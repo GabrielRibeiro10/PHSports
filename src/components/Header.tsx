@@ -37,7 +37,7 @@ export function Header() {
         </button>
 
         <Link to="/" className="flex shrink-0 items-center gap-2">
-          <span className="grid size-8 place-items-center rounded-md bg-primary text-primary-foreground text-xs font-black">PH</span>
+          <img src={logo.url} alt="PH Sports" className="size-9 rounded-full object-cover ring-1 ring-border" />
           <span className="text-lg font-black tracking-tight">
             PH<span className="text-brand">SPORTS</span>
           </span>
