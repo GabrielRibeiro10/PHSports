@@ -16,8 +16,8 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "PH Sports — Camisas de Futebol Premium dos Maiores Clubes" },
       { name: "description", content: "Corinthians, Palmeiras, Flamengo, Vasco, Cruzeiro, Botafogo, São Paulo e Bahia. Camisas premium por R$ 99,90 com troca fácil." },
-      { property: "og:title", content: "PH Sports — Camisas de Futebol Premium" },
-      { property: "og:description", content: "Camisas dos maiores clubes por R$ 99,90. Envio para todo o Brasil e internacional." },
+      { property: "og:title", content: "PH Sports — Camisas de Futebol Premium dos Maiores Clubes" },
+      { property: "og:description", content: "Corinthians, Palmeiras, Flamengo, Vasco, Cruzeiro, Botafogo, São Paulo e Bahia. Camisas premium por R$ 99,90 com troca fácil." },
     ],
   }),
   component: Home,
