@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Mail, Phone, MapPin, ShieldCheck, CreditCard } from "lucide-react";
 import { STORE_EMAIL, STORE_LOCATION, STORE_PHONE_DISPLAY } from "@/lib/products";
+import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
 
 export function Footer() {
   return (
