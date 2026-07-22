@@ -3,6 +3,7 @@ import { Search, ShoppingBag, Menu, X, Truck } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { useCart } from "@/lib/cart";
 import { products } from "@/lib/products";
+import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
 
 export function Header() {
   const { count } = useCart();
