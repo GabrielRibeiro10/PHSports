@@ -129,6 +129,33 @@
   transform: translate3d(0, 0, 0);
 }
 
+/* Clubs continuous marquee - smooth infinite scroll */
+@keyframes clubs-scroll {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+.clubs-track {
+  animation: clubs-scroll 38s linear infinite;
+  will-change: transform;
+}
+.clubs-track:hover { animation-play-state: paused; }
+
+/* Global premium button interaction */
+button, a.btn-glow, button.btn-glow {
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 240ms ease,
+              background-color 200ms ease,
+              color 200ms ease,
+              border-color 200ms ease,
+              filter 200ms ease;
+}
+.btn-glow:hover {
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 10px 30px -10px oklch(0.55 0.22 27 / 0.55), 0 0 0 3px oklch(0.55 0.22 27 / 0.15);
+  filter: brightness(1.03);
+}
+.btn-glow:active { transform: translateY(0) scale(0.99); }
+
 /* Utility */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }

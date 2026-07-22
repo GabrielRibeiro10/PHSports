@@ -5,7 +5,6 @@ import { Check, ChevronRight, Ruler, RefreshCw, ShieldCheck, ShoppingBag, Zap } 
 import { formatBRL, getProduct, products, SIZES, type Size } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { ProductCard } from "@/components/ProductCard";
-import { ShippingCalc } from "@/components/ShippingCalc";
 
 export const Route = createFileRoute("/produto/$slug")({
   loader: ({ params }) => {
@@ -174,10 +173,6 @@ function ProductPage() {
             <li className="inline-flex items-center gap-2"><Check className="size-3.5 text-brand" /> Escudo bordado e acabamento profissional</li>
             <li className="inline-flex items-center gap-2"><Check className="size-3.5 text-brand" /> Modelagem torcedor unissex</li>
           </ul>
-
-          <div className="mt-6">
-            <ShippingCalc />
-          </div>
 
           <div className="mt-6 grid gap-3 rounded-xl border border-border bg-secondary/40 p-4 text-sm">
             <p className="font-bold">Descrição</p>
