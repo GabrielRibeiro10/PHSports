@@ -204,7 +204,7 @@ function ProductPage() {
             </div>
             <div className="flex items-start gap-2 text-xs">
               <ShieldCheck className="mt-0.5 size-4 shrink-0 text-brand" />
-              <span><strong>Compra segura:</strong> pagamento via Pix, cartão ou boleto com SSL 256-bit.</span>
+              <span><strong>Compra segura:</strong> pagamento via Pix, rápido e protegido.</span>
             </div>
           </div>
         </div>
