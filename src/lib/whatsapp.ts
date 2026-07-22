@@ -8,6 +8,9 @@ export function whatsappHref(text: string) {
 export const TRACKING_MESSAGE =
   "Olá! Gostaria de acompanhar o status do meu pedido. Poderiam me ajudar com as informações de rastreamento?";
 
+export const EXCHANGE_MESSAGE =
+  "Olá! Gostaria de solicitar uma troca ou devolução. Poderiam me orientar sobre os próximos passos?";
+
 export function buildOrderMessage(items: CartItem[], subtotal: number) {
   const enriched = items
     .map((it) => ({ it, p: products.find((pr) => pr.slug === it.slug) }))
