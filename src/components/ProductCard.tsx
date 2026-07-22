@@ -1,7 +1,16 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { ShoppingBag, Zap } from "lucide-react";
 import { formatBRL, type Product } from "@/lib/products";
 
 export function ProductCard({ p, priority = false }: { p: Product; priority?: boolean }) {
+  const nav = useNavigate();
+
+  const go = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    nav({ to: "/produto/$slug", params: { slug: p.slug } });
+  };
+
   return (
     <Link
       to="/produto/$slug"
@@ -32,6 +41,23 @@ export function ProductCard({ p, priority = false }: { p: Product; priority?: bo
           <span className="text-xs text-muted-foreground line-through">{formatBRL(p.oldPrice)}</span>
         </div>
         <p className="text-[11px] font-semibold text-brand">Promoção — economize {formatBRL(p.oldPrice - p.price)}</p>
+
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={go}
+            className="btn-glow inline-flex items-center justify-center gap-1 rounded-md bg-brand px-2 py-2 text-[11px] font-black uppercase tracking-wider text-brand-foreground shadow-sm"
+          >
+            <Zap className="size-3.5" /> Comprar
+          </button>
+          <button
+            type="button"
+            onClick={go}
+            className="btn-glow inline-flex items-center justify-center gap-1 rounded-md border-2 border-primary bg-background px-2 py-2 text-[11px] font-black uppercase tracking-wider text-primary"
+          >
+            <ShoppingBag className="size-3.5" /> Adicionar
+          </button>
+        </div>
       </div>
     </Link>
   );
