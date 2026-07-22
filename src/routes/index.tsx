@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Search } from "lucide-react";
+import { ArrowRight, Search, ShieldCheck, Truck } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import hero from "@/assets/hero-banner.jpg";
@@ -9,15 +9,14 @@ import { Ticker } from "@/components/Ticker";
 import { ProductCarousel } from "@/components/ProductCarousel";
 import { BenefitsMarquee } from "@/components/BenefitsMarquee";
 import { Reviews } from "@/components/Reviews";
-import { ShippingCalc } from "@/components/ShippingCalc";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "PH Sports — Camisas de Futebol Premium dos Maiores Clubes" },
-      { name: "description", content: "Corinthians, Palmeiras, Flamengo, Vasco, Cruzeiro, Botafogo, São Paulo e Bahia. Camisas premium por R$ 99,90 com troca fácil." },
+      { name: "description", content: "Camisas premium dos maiores clubes brasileiros por R$ 99,90. Envio para todo o Brasil e atendimento humanizado via WhatsApp." },
       { property: "og:title", content: "PH Sports — Camisas de Futebol Premium dos Maiores Clubes" },
-      { property: "og:description", content: "Corinthians, Palmeiras, Flamengo, Vasco, Cruzeiro, Botafogo, São Paulo e Bahia. Camisas premium por R$ 99,90 com troca fácil." },
+      { property: "og:description", content: "Camisas premium dos maiores clubes brasileiros por R$ 99,90 na PH Sports." },
     ],
   }),
   component: Home,
@@ -28,7 +27,7 @@ function Home() {
     <>
       <Ticker />
       <Hero />
-      <ClubsBar />
+      <ClubsMarquee />
       <SearchAndProducts />
       <section className="mx-auto max-w-7xl px-4 py-14" id="destaques">
         <div className="mb-6 flex items-end justify-between">
@@ -48,65 +47,56 @@ function Home() {
         </div>
       </section>
       <Reviews />
-      <section id="frete" className="mx-auto max-w-7xl px-4 pb-14">
-        <div className="mx-auto max-w-xl">
-          <div className="mb-4 text-center">
-            <p className="text-xs font-bold uppercase tracking-widest text-brand">Consulta rápida</p>
-            <h2 className="text-2xl font-black md:text-3xl">Calcule seu frete</h2>
-          </div>
-          <ShippingCalc />
-        </div>
-      </section>
+      <BrandTypography />
     </>
   );
 }
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-primary text-primary-foreground">
-      <div className="mx-auto grid max-w-7xl items-center gap-6 px-4 py-10 md:grid-cols-2 md:py-16">
+    <section className="relative overflow-hidden bg-background">
+      <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-12 md:grid-cols-2 md:py-20">
         <div className="relative z-10">
-          <span className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand">
+          <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/5 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand">
             Coleção 2026 • Edição Premium
           </span>
-          <h1 className="mt-4 text-4xl font-black leading-[1.05] tracking-tight md:text-6xl">
+          <h1 className="mt-5 text-4xl font-black leading-[1.02] tracking-tight text-foreground md:text-6xl">
             Vista as cores do <span className="text-brand">seu clube.</span>
           </h1>
-          <p className="mt-4 max-w-md text-base text-primary-foreground/80">
+          <p className="mt-5 max-w-md text-base text-muted-foreground">
             Camisas dos maiores clubes do Brasil com acabamento premium. Tudo por{" "}
-            <span className="font-black text-primary-foreground">R$ 99,90</span> na PH Sports.
+            <span className="font-black text-foreground">R$ 99,90</span> na PH Sports.
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-7 flex flex-wrap gap-3">
             <Link
               to="/"
               hash="produtos"
-              className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-bold text-brand-foreground shadow-[var(--shadow-premium)] transition-transform hover:scale-105"
+              className="btn-glow inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm font-bold text-brand-foreground shadow-[var(--shadow-premium)]"
             >
               Comprar agora <ArrowRight className="size-4" />
             </Link>
             <Link
               to="/"
               hash="clubes"
-              className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/20 px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary-foreground/10"
+              className="btn-glow inline-flex items-center gap-2 rounded-full border border-border bg-background px-7 py-3.5 text-sm font-semibold text-foreground hover:border-primary"
             >
               Ver clubes
             </Link>
           </div>
-          <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-primary-foreground/70">
-            <span>✓ Envio para todo Brasil</span>
-            <span>✓ Troca fácil</span>
-            <span>✓ Atendimento humanizado</span>
+          <div className="mt-7 flex flex-wrap items-center gap-5 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5"><Truck className="size-4 text-brand" /> Envio para todo Brasil</span>
+            <span className="inline-flex items-center gap-1.5"><ShieldCheck className="size-4 text-brand" /> Compra 100% segura</span>
           </div>
         </div>
         <div className="relative">
-          <div className="absolute -inset-8 rounded-[2rem] bg-brand/20 blur-3xl" aria-hidden />
+          <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-secondary/60 to-brand/5 blur-2xl" aria-hidden />
           <img
             src={hero}
-            alt="Atleta com camisa PH Sports"
-            width={1920}
-            height={1080}
+            alt="Coleção premium PH Sports — camisa, chuteira e bola de futebol"
+            width={1600}
+            height={1200}
             fetchPriority="high"
-            className="relative aspect-[4/3] w-full rounded-2xl object-cover shadow-[var(--shadow-premium)]"
+            className="relative aspect-[4/3] w-full rounded-2xl bg-white object-cover shadow-[var(--shadow-premium)] ring-1 ring-border"
           />
         </div>
       </div>
@@ -114,24 +104,28 @@ function Hero() {
   );
 }
 
-function ClubsBar() {
+function ClubsMarquee() {
+  const loop = [...products, ...products];
   return (
-    <section id="clubes" className="border-b border-border">
+    <section id="clubes" className="border-b border-border bg-background">
       <div className="mx-auto max-w-7xl px-4 py-6">
-        <div className="flex gap-3 overflow-x-auto no-scrollbar">
-          {products.map((p) => (
-            <Link
-              key={p.slug}
-              to="/produto/$slug"
-              params={{ slug: p.slug }}
-              className="group flex shrink-0 flex-col items-center gap-2"
-            >
-              <div className="grid size-16 place-items-center overflow-hidden rounded-full border border-border bg-secondary transition-all group-hover:border-brand group-hover:shadow-md md:size-20">
-                <img src={p.image} alt={p.club} loading="lazy" className="size-full object-cover" width={200} height={200} />
-              </div>
-              <span className="text-[11px] font-semibold text-muted-foreground group-hover:text-brand">{p.club}</span>
-            </Link>
-          ))}
+        <div className="overflow-hidden">
+          <div className="clubs-track flex w-max gap-6">
+            {loop.map((p, i) => (
+              <Link
+                key={`${p.slug}-${i}`}
+                to="/produto/$slug"
+                params={{ slug: p.slug }}
+                className="group flex shrink-0 flex-col items-center gap-2"
+                aria-hidden={i >= products.length ? true : undefined}
+              >
+                <div className="grid size-16 place-items-center overflow-hidden rounded-full border border-border bg-secondary transition-all group-hover:border-brand group-hover:shadow-md md:size-20">
+                  <img src={p.image} alt={p.club} loading="lazy" className="size-full object-cover" width={200} height={200} />
+                </div>
+                <span className="whitespace-nowrap text-[11px] font-semibold text-muted-foreground group-hover:text-brand">{p.club}</span>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -176,7 +170,7 @@ function SearchAndProducts() {
       <div className="mb-6 flex flex-wrap gap-2">
         <button
           onClick={() => setFilter(null)}
-          className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+          className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold ${
             filter === null ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-primary"
           }`}
         >
@@ -186,7 +180,7 @@ function SearchAndProducts() {
           <button
             key={p.slug}
             onClick={() => setFilter(p.club)}
-            className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+            className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold ${
               filter === p.club ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-primary"
             }`}
           >
@@ -199,6 +193,27 @@ function SearchAndProducts() {
         {filtered.map((p, i) => (
           <ProductCard key={p.slug} p={p} priority={i < 4} />
         ))}
+      </div>
+    </section>
+  );
+}
+
+function BrandTypography() {
+  return (
+    <section aria-label="PHSPORTS" className="relative overflow-hidden border-t border-border bg-background">
+      <div className="mx-auto max-w-7xl px-4 py-16 md:py-24">
+        <div className="text-center">
+          <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand">A marca dos torcedores</p>
+          <h2
+            aria-label="PHSPORTS"
+            className="mt-4 select-none bg-gradient-to-b from-foreground via-foreground to-foreground/10 bg-clip-text text-[19vw] font-black leading-none tracking-tighter text-transparent md:text-[13rem]"
+          >
+            PH<span className="text-brand [-webkit-text-fill-color:currentColor]">SPORTS</span>
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground">
+            Paixão, qualidade e velocidade em cada camisa. Feito para quem vive o jogo.
+          </p>
+        </div>
       </div>
     </section>
   );

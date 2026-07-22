@@ -5,32 +5,33 @@ export function whatsappHref(text: string) {
   return `https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(text)}`;
 }
 
-export function buildOrderMessage(
-  items: CartItem[],
-  subtotal: number,
-  shipping: { label: string; value: number } | null,
-) {
-  const lines: string[] = [];
-  lines.push("*Novo pedido — PH Sports* 🛒");
-  lines.push("");
-  items.forEach((it, idx) => {
-    const p = products.find((pr) => pr.slug === it.slug);
-    if (!p) return;
-    lines.push(`${idx + 1}. ${p.name}`);
-    lines.push(`   • Tamanho: ${it.size}`);
-    lines.push(`   • Quantidade: ${it.qty}`);
-    lines.push(`   • Subtotal: ${formatBRL(p.price * it.qty)}`);
-  });
-  lines.push("");
-  lines.push(`*Produtos:* ${formatBRL(subtotal)}`);
-  if (shipping) {
-    lines.push(`*Frete (${shipping.label}):* ${shipping.value === 0 ? "GRÁTIS" : formatBRL(shipping.value)}`);
-    lines.push(`*Total:* ${formatBRL(subtotal + shipping.value)}`);
-  } else {
-    lines.push(`*Frete:* a combinar`);
-    lines.push(`*Total:* ${formatBRL(subtotal)}`);
-  }
-  lines.push("");
-  lines.push("Olá! Quero finalizar essa compra.");
-  return lines.join("\n");
+export const TRACKING_MESSAGE =
+  "Olá! Gostaria de acompanhar o status do meu pedido. Poderiam me ajudar com as informações de rastreamento?";
+
+export function buildOrderMessage(items: CartItem[], subtotal: number) {
+  const enriched = items
+    .map((it) => ({ it, p: products.find((pr) => pr.slug === it.slug) }))
+    .filter((x) => x.p);
+
+  const produtos = enriched.map(({ it, p }) => `- ${p!.name} (x${it.qty})`).join("\n");
+  const tamanhos = enriched.map(({ it, p }) => `- ${p!.name}: ${it.size}`).join("\n");
+  const quantidades = enriched.map(({ it, p }) => `- ${p!.name}: ${it.qty}`).join("\n");
+
+  return [
+    "Olá, equipe PHSPORTS! Gostaria de finalizar meu pedido.",
+    "",
+    "Produtos:",
+    produtos,
+    "",
+    "Tamanhos:",
+    tamanhos,
+    "",
+    "Quantidade:",
+    quantidades,
+    "",
+    `Valor Total:`,
+    formatBRL(subtotal),
+    "",
+    "Aguardo as instruções para concluir a compra. Obrigado!",
+  ].join("\n");
 }
