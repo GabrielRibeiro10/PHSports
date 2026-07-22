@@ -22,7 +22,6 @@ export function Reviews() {
             ))}
           </div>
           <span className="font-bold">4.9/5</span>
-          <span className="text-muted-foreground">— +2.400 avaliações</span>
         </div>
       </div>
 
