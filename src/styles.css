@@ -100,7 +100,7 @@
   100% { transform: translate3d(-50%, 0, 0); }
 }
 .benefits-track {
-  animation: benefits-scroll 26s linear infinite; /* was ~32s */
+  animation: benefits-scroll 22s linear infinite;
   will-change: transform;
 }
 
