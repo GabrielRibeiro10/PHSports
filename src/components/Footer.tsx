@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Mail, Phone, MapPin, ShieldCheck, CreditCard } from "lucide-react";
 import { STORE_EMAIL, STORE_LOCATION, STORE_PHONE_DISPLAY } from "@/lib/products";
+import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
 
 export function Footer() {
   return (
@@ -9,7 +10,7 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="grid size-9 place-items-center rounded-md bg-primary text-primary-foreground text-sm font-black">PH</span>
+              <img src={logo.url} alt="PH Sports" className="size-10 rounded-full object-cover ring-1 ring-border" />
               <span className="text-xl font-black tracking-tight">
                 PH<span className="text-brand">SPORTS</span>
               </span>
