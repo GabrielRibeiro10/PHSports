@@ -120,7 +120,7 @@ function ProductPage() {
               </button>
             </div>
             <div className="mt-2 flex flex-wrap gap-2">
-              {sizeOptions.map((s) => (
+              {sizeOptions.map((s: string) => (
                 <button
                   key={s}
                   onClick={() => setSize(s)}
