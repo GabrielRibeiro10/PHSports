@@ -9,6 +9,7 @@ import { Ticker } from "@/components/Ticker";
 import { ProductCarousel } from "@/components/ProductCarousel";
 import { BenefitsMarquee } from "@/components/BenefitsMarquee";
 import { Reviews } from "@/components/Reviews";
+import { CategoryCarousel } from "@/components/CategoryCarousel";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -27,6 +28,7 @@ function Home() {
     <>
       <Ticker />
       <Hero />
+      <CategoryCarousel />
       <ClubsMarquee />
       <SearchAndProducts />
       <section className="mx-auto max-w-7xl px-4 py-14" id="destaques">
