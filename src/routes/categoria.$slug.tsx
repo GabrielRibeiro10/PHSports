@@ -69,7 +69,7 @@ function CategoryPage() {
         <p className="text-sm text-muted-foreground">Nenhum produto cadastrado nesta categoria.</p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 reveal-up">
-          {items.map((p, i) => (
+          {items.map((p: (typeof items)[number], i: number) => (
             <ProductCard key={p.slug} p={p} priority={i < 4} />
           ))}
         </div>
