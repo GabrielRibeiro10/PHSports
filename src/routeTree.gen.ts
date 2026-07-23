@@ -9,14 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermosRouteImport } from './routes/termos'
+import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as RastreioRouteImport } from './routes/rastreio'
+import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RastreioRoute = RastreioRouteImport.update({
   id: '/rastreio',
   path: '/rastreio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadeRoute = PrivacidadeRouteImport.update({
+  id: '/privacidade',
+  path: '/privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CarrinhoRoute = CarrinhoRouteImport.update({
@@ -38,44 +56,99 @@ const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/carrinho': typeof CarrinhoRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/rastreio': typeof RastreioRoute
+  '/sobre': typeof SobreRoute
+  '/termos': typeof TermosRoute
   '/produto/$slug': typeof ProdutoSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/carrinho': typeof CarrinhoRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/rastreio': typeof RastreioRoute
+  '/sobre': typeof SobreRoute
+  '/termos': typeof TermosRoute
   '/produto/$slug': typeof ProdutoSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/carrinho': typeof CarrinhoRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/rastreio': typeof RastreioRoute
+  '/sobre': typeof SobreRoute
+  '/termos': typeof TermosRoute
   '/produto/$slug': typeof ProdutoSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/carrinho' | '/rastreio' | '/produto/$slug'
+  fullPaths:
+    | '/'
+    | '/carrinho'
+    | '/privacidade'
+    | '/rastreio'
+    | '/sobre'
+    | '/termos'
+    | '/produto/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/carrinho' | '/rastreio' | '/produto/$slug'
-  id: '__root__' | '/' | '/carrinho' | '/rastreio' | '/produto/$slug'
+  to:
+    | '/'
+    | '/carrinho'
+    | '/privacidade'
+    | '/rastreio'
+    | '/sobre'
+    | '/termos'
+    | '/produto/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/carrinho'
+    | '/privacidade'
+    | '/rastreio'
+    | '/sobre'
+    | '/termos'
+    | '/produto/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CarrinhoRoute: typeof CarrinhoRoute
+  PrivacidadeRoute: typeof PrivacidadeRoute
   RastreioRoute: typeof RastreioRoute
+  SobreRoute: typeof SobreRoute
+  TermosRoute: typeof TermosRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/termos': {
+      id: '/termos'
+      path: '/termos'
+      fullPath: '/termos'
+      preLoaderRoute: typeof TermosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rastreio': {
       id: '/rastreio'
       path: '/rastreio'
       fullPath: '/rastreio'
       preLoaderRoute: typeof RastreioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidade': {
+      id: '/privacidade'
+      path: '/privacidade'
+      fullPath: '/privacidade'
+      preLoaderRoute: typeof PrivacidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/carrinho': {
@@ -105,7 +178,10 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CarrinhoRoute: CarrinhoRoute,
+  PrivacidadeRoute: PrivacidadeRoute,
   RastreioRoute: RastreioRoute,
+  SobreRoute: SobreRoute,
+  TermosRoute: TermosRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
 }
 export const routeTree = rootRouteImport
