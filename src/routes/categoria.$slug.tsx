@@ -1,0 +1,79 @@
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
+import { categories, getCategoryBySlug, productsByCategory } from "@/lib/products";
+import { ProductCard } from "@/components/ProductCard";
+
+export const Route = createFileRoute("/categoria/$slug")({
+  loader: ({ params }) => {
+    const category = getCategoryBySlug(params.slug);
+    if (!category) throw notFound();
+    const items = productsByCategory(category.id);
+    return { category, items };
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData) return { meta: [{ title: "Categoria — PH Sports" }] };
+    const { category } = loaderData;
+    const title = `${category.name} — PH Sports`;
+    const description = `${category.tagline}. Encontre produtos ${category.name.toLowerCase()} na PH Sports com envio para todo o Brasil.`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+      ],
+    };
+  },
+  component: CategoryPage,
+});
+
+function CategoryPage() {
+  const { category, items } = Route.useLoaderData();
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-8">
+      <nav className="mb-4 flex items-center gap-1 text-xs text-muted-foreground">
+        <Link to="/" className="hover:text-brand">Início</Link>
+        <ChevronRight className="size-3" />
+        <Link to="/" hash="categorias" className="hover:text-brand">Categorias</Link>
+        <ChevronRight className="size-3" />
+        <span className="text-foreground">{category.name}</span>
+      </nav>
+
+      <header className="mb-8 reveal-up">
+        <span className="inline-flex items-center gap-2 rounded-full bg-brand/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand">
+          {category.emoji} Categoria
+        </span>
+        <h1 className="mt-3 text-3xl font-black md:text-4xl">{category.name}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{category.tagline}</p>
+      </header>
+
+      <div className="mb-8 flex flex-wrap gap-2">
+        {categories.map((c) => (
+          <Link
+            key={c.id}
+            to="/categoria/$slug"
+            params={{ slug: c.slug }}
+            className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+              c.id === category.id
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-border hover:border-primary"
+            }`}
+          >
+            {c.emoji} {c.name}
+          </Link>
+        ))}
+      </div>
+
+      {items.length === 0 ? (
+        <p className="text-sm text-muted-foreground">Nenhum produto cadastrado nesta categoria.</p>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 reveal-up">
+          {items.map((p, i) => (
+            <ProductCard key={p.slug} p={p} priority={i < 4} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
