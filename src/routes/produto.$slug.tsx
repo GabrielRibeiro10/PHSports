@@ -52,7 +52,9 @@ function ProductPage() {
     nav({ to: "/carrinho" });
   };
 
-  const related = products.filter((p) => p.slug !== product.slug).slice(0, 4);
+  const sizeOptions = product.sizes ?? SIZES;
+  const related = products.filter((p) => p.slug !== product.slug && p.category === product.category).slice(0, 4);
+  const relatedFinal = related.length ? related : products.filter((p) => p.slug !== product.slug).slice(0, 4);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
@@ -118,7 +120,7 @@ function ProductPage() {
               </button>
             </div>
             <div className="mt-2 flex flex-wrap gap-2">
-              {SIZES.map((s) => (
+              {sizeOptions.map((s) => (
                 <button
                   key={s}
                   onClick={() => setSize(s)}
