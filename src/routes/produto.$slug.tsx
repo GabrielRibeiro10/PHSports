@@ -179,26 +179,56 @@ function ProductPage() {
           <div className="mt-6 grid gap-3 rounded-xl border border-border bg-secondary/40 p-4 text-sm">
             <p className="font-bold">Descrição</p>
             <p className="text-muted-foreground">
-              Camisa oficial do {product.club} versão torcedor 2026. Confeccionada em poliéster premium de alta densidade,
-              com tecnologia de secagem rápida, respirabilidade e conforto durante todo o dia.
+              {product.description ??
+                (product.category === "feminino"
+                  ? `Camisa feminina do ${product.club} com modelagem slim e caimento premium. Tecido dry-fit de alta densidade, com respirabilidade e conforto o dia todo.`
+                  : product.category === "retro"
+                  ? `Camisa retrô ${product.name.replace("Camisa Retrô ", "")} — reedição clássica com acabamento vintage, gola de época e escudo bordado.`
+                  : `Camisa oficial do ${product.club} versão torcedor 2026. Confeccionada em poliéster premium de alta densidade, com tecnologia de secagem rápida.`)}
             </p>
-            <div className="grid gap-1 text-xs">
-              <p><span className="font-bold">Material:</span> 100% poliéster dry-fit</p>
-              <p><span className="font-bold">Modelagem:</span> Unissex</p>
-              <p><span className="font-bold">Lavagem:</span> Máquina até 30°C, sem alvejante</p>
-            </div>
+            {product.category !== "caneleiras" && (
+              <div className="grid gap-1 text-xs">
+                <p><span className="font-bold">Material:</span> 100% poliéster dry-fit</p>
+                <p><span className="font-bold">Modelagem:</span> {product.category === "feminino" ? "Feminina slim" : product.category === "jogador" ? "Slim atlética (player)" : "Unissex torcedor"}</p>
+                <p><span className="font-bold">Lavagem:</span> Máquina até 30°C, sem alvejante</p>
+              </div>
+            )}
             <details className="text-sm">
               <summary className="cursor-pointer font-bold">Tabela de medidas</summary>
-              <table className="mt-2 w-full text-xs">
-                <thead className="text-left text-muted-foreground">
-                  <tr><th className="py-1">Tamanho</th><th>Peito (cm)</th><th>Comprimento (cm)</th></tr>
-                </thead>
-                <tbody>
-                  {[["P",50,70],["M",53,72],["G",56,74],["GG",59,76],["XG",62,78]].map(([s,p,c]) => (
-                    <tr key={s} className="border-t border-border/60"><td className="py-1 font-semibold">{s}</td><td>{p}</td><td>{c}</td></tr>
-                  ))}
-                </tbody>
-              </table>
+              {product.category === "feminino" ? (
+                <table className="mt-2 w-full text-xs">
+                  <thead className="text-left text-muted-foreground">
+                    <tr><th className="py-1">Tamanho</th><th>Busto (cm)</th><th>Comprimento (cm)</th></tr>
+                  </thead>
+                  <tbody>
+                    {[["P",44,62],["M",47,64],["G",50,66],["GG",53,68],["XG",56,70]].map(([s,p,c]) => (
+                      <tr key={String(s)} className="border-t border-border/60"><td className="py-1 font-semibold">{s}</td><td>{p}</td><td>{c}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : product.category === "caneleiras" ? (
+                <table className="mt-2 w-full text-xs">
+                  <thead className="text-left text-muted-foreground">
+                    <tr><th className="py-1">Tamanho</th><th>Altura recomendada</th></tr>
+                  </thead>
+                  <tbody>
+                    {[["S","1,40m – 1,60m"],["M","1,60m – 1,75m"],["L","1,75m – 1,90m"]].map(([s,h]) => (
+                      <tr key={s} className="border-t border-border/60"><td className="py-1 font-semibold">{s}</td><td>{h}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <table className="mt-2 w-full text-xs">
+                  <thead className="text-left text-muted-foreground">
+                    <tr><th className="py-1">Tamanho</th><th>Peito (cm)</th><th>Comprimento (cm)</th></tr>
+                  </thead>
+                  <tbody>
+                    {[["P",50,70],["M",53,72],["G",56,74],["GG",59,76],["XG",62,78]].map(([s,p,c]) => (
+                      <tr key={String(s)} className="border-t border-border/60"><td className="py-1 font-semibold">{s}</td><td>{p}</td><td>{c}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </details>
             <div id="trocas" className="flex items-start gap-2 text-xs">
               <RefreshCw className="mt-0.5 size-4 shrink-0 text-brand" />
