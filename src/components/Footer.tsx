@@ -37,15 +37,15 @@ export function Footer() {
           <div>
             <h4 className="text-sm font-bold uppercase tracking-wider">Institucional</h4>
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/" hash="beneficios" className="hover:text-foreground">Sobre nós</Link></li>
+              <li><Link to="/sobre" className="hover:text-foreground">Sobre nós</Link></li>
               <li>
                 <a href={whatsappHref(EXCHANGE_MESSAGE)} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
                   Trocas e devoluções
                 </a>
               </li>
               <li><Link to="/rastreio" className="hover:text-foreground">Rastrear pedido</Link></li>
-              <li><Link to="/" hash="privacidade" className="hover:text-foreground">Política de Privacidade</Link></li>
-              <li><Link to="/" hash="termos" className="hover:text-foreground">Termos de Uso</Link></li>
+              <li><Link to="/privacidade" className="hover:text-foreground">Política de Privacidade</Link></li>
+              <li><Link to="/termos" className="hover:text-foreground">Termos de Uso</Link></li>
             </ul>
             <a
               href={whatsappHref(EXCHANGE_MESSAGE)}
@@ -56,6 +56,7 @@ export function Footer() {
               <MessageCircle className="size-4" /> Solicitar troca/devolução
             </a>
           </div>
+
 
           <div>
             <h4 className="text-sm font-bold uppercase tracking-wider">Contato</h4>
