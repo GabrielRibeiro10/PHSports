@@ -43,10 +43,13 @@ export function Header() {
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+        <nav className="hidden md:flex items-center gap-5 text-sm font-medium">
           <Link to="/" hash="produtos" className="hover:text-brand transition-colors">Camisas</Link>
-          <Link to="/" hash="clubes" className="hover:text-brand transition-colors">Clubes</Link>
-          <Link to="/rastreio" className="hover:text-brand transition-colors">Rastrear pedido</Link>
+          <Link to="/categoria/$slug" params={{ slug: "mulheres" }} className="hover:text-brand transition-colors">Femininas</Link>
+          <Link to="/categoria/$slug" params={{ slug: "retro" }} className="hover:text-brand transition-colors">Retrô</Link>
+          <Link to="/categoria/$slug" params={{ slug: "versao-jogador" }} className="hover:text-brand transition-colors">Jogador</Link>
+          <Link to="/categoria/$slug" params={{ slug: "caneleiras" }} className="hover:text-brand transition-colors">Caneleiras</Link>
+          <Link to="/rastreio" className="hover:text-brand transition-colors">Rastrear</Link>
         </nav>
 
         <form onSubmit={onSearch} className="ml-auto hidden md:flex flex-1 max-w-md items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2">
@@ -90,7 +93,10 @@ export function Header() {
             </form>
             <nav className="grid gap-1 text-sm font-medium">
               <Link to="/" hash="produtos" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary">Camisas</Link>
-              <Link to="/" hash="clubes" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary">Clubes</Link>
+              <Link to="/categoria/$slug" params={{ slug: "mulheres" }} onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary">Camisas Femininas</Link>
+              <Link to="/categoria/$slug" params={{ slug: "retro" }} onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary">Retrô</Link>
+              <Link to="/categoria/$slug" params={{ slug: "versao-jogador" }} onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary">Versão Jogador</Link>
+              <Link to="/categoria/$slug" params={{ slug: "caneleiras" }} onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary">Caneleiras</Link>
               <Link to="/rastreio" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary flex items-center gap-2">
                 <Truck className="size-4" /> Rastrear pedido
               </Link>
