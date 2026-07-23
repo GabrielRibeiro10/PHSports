@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
-import { categories, getCategoryBySlug, productsByCategory } from "@/lib/products";
+import { categories, getCategoryBySlug, productsByCategory, type Product } from "@/lib/products";
 import { ProductCard } from "@/components/ProductCard";
 
 export const Route = createFileRoute("/categoria/$slug")({
@@ -69,7 +69,7 @@ function CategoryPage() {
         <p className="text-sm text-muted-foreground">Nenhum produto cadastrado nesta categoria.</p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 reveal-up">
-          {items.map((p: (typeof items)[number], i: number) => (
+          {items.map((p: Product, i: number) => (
             <ProductCard key={p.slug} p={p} priority={i < 4} />
           ))}
         </div>
