@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Minus, Plus, Trash2, ShoppingBag, MessageCircle } from "lucide-react";
 import { useMemo } from "react";
-import { formatBRL } from "@/lib/products";
+import { toast } from "sonner";
+import { formatBRL, SIZES } from "@/lib/products";
 import { itemProduct, useCart } from "@/lib/cart";
 import { buildOrderMessage, whatsappHref } from "@/lib/whatsapp";
 
@@ -19,7 +20,7 @@ export const Route = createFileRoute("/carrinho")({
 });
 
 function CartPage() {
-  const { items, setQty, remove, subtotal, hydrated, clear } = useCart();
+  const { items, setQty, remove, changeSize, subtotal, hydrated, clear } = useCart();
   const msg = useMemo(() => buildOrderMessage(items, subtotal), [items, subtotal]);
 
   if (!hydrated) {
@@ -55,13 +56,52 @@ function CartPage() {
           {items.map((it) => {
             const p = itemProduct(it);
             if (!p) return null;
+            const available = p.sizes && p.sizes.length > 0 ? p.sizes : (SIZES as readonly string[]);
+            const showSizeSelector = available.length > 0;
             return (
               <li key={`${it.slug}-${it.size}`} className="grid grid-cols-[80px_1fr_auto] items-center gap-4 rounded-xl border border-border bg-card p-3 md:grid-cols-[100px_1fr_auto_auto]">
                 <img src={p.image} alt={p.name} width={100} height={100} loading="lazy" className="aspect-square size-20 rounded-lg object-cover md:size-24" />
                 <div className="min-w-0">
                   <p className="text-[11px] font-semibold uppercase text-muted-foreground">{p.club}</p>
                   <p className="truncate text-sm font-bold">{p.name}</p>
-                  <p className="text-xs text-muted-foreground">Tamanho: <span className="font-semibold text-foreground">{it.size}</span></p>
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Versão: <span className="text-foreground">{
+                      p.category === "feminino" ? "Feminina" :
+                      p.category === "retro" ? "Retrô" :
+                      p.category === "jogador" ? "Jogador" :
+                      p.category === "caneleiras" ? "Acessório" : "Torcedor"
+                    }</span>
+                  </p>
+                  {showSizeSelector ? (
+                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                      <span className="text-[11px] font-semibold text-muted-foreground">Tamanho:</span>
+                      {available.map((s) => {
+                        const active = s === it.size;
+                        return (
+                          <button
+                            key={s}
+                            type="button"
+                            onClick={() => {
+                              if (active) return;
+                              changeSize(it.slug, it.size, s);
+                              toast.success("Tamanho atualizado", { description: `${p.name} • ${s}` });
+                            }}
+                            className={`min-w-[34px] rounded-md border px-2 py-1 text-[11px] font-bold transition-all hover:-translate-y-0.5 ${
+                              active
+                                ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                                : "border-border bg-background text-foreground hover:border-primary"
+                            }`}
+                            aria-pressed={active}
+                            aria-label={`Trocar tamanho para ${s}`}
+                          >
+                            {s}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">Tamanho: <span className="font-semibold text-foreground">{it.size}</span></p>
+                  )}
                   <p className="mt-1 text-sm font-black">{formatBRL(p.price)}</p>
                 </div>
                 <div className="col-span-3 flex items-center gap-2 md:col-span-1">
