@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -16,6 +17,8 @@ import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { BackToTop } from "@/components/BackToTop";
 import { CartProvider } from "@/lib/cart";
+import { AuthProvider } from "@/lib/auth";
+import { useCatalogRealtimeSync } from "@/lib/catalog";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -110,20 +113,33 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isAdminRoute = pathname.startsWith("/admin");
+  useCatalogRealtimeSync();
   return (
     <QueryClientProvider client={queryClient}>
-      <CartProvider>
-        <div className="flex min-h-screen flex-col">
-          <Header />
-          <main className="flex-1">
+      <AuthProvider>
+        <CartProvider>
+          {isAdminRoute ? (
             <Outlet />
-          </main>
-          <Footer />
-        </div>
-        <WhatsAppButton />
-        <BackToTop />
-        <Toaster position="top-center" richColors />
-      </CartProvider>
+          ) : (
+            <div className="flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">
+                <Outlet />
+              </main>
+              <Footer />
+            </div>
+          )}
+          {!isAdminRoute && (
+            <>
+              <WhatsAppButton />
+              <BackToTop />
+            </>
+          )}
+          <Toaster position="top-center" richColors />
+        </CartProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

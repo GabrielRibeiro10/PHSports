@@ -1,4 +1,4 @@
-import { formatBRL, products, STORE_PHONE } from "./products";
+import { formatBRL, STORE_PHONE, type Product } from "./products";
 import type { CartItem } from "./cart";
 
 export function whatsappHref(text: string) {
@@ -11,7 +11,7 @@ export const TRACKING_MESSAGE =
 export const EXCHANGE_MESSAGE =
   "Olá! Gostaria de solicitar uma troca ou devolução. Poderiam me orientar sobre os próximos passos?";
 
-export function buildOrderMessage(items: CartItem[], subtotal: number) {
+export function buildOrderMessage(items: CartItem[], subtotal: number, products: Product[]) {
   const enriched = items
     .map((it) => ({ it, p: products.find((pr) => pr.slug === it.slug) }))
     .filter((x) => x.p);

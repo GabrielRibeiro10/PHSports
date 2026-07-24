@@ -2,8 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Search, ShieldCheck, Truck } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import hero from "@/assets/hero-banner.jpg";
-import { products } from "@/lib/products";
+import { productsQueryOptions } from "@/lib/catalog";
 import { ProductCard } from "@/components/ProductCard";
 import { Ticker } from "@/components/Ticker";
 import { ProductCarousel } from "@/components/ProductCarousel";
@@ -12,6 +13,7 @@ import { Reviews } from "@/components/Reviews";
 import { CategoryCarousel } from "@/components/CategoryCarousel";
 
 export const Route = createFileRoute("/")({
+  loader: ({ context }) => context.queryClient.ensureQueryData(productsQueryOptions),
   head: () => ({
     meta: [
       { title: "PH Sports — Camisas de Futebol Premium dos Maiores Clubes" },
@@ -24,6 +26,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const { data: products = [] } = useQuery(productsQueryOptions);
   return (
     <>
       <Ticker />
@@ -116,6 +119,7 @@ function Hero() {
 }
 
 function ClubsMarquee() {
+  const { data: products = [] } = useQuery(productsQueryOptions);
   const loop = [...products, ...products];
   return (
     <section id="clubes" className="border-b border-border bg-background">
@@ -145,6 +149,7 @@ function ClubsMarquee() {
 
 function SearchAndProducts() {
   const nav = useNavigate();
+  const { data: products = [] } = useQuery(productsQueryOptions);
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<string | null>(null);
 

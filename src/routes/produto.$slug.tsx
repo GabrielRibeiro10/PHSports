@@ -1,14 +1,17 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Check, ChevronRight, Ruler, RefreshCw, ShieldCheck, ShoppingBag, Zap } from "lucide-react";
-import { formatBRL, getProduct, products, SIZES, type Size } from "@/lib/products";
+import { formatBRL, SIZES, type Size } from "@/lib/products";
+import { getProduct, productsQueryOptions } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
 import { ProductCard } from "@/components/ProductCard";
 
 export const Route = createFileRoute("/produto/$slug")({
-  loader: ({ params }) => {
-    const product = getProduct(params.slug);
+  loader: async ({ params, context }) => {
+    const products = await context.queryClient.ensureQueryData(productsQueryOptions);
+    const product = getProduct(products, params.slug);
     if (!product) throw notFound();
     return { product };
   },
@@ -28,7 +31,9 @@ export const Route = createFileRoute("/produto/$slug")({
 });
 
 function ProductPage() {
-  const { product } = Route.useLoaderData();
+  const { product: initialProduct } = Route.useLoaderData();
+  const { data: products = [] } = useQuery(productsQueryOptions);
+  const product = getProduct(products, initialProduct.slug) ?? initialProduct;
   const { add } = useCart();
   const nav = useNavigate();
   const [size, setSize] = useState<Size | null>(null);

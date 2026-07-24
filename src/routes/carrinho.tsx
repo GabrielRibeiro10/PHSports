@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Minus, Plus, Trash2, ShoppingBag, MessageCircle } from "lucide-react";
 import { useMemo } from "react";
 import { toast } from "sonner";
 import { formatBRL, SIZES } from "@/lib/products";
-import { itemProduct, useCart } from "@/lib/cart";
+import { productsQueryOptions } from "@/lib/catalog";
+import { useCart } from "@/lib/cart";
 import { buildOrderMessage, whatsappHref } from "@/lib/whatsapp";
 
 export const Route = createFileRoute("/carrinho")({
@@ -20,8 +22,9 @@ export const Route = createFileRoute("/carrinho")({
 });
 
 function CartPage() {
-  const { items, setQty, remove, changeSize, subtotal, hydrated, clear } = useCart();
-  const msg = useMemo(() => buildOrderMessage(items, subtotal), [items, subtotal]);
+  const { items, setQty, remove, changeSize, subtotal, hydrated, clear, getProduct } = useCart();
+  const { data: products = [] } = useQuery(productsQueryOptions);
+  const msg = useMemo(() => buildOrderMessage(items, subtotal, products), [items, subtotal, products]);
 
   if (!hydrated) {
     return <div className="mx-auto max-w-4xl px-4 py-16 text-center text-muted-foreground">Carregando…</div>;
@@ -54,7 +57,7 @@ function CartPage() {
       <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
         <ul className="space-y-3">
           {items.map((it) => {
-            const p = itemProduct(it);
+            const p = getProduct(it.slug);
             if (!p) return null;
             const available = p.sizes && p.sizes.length > 0 ? p.sizes : (SIZES as readonly string[]);
             const showSizeSelector = available.length > 0;

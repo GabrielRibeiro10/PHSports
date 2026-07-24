@@ -1,12 +1,14 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Search, ShoppingBag, Menu, X, Truck } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { useCart } from "@/lib/cart";
-import { products } from "@/lib/products";
+import { productsQueryOptions } from "@/lib/catalog";
 import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
 
 export function Header() {
   const { count } = useCart();
+  const { data: products = [] } = useQuery(productsQueryOptions);
   const navigate = useNavigate();
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);

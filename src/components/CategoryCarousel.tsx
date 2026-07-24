@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { categories } from "@/lib/products";
+import { categoriesQueryOptions } from "@/lib/catalog";
 
 export function CategoryCarousel() {
-  const items = categories;
+  const { data: items = [] } = useQuery(categoriesQueryOptions);
   const [index, setIndex] = useState(0);
   const [perView, setPerView] = useState(4);
   const [paused, setPaused] = useState(false);

@@ -1,15 +1,25 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronRight, Search } from "lucide-react";
 import { useMemo, useState } from "react";
-import { categories, getCategoryBySlug, productsByCategory, type Product } from "@/lib/products";
+import type { Product } from "@/lib/products";
+import {
+  categoriesQueryOptions,
+  getCategoryBySlug,
+  productsByCategory,
+  productsQueryOptions,
+} from "@/lib/catalog";
 import { ProductCard } from "@/components/ProductCard";
 
 export const Route = createFileRoute("/categoria/$slug")({
-  loader: ({ params }) => {
-    const category = getCategoryBySlug(params.slug);
+  loader: async ({ params, context }) => {
+    const [categories, products] = await Promise.all([
+      context.queryClient.ensureQueryData(categoriesQueryOptions),
+      context.queryClient.ensureQueryData(productsQueryOptions),
+    ]);
+    const category = getCategoryBySlug(categories, params.slug);
     if (!category) throw notFound();
-    const items = productsByCategory(category.id);
-    return { category, items };
+    return { category };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return { meta: [{ title: "Categoria — PH Sports" }] };
@@ -29,7 +39,11 @@ export const Route = createFileRoute("/categoria/$slug")({
 });
 
 function CategoryPage() {
-  const { category, items } = Route.useLoaderData();
+  const { category: initialCategory } = Route.useLoaderData();
+  const { data: categories = [] } = useQuery(categoriesQueryOptions);
+  const { data: products = [] } = useQuery(productsQueryOptions);
+  const category = getCategoryBySlug(categories, initialCategory.slug) ?? initialCategory;
+  const items = productsByCategory(products, category.id);
   const [q, setQ] = useState("");
 
   const filtered = useMemo(() => {

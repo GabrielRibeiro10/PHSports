@@ -1,3 +1,5 @@
+// These types mirror the schema created by supabase/migrations/20260724120000_admin_panel_schema.sql.
+// Regenerate with the Supabase CLI (`supabase gen types typescript`) after changing the schema.
 export type Json =
   | string
   | number
@@ -7,23 +9,135 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
-      [_ in never]: never
+      categories: {
+        Row: {
+          id: "masculino" | "feminino" | "retro" | "caneleiras" | "jogador"
+          slug: string
+          name: string
+          emoji: string
+          tagline: string
+          image_url: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          id: "masculino" | "feminino" | "retro" | "caneleiras" | "jogador"
+          slug: string
+          name: string
+          emoji?: string
+          tagline?: string
+          image_url?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: "masculino" | "feminino" | "retro" | "caneleiras" | "jogador"
+          slug?: string
+          name?: string
+          emoji?: string
+          tagline?: string
+          image_url?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          id: string
+          slug: string
+          name: string
+          club: string
+          image_url: string
+          price: number
+          old_price: number
+          discount: number
+          colors: string[]
+          category: "masculino" | "feminino" | "retro" | "caneleiras" | "jogador"
+          sizes: string[] | null
+          description: string | null
+          active: boolean
+          sort_order: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          name: string
+          club: string
+          image_url?: string
+          price?: number
+          old_price?: number
+          discount?: number
+          colors?: string[]
+          category: "masculino" | "feminino" | "retro" | "caneleiras" | "jogador"
+          sizes?: string[] | null
+          description?: string | null
+          active?: boolean
+          sort_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          name?: string
+          club?: string
+          image_url?: string
+          price?: number
+          old_price?: number
+          discount?: number
+          colors?: string[]
+          category?: "masculino" | "feminino" | "retro" | "caneleiras" | "jogador"
+          sizes?: string[] | null
+          description?: string | null
+          active?: boolean
+          sort_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          user_id: string
+          role: "admin"
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          role: "admin"
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          role?: "admin"
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: { _user_id: string; _role: "admin" }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin"
+      product_category: "masculino" | "feminino" | "retro" | "caneleiras" | "jogador"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +264,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin"],
+      product_category: ["masculino", "feminino", "retro", "caneleiras", "jogador"],
+    },
   },
 } as const
