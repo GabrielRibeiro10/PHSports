@@ -94,7 +94,7 @@ export function CategoryCarousel() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
                   <div className="relative z-10 p-5 text-white">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-brand/90 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider">
-                      {c.emoji} Categoria
+                      Categoria
                     </span>
                     <h3 className="mt-3 text-2xl font-black leading-none">{c.name}</h3>
                     <p className="mt-1 text-xs opacity-90">{c.tagline}</p>
