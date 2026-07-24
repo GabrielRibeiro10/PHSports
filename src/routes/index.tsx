@@ -104,6 +104,11 @@ function Hero() {
             fetchPriority="high"
             className="relative aspect-[4/3] w-full rounded-2xl bg-white object-cover shadow-[var(--shadow-premium)] ring-1 ring-border"
           />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 rounded-b-2xl bg-gradient-to-t from-black/70 via-black/30 to-transparent p-5 md:p-7">
+            <p className="max-w-md text-sm font-semibold leading-snug text-white md:text-base">
+              Os melhores produtos esportivos para quem vive a paixão pelo esporte.
+            </p>
+          </div>
         </div>
       </div>
     </section>
