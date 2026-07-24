@@ -69,6 +69,10 @@ function Hero() {
             Camisas dos maiores clubes do Brasil com acabamento premium. Tudo por{" "}
             <span className="font-black text-foreground">R$ 99,90</span> na PH Sports.
           </p>
+          <div className="mt-6 inline-flex items-baseline gap-2 rounded-full border border-brand/30 bg-brand/5 px-4 py-2">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-brand">A partir de</span>
+            <span className="text-2xl font-black tracking-tight text-foreground md:text-3xl">R$ 180,00</span>
+          </div>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
               to="/"
@@ -100,6 +104,11 @@ function Hero() {
             fetchPriority="high"
             className="relative aspect-[4/3] w-full rounded-2xl bg-white object-cover shadow-[var(--shadow-premium)] ring-1 ring-border"
           />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 rounded-b-2xl bg-gradient-to-t from-black/70 via-black/30 to-transparent p-5 md:p-7">
+            <p className="max-w-md text-sm font-semibold leading-snug text-white md:text-base">
+              Os melhores produtos esportivos para quem vive a paixão pelo esporte.
+            </p>
+          </div>
         </div>
       </div>
     </section>

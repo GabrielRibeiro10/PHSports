@@ -95,23 +95,6 @@ export function ProductCarousel({ items }: { items: Product[] }) {
         <ChevronRight className="size-5" />
       </button>
 
-      <div className="mt-4 flex justify-center gap-1.5">
-        {Array.from({ length: maxIndex + 1 }).map((_, i) => (
-          <button
-            key={i}
-            aria-label={`Ir para ${i + 1}`}
-            onClick={() => {
-              setIndex(i);
-              setPaused(true);
-              if (resumeTimer.current) window.clearTimeout(resumeTimer.current);
-              resumeTimer.current = window.setTimeout(() => setPaused(false), 5000);
-            }}
-            className={`h-1.5 rounded-full transition-all ${
-              i === index ? "w-6 bg-brand" : "w-1.5 bg-border"
-            }`}
-          />
-        ))}
-      </div>
     </div>
   );
 }

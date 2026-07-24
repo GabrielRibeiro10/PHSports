@@ -12,6 +12,7 @@ type CartCtx = {
   add: (slug: string, size: Size, qty?: number) => void;
   remove: (slug: string, size: Size) => void;
   setQty: (slug: string, size: Size, qty: number) => void;
+  changeSize: (slug: string, oldSize: Size, newSize: Size) => void;
   clear: () => void;
   count: number;
   subtotal: number;
@@ -59,6 +60,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
         .map((x) => (x.slug === slug && x.size === size ? { ...x, qty: Math.max(1, qty) } : x))
         .filter((x) => x.qty > 0),
     );
+  const changeSize: CartCtx["changeSize"] = (slug, oldSize, newSize) => {
+    if (oldSize === newSize) return;
+    setItems((prev) => {
+      const current = prev.find((x) => x.slug === slug && x.size === oldSize);
+      if (!current) return prev;
+      const existing = prev.find((x) => x.slug === slug && x.size === newSize);
+      if (existing) {
+        return prev
+          .map((x) =>
+            x.slug === slug && x.size === newSize ? { ...x, qty: x.qty + current.qty } : x,
+          )
+          .filter((x) => !(x.slug === slug && x.size === oldSize));
+      }
+      return prev.map((x) =>
+        x.slug === slug && x.size === oldSize ? { ...x, size: newSize } : x,
+      );
+    });
+  };
   const clear = () => setItems([]);
 
   const count = items.reduce((s, i) => s + i.qty, 0);
@@ -68,7 +87,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, 0);
 
   return (
-    <Ctx.Provider value={{ items, add, remove, setQty, clear, count, subtotal, hydrated }}>
+    <Ctx.Provider value={{ items, add, remove, setQty, changeSize, clear, count, subtotal, hydrated }}>
       {children}
     </Ctx.Provider>
   );
