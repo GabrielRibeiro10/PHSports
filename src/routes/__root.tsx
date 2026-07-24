@@ -111,13 +111,18 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function CatalogRealtimeSync() {
+  useCatalogRealtimeSync();
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isAdminRoute = pathname.startsWith("/admin");
-  useCatalogRealtimeSync();
   return (
     <QueryClientProvider client={queryClient}>
+      <CatalogRealtimeSync />
       <AuthProvider>
         <CartProvider>
           {isAdminRoute ? (
