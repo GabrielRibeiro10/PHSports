@@ -1,12 +1,9 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ShoppingBag, Zap } from "lucide-react";
-import { toast } from "sonner";
+import { Zap } from "lucide-react";
 import { formatBRL, type Product } from "@/lib/products";
-import { useCart } from "@/lib/cart";
 
 export function ProductCard({ p, priority = false }: { p: Product; priority?: boolean }) {
   const nav = useNavigate();
-  const { add } = useCart();
 
   const goToProduct = (e: React.MouseEvent) => {
     e.preventDefault();
