@@ -1,5 +1,3 @@
-// These types mirror the schema created by supabase/migrations/20260724120000_admin_panel_schema.sql.
-// Regenerate with the Supabase CLI (`supabase gen types typescript`) after changing the schema.
 export type Json =
   | string
   | number
@@ -9,6 +7,8 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
@@ -16,112 +16,112 @@ export type Database = {
     Tables: {
       categories: {
         Row: {
-          id: "masculino" | "feminino" | "retro" | "caneleiras" | "jogador"
-          slug: string
-          name: string
           emoji: string
-          tagline: string
+          id: Database["public"]["Enums"]["product_category"]
           image_url: string
+          name: string
+          slug: string
           sort_order: number
+          tagline: string
           updated_at: string
         }
         Insert: {
-          id: "masculino" | "feminino" | "retro" | "caneleiras" | "jogador"
-          slug: string
-          name: string
           emoji?: string
-          tagline?: string
+          id: Database["public"]["Enums"]["product_category"]
           image_url?: string
+          name: string
+          slug: string
           sort_order?: number
+          tagline?: string
           updated_at?: string
         }
         Update: {
-          id?: "masculino" | "feminino" | "retro" | "caneleiras" | "jogador"
-          slug?: string
-          name?: string
           emoji?: string
-          tagline?: string
+          id?: Database["public"]["Enums"]["product_category"]
           image_url?: string
+          name?: string
+          slug?: string
           sort_order?: number
+          tagline?: string
           updated_at?: string
         }
         Relationships: []
       }
       products: {
         Row: {
-          id: string
-          slug: string
-          name: string
-          club: string
-          image_url: string
-          price: number
-          old_price: number
-          discount: number
-          colors: string[]
-          category: "masculino" | "feminino" | "retro" | "caneleiras" | "jogador"
-          sizes: string[] | null
-          description: string | null
           active: boolean
-          sort_order: number
+          category: Database["public"]["Enums"]["product_category"]
+          club: string
+          colors: string[]
           created_at: string
+          description: string | null
+          discount: number
+          id: string
+          image_url: string
+          name: string
+          old_price: number
+          price: number
+          sizes: string[] | null
+          slug: string
+          sort_order: number
           updated_at: string
         }
         Insert: {
-          id?: string
-          slug: string
-          name: string
-          club: string
-          image_url?: string
-          price?: number
-          old_price?: number
-          discount?: number
-          colors?: string[]
-          category: "masculino" | "feminino" | "retro" | "caneleiras" | "jogador"
-          sizes?: string[] | null
-          description?: string | null
           active?: boolean
-          sort_order?: number
+          category: Database["public"]["Enums"]["product_category"]
+          club: string
+          colors?: string[]
           created_at?: string
+          description?: string | null
+          discount?: number
+          id?: string
+          image_url?: string
+          name: string
+          old_price?: number
+          price?: number
+          sizes?: string[] | null
+          slug: string
+          sort_order?: number
           updated_at?: string
         }
         Update: {
-          id?: string
-          slug?: string
-          name?: string
-          club?: string
-          image_url?: string
-          price?: number
-          old_price?: number
-          discount?: number
-          colors?: string[]
-          category?: "masculino" | "feminino" | "retro" | "caneleiras" | "jogador"
-          sizes?: string[] | null
-          description?: string | null
           active?: boolean
-          sort_order?: number
+          category?: Database["public"]["Enums"]["product_category"]
+          club?: string
+          colors?: string[]
           created_at?: string
+          description?: string | null
+          discount?: number
+          id?: string
+          image_url?: string
+          name?: string
+          old_price?: number
+          price?: number
+          sizes?: string[] | null
+          slug?: string
+          sort_order?: number
           updated_at?: string
         }
         Relationships: []
       }
       user_roles: {
         Row: {
-          id: string
-          user_id: string
-          role: "admin"
           created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
         }
         Insert: {
-          id?: string
-          user_id: string
-          role: "admin"
           created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
         }
         Update: {
-          id?: string
-          user_id?: string
-          role?: "admin"
           created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
         }
         Relationships: []
       }
@@ -131,13 +131,21 @@ export type Database = {
     }
     Functions: {
       has_role: {
-        Args: { _user_id: string; _role: "admin" }
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
         Returns: boolean
       }
     }
     Enums: {
       app_role: "admin"
-      product_category: "masculino" | "feminino" | "retro" | "caneleiras" | "jogador"
+      product_category:
+        | "masculino"
+        | "feminino"
+        | "retro"
+        | "caneleiras"
+        | "jogador"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -266,7 +274,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin"],
-      product_category: ["masculino", "feminino", "retro", "caneleiras", "jogador"],
+      product_category: [
+        "masculino",
+        "feminino",
+        "retro",
+        "caneleiras",
+        "jogador",
+      ],
     },
   },
 } as const
