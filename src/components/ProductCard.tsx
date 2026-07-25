@@ -11,12 +11,6 @@ export function ProductCard({ p, priority = false }: { p: Product; priority?: bo
     nav({ to: "/produto/$slug", params: { slug: p.slug } });
   };
 
-  const addToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    add(p.slug, "M", 1);
-    toast.success("Adicionado ao carrinho", { description: `${p.name} • Tamanho M` });
-  };
 
   return (
     <Link
