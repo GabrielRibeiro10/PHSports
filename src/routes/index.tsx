@@ -70,12 +70,8 @@ function Hero() {
           </h1>
           <p className="mt-5 max-w-md text-base text-muted-foreground">
             Camisas dos maiores clubes do Brasil com acabamento premium. Tudo por{" "}
-            <span className="font-black text-foreground">R$ 99,90</span> na PH Sports.
+            <span className="font-black text-foreground">R$ 179,90</span> na PH Sports.
           </p>
-          <div className="mt-6 inline-flex items-baseline gap-2 rounded-full border border-brand/30 bg-brand/5 px-4 py-2">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-brand">A partir de</span>
-            <span className="text-2xl font-black tracking-tight text-foreground md:text-3xl">R$ 180,00</span>
-          </div>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
               to="/"
