@@ -1,12 +1,9 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ShoppingBag, Zap } from "lucide-react";
-import { toast } from "sonner";
+import { Zap } from "lucide-react";
 import { formatBRL, type Product } from "@/lib/products";
-import { useCart } from "@/lib/cart";
 
 export function ProductCard({ p, priority = false }: { p: Product; priority?: boolean }) {
   const nav = useNavigate();
-  const { add } = useCart();
 
   const goToProduct = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -14,12 +11,6 @@ export function ProductCard({ p, priority = false }: { p: Product; priority?: bo
     nav({ to: "/produto/$slug", params: { slug: p.slug } });
   };
 
-  const addToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    add(p.slug, "M", 1);
-    toast.success("Adicionado ao carrinho", { description: `${p.name} • Tamanho M` });
-  };
 
   return (
     <Link
@@ -52,20 +43,13 @@ export function ProductCard({ p, priority = false }: { p: Product; priority?: bo
         </div>
         <p className="text-[11px] font-semibold text-brand">Promoção — economize {formatBRL(p.oldPrice - p.price)}</p>
 
-        <div className="mt-3 grid grid-cols-2 gap-2">
+        <div className="mt-3">
           <button
             type="button"
             onClick={goToProduct}
-            className="btn-glow inline-flex items-center justify-center gap-1 rounded-md bg-brand px-2 py-2 text-[11px] font-black uppercase tracking-wider text-brand-foreground shadow-sm"
+            className="btn-glow inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-brand px-3 py-2 text-[11px] font-black uppercase tracking-wider text-brand-foreground shadow-sm"
           >
             <Zap className="size-3.5" /> Comprar
-          </button>
-          <button
-            type="button"
-            onClick={addToCart}
-            className="btn-glow inline-flex items-center justify-center gap-1 rounded-md border-2 border-primary bg-background px-2 py-2 text-[11px] font-black uppercase tracking-wider text-primary"
-          >
-            <ShoppingBag className="size-3.5" /> Adicionar
           </button>
         </div>
       </div>

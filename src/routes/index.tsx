@@ -17,9 +17,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "PH Sports — Camisas de Futebol Premium dos Maiores Clubes" },
-      { name: "description", content: "Camisas premium dos maiores clubes brasileiros por R$ 99,90. Envio para todo o Brasil e atendimento humanizado via WhatsApp." },
+      { name: "description", content: "Camisas premium dos maiores clubes brasileiros por R$ 179,90. Envio para todo o Brasil e atendimento humanizado via WhatsApp." },
       { property: "og:title", content: "PH Sports — Camisas de Futebol Premium dos Maiores Clubes" },
-      { property: "og:description", content: "Camisas premium dos maiores clubes brasileiros por R$ 99,90 na PH Sports." },
+      { property: "og:description", content: "Camisas premium dos maiores clubes brasileiros por R$ 179,90 na PH Sports." },
     ],
   }),
   component: Home,
@@ -70,12 +70,8 @@ function Hero() {
           </h1>
           <p className="mt-5 max-w-md text-base text-muted-foreground">
             Camisas dos maiores clubes do Brasil com acabamento premium. Tudo por{" "}
-            <span className="font-black text-foreground">R$ 99,90</span> na PH Sports.
+            <span className="font-black text-foreground">R$ 179,90</span> na PH Sports.
           </p>
-          <div className="mt-6 inline-flex items-baseline gap-2 rounded-full border border-brand/30 bg-brand/5 px-4 py-2">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-brand">A partir de</span>
-            <span className="text-2xl font-black tracking-tight text-foreground md:text-3xl">R$ 180,00</span>
-          </div>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
               to="/"
@@ -169,7 +165,7 @@ function SearchAndProducts() {
         <div>
           <p className="text-xs font-bold uppercase tracking-widest text-brand">Catálogo</p>
           <h2 className="text-2xl font-black md:text-3xl">Camisas dos grandes clubes</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Todas por R$ 99,90 com etiqueta de promoção.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Todas por R$ 179,90 com etiqueta de promoção.</p>
         </div>
         <form onSubmit={onSearch} className="flex w-full items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2 md:w-80">
           <Search className="size-4 text-muted-foreground" />
