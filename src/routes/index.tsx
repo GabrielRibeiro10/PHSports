@@ -143,13 +143,47 @@ function ClubsMarquee() {
   );
 }
 
+const BRAZILIAN_CLUBS = new Set([
+  "Athletico-PR","Atlético-MG","Bahia","Botafogo","Corinthians","Cruzeiro",
+  "Flamengo","Fluminense","Grêmio","Internacional","Palmeiras","Santos",
+  "São Paulo","Vasco","Fortaleza",
+]);
+const EUROPEAN_CLUBS = new Set([
+  "Real Madrid","Barcelona","Manchester City","Manchester United","Liverpool",
+  "Arsenal","Chelsea","PSG","Bayern de Munique","Juventus","Milan",
+  "Inter de Milão","Borussia Dortmund","Atlético de Madrid","Tottenham",
+]);
+const NATIONAL_TEAMS = new Set([
+  "Brasil","Argentina","Portugal","França","Espanha","Alemanha","Itália",
+  "Inglaterra","Holanda","Uruguai","Bélgica","Croácia","México","Japão",
+]);
+
+type Region = "todos" | "brasileiros" | "europeus" | "selecoes";
+type Gender = "todos" | "masculino" | "feminino";
+type SizeFilter = "todos" | "P" | "M" | "G" | "GG" | "XG";
+
+function regionOf(club: string): Region {
+  if (NATIONAL_TEAMS.has(club)) return "selecoes";
+  if (BRAZILIAN_CLUBS.has(club)) return "brasileiros";
+  if (EUROPEAN_CLUBS.has(club)) return "europeus";
+  return "todos";
+}
+
 function SearchAndProducts() {
   const nav = useNavigate();
   const { data: products = [] } = useQuery(productsQueryOptions);
   const [q, setQ] = useState("");
-  const [filter, setFilter] = useState<string | null>(null);
+  const [region, setRegion] = useState<Region>("todos");
+  const [gender, setGender] = useState<Gender>("todos");
+  const [size, setSize] = useState<SizeFilter>("todos");
 
-  const filtered = filter ? products.filter((p) => p.club === filter) : products;
+  const filtered = products.filter((p) => {
+    if (region !== "todos" && regionOf(p.club) !== region) return false;
+    if (gender === "masculino" && p.category !== "masculino" && p.category !== "jogador" && p.category !== "retro") return false;
+    if (gender === "feminino" && p.category !== "feminino") return false;
+    if (size !== "todos" && !(p.sizes ?? []).includes(size)) return false;
+    return true;
+  });
 
   const onSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -158,6 +192,19 @@ function SearchAndProducts() {
     const hit = products.find((p) => p.club.toLowerCase().includes(t) || p.name.toLowerCase().includes(t));
     if (hit) nav({ to: "/produto/$slug", params: { slug: hit.slug } });
   };
+
+  const regionOptions: { id: Region; label: string }[] = [
+    { id: "todos", label: "Todos" },
+    { id: "brasileiros", label: "Brasileiros" },
+    { id: "europeus", label: "Europeus" },
+    { id: "selecoes", label: "Seleções" },
+  ];
+  const genderOptions: { id: Gender; label: string }[] = [
+    { id: "todos", label: "Todos" },
+    { id: "masculino", label: "Masculino" },
+    { id: "feminino", label: "Feminino" },
+  ];
+  const sizeOptions: SizeFilter[] = ["todos", "P", "M", "G", "GG", "XG"];
 
   return (
     <section id="produtos" className="mx-auto max-w-7xl px-4 py-14">
@@ -179,32 +226,60 @@ function SearchAndProducts() {
         </form>
       </div>
 
-      <div className="mb-6 flex flex-wrap gap-2">
-        <button
-          onClick={() => setFilter(null)}
-          className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold ${
-            filter === null ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-primary"
-          }`}
-        >
-          Todos
-        </button>
-        {products.map((p) => (
+      <div className="mb-4 flex flex-wrap gap-2">
+        {regionOptions.map((r) => (
           <button
-            key={p.slug}
-            onClick={() => setFilter(p.club)}
-            className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold ${
-              filter === p.club ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-primary"
+            key={r.id}
+            onClick={() => setRegion(r.id)}
+            className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all ${
+              region === r.id ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-primary"
             }`}
           >
-            {p.club}
+            {r.label}
           </button>
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="mb-6 grid gap-3 rounded-2xl border border-border bg-secondary/30 p-3 sm:flex sm:flex-wrap sm:items-center">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Gênero</span>
+          {genderOptions.map((g) => (
+            <button
+              key={g.id}
+              onClick={() => setGender(g.id)}
+              className={`rounded-full border px-3 py-1 text-xs font-semibold transition-all ${
+                gender === g.id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:border-primary"
+              }`}
+            >
+              {g.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-2 sm:ml-6">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Tamanho</span>
+          {sizeOptions.map((s) => (
+            <button
+              key={s}
+              onClick={() => setSize(s)}
+              className={`rounded-full border px-3 py-1 text-xs font-semibold transition-all ${
+                size === s ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:border-primary"
+              }`}
+            >
+              {s === "todos" ? "Todos" : s}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid animate-in fade-in duration-300 grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {filtered.map((p, i) => (
           <ProductCard key={p.slug} p={p} priority={i < 4} />
         ))}
+        {filtered.length === 0 && (
+          <p className="col-span-full py-10 text-center text-sm text-muted-foreground">
+            Nenhum produto encontrado com os filtros selecionados.
+          </p>
+        )}
       </div>
     </section>
   );
