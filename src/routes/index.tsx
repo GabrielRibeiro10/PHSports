@@ -279,7 +279,7 @@ function SearchAndProducts() {
         ))}
         {filtered.length === 0 && (
           <p className="col-span-full py-10 text-center text-sm text-muted-foreground">
-            Nenhum produto encontrado com os filtros selecionados.
+            Nenhum produto encontrado nesta categoria para a pesquisa realizada.
           </p>
         )}
       </div>
