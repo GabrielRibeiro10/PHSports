@@ -177,11 +177,13 @@ function SearchAndProducts() {
   const [gender, setGender] = useState<Gender>("todos");
   const [size, setSize] = useState<SizeFilter>("todos");
 
+  const term = q.trim().toLowerCase();
   const filtered = products.filter((p) => {
     if (region !== "todos" && regionOf(p.club) !== region) return false;
     if (gender === "masculino" && p.category !== "masculino" && p.category !== "jogador" && p.category !== "retro") return false;
     if (gender === "feminino" && p.category !== "feminino") return false;
     if (size !== "todos" && !(p.sizes ?? []).includes(size)) return false;
+    if (term && !(p.club.toLowerCase().includes(term) || p.name.toLowerCase().includes(term))) return false;
     return true;
   });
 
@@ -189,7 +191,7 @@ function SearchAndProducts() {
     e.preventDefault();
     const t = q.trim().toLowerCase();
     if (!t) return;
-    const hit = products.find((p) => p.club.toLowerCase().includes(t) || p.name.toLowerCase().includes(t));
+    const hit = filtered.find((p) => p.club.toLowerCase().includes(t) || p.name.toLowerCase().includes(t));
     if (hit) nav({ to: "/produto/$slug", params: { slug: hit.slug } });
   };
 
@@ -277,7 +279,7 @@ function SearchAndProducts() {
         ))}
         {filtered.length === 0 && (
           <p className="col-span-full py-10 text-center text-sm text-muted-foreground">
-            Nenhum produto encontrado com os filtros selecionados.
+            Nenhum produto encontrado nesta categoria para a pesquisa realizada.
           </p>
         )}
       </div>
