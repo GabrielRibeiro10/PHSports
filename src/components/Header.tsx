@@ -1,6 +1,6 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Search, ShoppingBag, Menu, X, Truck } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type MouseEvent } from "react";
 import { useCart } from "@/lib/cart";
 import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
 
