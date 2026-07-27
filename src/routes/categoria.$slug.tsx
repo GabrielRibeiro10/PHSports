@@ -10,6 +10,7 @@ import {
   productsQueryOptions,
 } from "@/lib/catalog";
 import { ProductCard } from "@/components/ProductCard";
+import { MAX_SEARCH_LEN, sanitizeSearch } from "@/lib/search-safety";
 
 export const Route = createFileRoute("/categoria/$slug")({
   loader: async ({ params, context }) => {
@@ -98,7 +99,9 @@ function CategoryPage() {
           <Search className="size-4 text-muted-foreground" />
           <input
             value={q}
-            onChange={(e) => setQ(e.target.value)}
+            onChange={(e) => setQ(sanitizeSearch(e.target.value))}
+            maxLength={MAX_SEARCH_LEN}
+            inputMode="search"
             placeholder={`Buscar em ${category.name}...`}
             className="w-full bg-transparent text-sm outline-none"
             aria-label={`Buscar em ${category.name}`}

@@ -1,7 +1,9 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Search, ShoppingBag, Menu, X, Truck } from "lucide-react";
 import { useState, type FormEvent, type MouseEvent } from "react";
+import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
+import { MAX_SEARCH_LEN, sanitizeSearch, checkSearchRate } from "@/lib/search-safety";
 import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
 
 export function Header() {
@@ -13,8 +15,13 @@ export function Header() {
 
   const onSearch = (e: FormEvent) => {
     e.preventDefault();
-    const term = q.trim();
+    const term = sanitizeSearch(q);
     if (!term) return;
+    const gate = checkSearchRate();
+    if (!gate.ok) {
+      toast("Estamos processando suas solicitações. Aguarde alguns instantes antes de tentar novamente.");
+      return;
+    }
     navigate({ to: "/busca", search: { q: term } });
     setOpen(false);
   };
@@ -68,7 +75,9 @@ export function Header() {
           <Search className="size-4 text-muted-foreground" />
           <input
             value={q}
-            onChange={(e) => setQ(e.target.value)}
+            onChange={(e) => setQ(sanitizeSearch(e.target.value))}
+            maxLength={MAX_SEARCH_LEN}
+            inputMode="search"
             placeholder="Buscar camisa, clube..."
             className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             aria-label="Buscar produtos"
@@ -97,7 +106,9 @@ export function Header() {
               <Search className="size-4 text-muted-foreground" />
               <input
                 value={q}
-                onChange={(e) => setQ(e.target.value)}
+                onChange={(e) => setQ(sanitizeSearch(e.target.value))}
+                maxLength={MAX_SEARCH_LEN}
+                inputMode="search"
                 placeholder="Buscar camisa, clube..."
                 className="w-full bg-transparent text-sm outline-none"
                 aria-label="Buscar produtos"

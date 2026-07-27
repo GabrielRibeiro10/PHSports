@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Search, ShieldCheck, Truck } from "lucide-react";
 import { useState, type FormEvent } from "react";
+import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import hero from "@/assets/hero-banner.jpg";
@@ -8,6 +9,7 @@ import { productsQueryOptions } from "@/lib/catalog";
 import { ProductCard } from "@/components/ProductCard";
 import { Ticker } from "@/components/Ticker";
 import { ProductCarousel } from "@/components/ProductCarousel";
+import { MAX_SEARCH_LEN, sanitizeSearch, checkSearchRate } from "@/lib/search-safety";
 import { BenefitsMarquee } from "@/components/BenefitsMarquee";
 import { Reviews } from "@/components/Reviews";
 import { CategoryCarousel } from "@/components/CategoryCarousel";
@@ -177,7 +179,7 @@ function SearchAndProducts() {
   const [gender, setGender] = useState<Gender>("todos");
   const [size, setSize] = useState<SizeFilter>("todos");
 
-  const term = q.trim().toLowerCase();
+  const term = sanitizeSearch(q).toLowerCase();
   const filtered = products.filter((p) => {
     if (region !== "todos" && regionOf(p.club) !== region) return false;
     if (gender === "masculino" && p.category !== "masculino" && p.category !== "jogador" && p.category !== "retro") return false;
@@ -189,8 +191,13 @@ function SearchAndProducts() {
 
   const onSearch = (e: FormEvent) => {
     e.preventDefault();
-    const t = q.trim().toLowerCase();
+    const t = sanitizeSearch(q).toLowerCase();
     if (!t) return;
+    const gate = checkSearchRate();
+    if (!gate.ok) {
+      toast("Estamos processando suas solicitações. Aguarde alguns instantes antes de tentar novamente.");
+      return;
+    }
     const hit = filtered.find((p) => p.club.toLowerCase().includes(t) || p.name.toLowerCase().includes(t));
     if (hit) nav({ to: "/produto/$slug", params: { slug: hit.slug } });
   };
@@ -220,7 +227,9 @@ function SearchAndProducts() {
           <Search className="size-4 text-muted-foreground" />
           <input
             value={q}
-            onChange={(e) => setQ(e.target.value)}
+            onChange={(e) => setQ(sanitizeSearch(e.target.value))}
+            maxLength={MAX_SEARCH_LEN}
+            inputMode="search"
             placeholder="Buscar clube..."
             className="w-full bg-transparent text-sm outline-none"
             aria-label="Buscar clube"
