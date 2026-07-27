@@ -15,21 +15,14 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/busca")({
   validateSearch: zodValidator(searchSchema),
   loader: ({ context }) => context.queryClient.ensureQueryData(productsQueryOptions),
-  head: ({ loaderData: _ld, params: _p, match }) => {
-    const q = (match?.search as { q?: string } | undefined)?.q ?? "";
-    const title = q ? `Resultados para "${q}" — PH Sports` : "Buscar produtos — PH Sports";
-    const description = q
-      ? `Veja todas as camisas e produtos encontrados para "${q}" na PH Sports.`
-      : "Pesquise camisas de futebol dos maiores clubes e seleções na PH Sports.";
-    return {
-      meta: [
-        { title },
-        { name: "description", content: description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-      ],
-    };
-  },
+  head: () => ({
+    meta: [
+      { title: "Buscar produtos — PH Sports" },
+      { name: "description", content: "Pesquise camisas de futebol dos maiores clubes e seleções na PH Sports." },
+      { property: "og:title", content: "Buscar produtos — PH Sports" },
+      { property: "og:description", content: "Pesquise camisas de futebol dos maiores clubes e seleções na PH Sports." },
+    ],
+  }),
   component: SearchPage,
 });
 
