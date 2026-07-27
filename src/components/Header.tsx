@@ -75,7 +75,9 @@ export function Header() {
           <Search className="size-4 text-muted-foreground" />
           <input
             value={q}
-            onChange={(e) => setQ(e.target.value)}
+            onChange={(e) => setQ(sanitizeSearch(e.target.value))}
+            maxLength={MAX_SEARCH_LEN}
+            inputMode="search"
             placeholder="Buscar camisa, clube..."
             className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             aria-label="Buscar produtos"
@@ -104,7 +106,9 @@ export function Header() {
               <Search className="size-4 text-muted-foreground" />
               <input
                 value={q}
-                onChange={(e) => setQ(e.target.value)}
+                onChange={(e) => setQ(sanitizeSearch(e.target.value))}
+                maxLength={MAX_SEARCH_LEN}
+                inputMode="search"
                 placeholder="Buscar camisa, clube..."
                 className="w-full bg-transparent text-sm outline-none"
                 aria-label="Buscar produtos"

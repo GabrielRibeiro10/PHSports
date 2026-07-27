@@ -4,12 +4,14 @@ import { z } from "zod";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { Search } from "lucide-react";
 import { useState, type FormEvent } from "react";
+import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { productsQueryOptions } from "@/lib/catalog";
 import { ProductCard } from "@/components/ProductCard";
+import { MAX_SEARCH_LEN, sanitizeSearch, checkSearchRate } from "@/lib/search-safety";
 
 const searchSchema = z.object({
-  q: fallback(z.string(), "").default(""),
+  q: fallback(z.string().max(MAX_SEARCH_LEN).transform(sanitizeSearch), "").default(""),
 });
 
 export const Route = createFileRoute("/busca")({
@@ -62,8 +64,17 @@ function SearchPage() {
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const v = input.trim();
-    navigate({ to: "/busca", search: { q: v } });
+    const v = sanitizeSearch(input);
+    const gate = checkSearchRate();
+    if (!gate.ok) {
+      toast("Estamos processando suas solicitações. Aguarde alguns instantes antes de tentar novamente.");
+      return;
+    }
+    try {
+      navigate({ to: "/busca", search: { q: v } });
+    } catch {
+      toast("Não foi possível processar sua solicitação. Tente novamente em instantes.");
+    }
   };
 
   return (
