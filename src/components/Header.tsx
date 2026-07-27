@@ -7,6 +7,7 @@ import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
 export function Header() {
   const { count } = useCart();
   const navigate = useNavigate();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
 
@@ -16,6 +17,17 @@ export function Header() {
     if (!term) return;
     navigate({ to: "/busca", search: { q: term } });
     setOpen(false);
+  };
+
+  const onLogoClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    setOpen(false);
+    if (pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      // let navigation happen, then scroll to top smoothly
+      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+    }
   };
 
   return (
