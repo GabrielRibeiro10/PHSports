@@ -85,12 +85,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#0D0D0D" },
       { name: "twitter:title", content: "PH Sports — Camisas de Futebol Premium dos Maiores Clubes" },
       { name: "twitter:description", content: "Corinthians, Palmeiras, Flamengo, Vasco, Cruzeiro, Botafogo, São Paulo e Bahia. Camisas premium por R$ 99,90 com troca fácil." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c96e1d1f-4d3e-45b9-ade9-8ed577eccf37/id-preview-846d25fe--d4fd99e7-628e-47d5-a506-eb298e003b8a.lovable.app-1784734809590.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c96e1d1f-4d3e-45b9-ade9-8ed577eccf37/id-preview-846d25fe--d4fd99e7-628e-47d5-a506-eb298e003b8a.lovable.app-1784734809590.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
   shellComponent: RootShell,
