@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { sanitizeEmail, checkBackoff, recordFailure, resetBackoff } from "@/lib/input-safety";
 
 export const Route = createFileRoute("/admin/login")({
   head: () => ({
@@ -13,6 +14,8 @@ export const Route = createFileRoute("/admin/login")({
   }),
   component: AdminLoginPage,
 });
+
+const BACKOFF_KEY = "admin_login";
 
 function AdminLoginPage() {
   const navigate = useNavigate();
@@ -30,15 +33,33 @@ function AdminLoginPage() {
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
     setError(null);
 
+    const gate = checkBackoff(BACKOFF_KEY);
+    if (!gate.ok) {
+      const secs = Math.ceil(gate.retryInMs / 1000);
+      setError(`Muitas tentativas. Aguarde ${secs}s antes de tentar novamente.`);
+      return;
+    }
+
+    const cleanEmail = sanitizeEmail(email);
+    if (!cleanEmail || !password || password.length > 200) {
+      setError("Credenciais inválidas.");
+      return;
+    }
+
+    setSubmitting(true);
     const { data, error: signInError } = await supabase.auth.signInWithPassword({
-      email,
+      email: cleanEmail,
       password,
     });
     if (signInError || !data.user) {
-      setError("E-mail ou senha inválidos.");
+      const { blockedForMs } = recordFailure(BACKOFF_KEY);
+      setError(
+        blockedForMs > 0
+          ? `Credenciais inválidas. Aguarde ${Math.ceil(blockedForMs / 1000)}s antes de tentar novamente.`
+          : "Credenciais inválidas.",
+      );
       setSubmitting(false);
       return;
     }
@@ -51,12 +72,14 @@ function AdminLoginPage() {
       .maybeSingle();
 
     if (!roleRow) {
-      setError("Esta conta não tem permissão de administrador.");
+      recordFailure(BACKOFF_KEY);
+      setError("Credenciais inválidas.");
       await supabase.auth.signOut();
       setSubmitting(false);
       return;
     }
 
+    resetBackoff(BACKOFF_KEY);
     toast.success("Bem-vindo de volta!");
     navigate({ to: "/admin" });
   };
