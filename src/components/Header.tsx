@@ -1,28 +1,20 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
 import { Search, ShoppingBag, Menu, X, Truck } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { useCart } from "@/lib/cart";
-import { productsQueryOptions } from "@/lib/catalog";
 import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
 
 export function Header() {
   const { count } = useCart();
-  const { data: products = [] } = useQuery(productsQueryOptions);
   const navigate = useNavigate();
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
 
   const onSearch = (e: FormEvent) => {
     e.preventDefault();
-    const term = q.trim().toLowerCase();
+    const term = q.trim();
     if (!term) return;
-    const hit =
-      products.find((p) => p.slug === term) ||
-      products.find((p) => p.club.toLowerCase().includes(term)) ||
-      products.find((p) => p.name.toLowerCase().includes(term));
-    if (hit) navigate({ to: "/produto/$slug", params: { slug: hit.slug } });
-    else navigate({ to: "/", hash: "produtos" });
+    navigate({ to: "/busca", search: { q: term } });
     setOpen(false);
   };
 
