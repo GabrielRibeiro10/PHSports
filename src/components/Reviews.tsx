@@ -55,9 +55,6 @@ export function Reviews() {
               </div>
               <p className="text-sm text-foreground/80">"{r.comment}"</p>
             </div>
-            <div className="border-t border-dashed border-border px-4 py-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-              Ingresso #00{i + 1} — Verificado
-            </div>
           </article>
         ))}
       </div>
