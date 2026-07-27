@@ -98,7 +98,9 @@ function SearchPage() {
         <Search className="size-4 text-muted-foreground" />
         <input
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => setInput(sanitizeSearch(e.target.value))}
+          maxLength={MAX_SEARCH_LEN}
+          inputMode="search"
           placeholder="Buscar clube, camisa, categoria..."
           className="w-full bg-transparent text-sm outline-none"
           aria-label="Buscar produtos"
