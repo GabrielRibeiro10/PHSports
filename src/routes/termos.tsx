@@ -10,7 +10,7 @@ export const Route = createFileRoute("/termos")({
       { property: "og:description", content: "Regras claras para uma experiência de compra segura na PH Sports." },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "canonical", href: "https://www-phsports-com.lovable.app/termos" }],
+    links: [{ rel: "canonical", href: "https://phsports.com.br/termos" }],
   }),
   component: TermosPage,
 });
