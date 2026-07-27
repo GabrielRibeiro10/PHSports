@@ -1,12 +1,13 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Search, ShoppingBag, Menu, X, Truck } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type MouseEvent } from "react";
 import { useCart } from "@/lib/cart";
 import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
 
 export function Header() {
   const { count } = useCart();
   const navigate = useNavigate();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
 
@@ -16,6 +17,17 @@ export function Header() {
     if (!term) return;
     navigate({ to: "/busca", search: { q: term } });
     setOpen(false);
+  };
+
+  const onLogoClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    setOpen(false);
+    if (pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      // let navigation happen, then scroll to top smoothly
+      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+    }
   };
 
   return (
@@ -30,7 +42,13 @@ export function Header() {
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
 
-        <Link to="/" className="flex shrink-0 items-center gap-2">
+        <Link
+          to="/"
+          onClick={onLogoClick}
+          aria-label="Voltar ao topo"
+          title="Voltar ao topo"
+          className="group flex shrink-0 cursor-pointer items-center gap-2 rounded-full px-1 py-0.5 transition-all duration-300 hover:scale-[1.04] hover:[filter:drop-shadow(0_0_10px_oklch(0.55_0.22_27/0.45))] active:scale-[0.99]"
+        >
           <img src={logo.url} alt="PH Sports" className="size-9 rounded-full object-cover ring-1 ring-border" />
           <span className="text-lg font-black tracking-tight">
             PH<span className="text-brand">SPORTS</span>
