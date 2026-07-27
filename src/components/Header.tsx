@@ -42,7 +42,13 @@ export function Header() {
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
 
-        <Link to="/" className="flex shrink-0 items-center gap-2">
+        <Link
+          to="/"
+          onClick={onLogoClick}
+          aria-label="Voltar ao topo"
+          title="Voltar ao topo"
+          className="group flex shrink-0 cursor-pointer items-center gap-2 rounded-full px-1 py-0.5 transition-all duration-300 hover:scale-[1.04] hover:[filter:drop-shadow(0_0_10px_oklch(0.55_0.22_27/0.45))] active:scale-[0.99]"
+        >
           <img src={logo.url} alt="PH Sports" className="size-9 rounded-full object-cover ring-1 ring-border" />
           <span className="text-lg font-black tracking-tight">
             PH<span className="text-brand">SPORTS</span>
