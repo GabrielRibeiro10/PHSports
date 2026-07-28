@@ -21,7 +21,7 @@ export const Route = createFileRoute("/")({
       { title: "PH Sports — Camisas de Futebol Premium dos Maiores Clubes" },
       { name: "description", content: "Camisas premium dos maiores clubes brasileiros por R$ 179,90. Envio para todo o Brasil e atendimento humanizado via WhatsApp." },
       { property: "og:title", content: "PH Sports — Camisas de Futebol Premium dos Maiores Clubes" },
-      { property: "og:description", content: "Camisas premium dos maiores clubes brasileiros por R$ 179,90 na PH Sports." },
+      { property: "og:description", content: "Camisas premium dos maiores clubes brasileiros por R$ 179,90. Envio para todo o Brasil e atendimento humanizado via WhatsApp." },
     ],
   }),
   component: Home,
