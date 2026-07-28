@@ -75,6 +75,7 @@ function AdminLoginPage() {
 
     if (!roleRow) {
       recordFailure(BACKOFF_KEY);
+      void writeAudit("admin.login.failure", { metadata: { email: cleanEmail, reason: "not_admin" } });
       setError("Credenciais inválidas.");
       await supabase.auth.signOut();
       setSubmitting(false);
@@ -82,6 +83,7 @@ function AdminLoginPage() {
     }
 
     resetBackoff(BACKOFF_KEY);
+    void writeAudit("admin.login.success", { metadata: { email: cleanEmail } });
     toast.success("Bem-vindo de volta!");
     navigate({ to: "/admin" });
   };
