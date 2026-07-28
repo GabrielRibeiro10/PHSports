@@ -56,6 +56,7 @@ function AdminLoginPage() {
     });
     if (signInError || !data.user) {
       const { blockedForMs } = recordFailure(BACKOFF_KEY);
+      void writeAudit("admin.login.failure", { metadata: { email: cleanEmail } });
       setError(
         blockedForMs > 0
           ? `Credenciais inválidas. Aguarde ${Math.ceil(blockedForMs / 1000)}s antes de tentar novamente.`
