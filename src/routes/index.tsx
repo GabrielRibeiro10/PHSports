@@ -176,18 +176,34 @@ function SearchAndProducts() {
   const { data: products = [] } = useQuery(productsQueryOptions);
   const [q, setQ] = useState("");
   const [region, setRegion] = useState<Region>("todos");
+  const [club, setClub] = useState<string>("todos");
   const [gender, setGender] = useState<Gender>("todos");
   const [size, setSize] = useState<SizeFilter>("todos");
 
   const term = sanitizeSearch(q).toLowerCase();
+
+  // Clubs available inside the currently-selected region (derived from loaded products).
+  const clubsInRegion = (() => {
+    if (region === "todos") return [] as string[];
+    const set = new Set<string>();
+    for (const p of products) if (regionOf(p.club) === region) set.add(p.club);
+    return Array.from(set).sort((a, b) => a.localeCompare(b, "pt-BR"));
+  })();
+
   const filtered = products.filter((p) => {
     if (region !== "todos" && regionOf(p.club) !== region) return false;
+    if (region !== "todos" && club !== "todos" && p.club !== club) return false;
     if (gender === "masculino" && p.category !== "masculino" && p.category !== "jogador" && p.category !== "retro") return false;
     if (gender === "feminino" && p.category !== "feminino") return false;
     if (size !== "todos" && !(p.sizes ?? []).includes(size)) return false;
     if (term && !(p.club.toLowerCase().includes(term) || p.name.toLowerCase().includes(term))) return false;
     return true;
   });
+
+  const selectRegion = (id: Region) => {
+    setRegion(id);
+    setClub("todos");
+  };
 
   const onSearch = (e: FormEvent) => {
     e.preventDefault();
