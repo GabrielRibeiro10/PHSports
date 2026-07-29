@@ -176,18 +176,34 @@ function SearchAndProducts() {
   const { data: products = [] } = useQuery(productsQueryOptions);
   const [q, setQ] = useState("");
   const [region, setRegion] = useState<Region>("todos");
+  const [club, setClub] = useState<string>("todos");
   const [gender, setGender] = useState<Gender>("todos");
   const [size, setSize] = useState<SizeFilter>("todos");
 
   const term = sanitizeSearch(q).toLowerCase();
+
+  // Clubs available inside the currently-selected region (derived from loaded products).
+  const clubsInRegion = (() => {
+    if (region === "todos") return [] as string[];
+    const set = new Set<string>();
+    for (const p of products) if (regionOf(p.club) === region) set.add(p.club);
+    return Array.from(set).sort((a, b) => a.localeCompare(b, "pt-BR"));
+  })();
+
   const filtered = products.filter((p) => {
     if (region !== "todos" && regionOf(p.club) !== region) return false;
+    if (region !== "todos" && club !== "todos" && p.club !== club) return false;
     if (gender === "masculino" && p.category !== "masculino" && p.category !== "jogador" && p.category !== "retro") return false;
     if (gender === "feminino" && p.category !== "feminino") return false;
     if (size !== "todos" && !(p.sizes ?? []).includes(size)) return false;
     if (term && !(p.club.toLowerCase().includes(term) || p.name.toLowerCase().includes(term))) return false;
     return true;
   });
+
+  const selectRegion = (id: Region) => {
+    setRegion(id);
+    setClub("todos");
+  };
 
   const onSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -237,19 +253,53 @@ function SearchAndProducts() {
         </form>
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-2">
-        {regionOptions.map((r) => (
-          <button
-            key={r.id}
-            onClick={() => setRegion(r.id)}
-            className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all ${
-              region === r.id ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-primary"
-            }`}
-          >
-            {r.label}
-          </button>
-        ))}
+      <div className="mb-3 -mx-4 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex gap-2 md:flex-wrap">
+          {regionOptions.map((r) => (
+            <button
+              key={r.id}
+              onClick={() => selectRegion(r.id)}
+              className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
+                region === r.id
+                  ? "border-primary bg-primary text-primary-foreground scale-[1.03]"
+                  : "border-border bg-background hover:border-primary"
+              }`}
+            >
+              {r.label}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {region !== "todos" && clubsInRegion.length > 0 && (
+        <div className="mb-4 -mx-4 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden animate-in fade-in slide-in-from-top-1 duration-200">
+          <div className="flex gap-2 md:flex-wrap">
+            <button
+              onClick={() => setClub("todos")}
+              className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
+                club === "todos"
+                  ? "border-primary bg-primary text-primary-foreground scale-[1.03]"
+                  : "border-border bg-background hover:border-primary"
+              }`}
+            >
+              Todos
+            </button>
+            {clubsInRegion.map((c) => (
+              <button
+                key={c}
+                onClick={() => setClub(c)}
+                className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
+                  club === c
+                    ? "border-primary bg-primary text-primary-foreground scale-[1.03]"
+                    : "border-border bg-background hover:border-primary"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mb-6 grid gap-3 rounded-2xl border border-border bg-secondary/30 p-3 sm:flex sm:flex-wrap sm:items-center">
         <div className="flex flex-wrap items-center gap-2">
