@@ -253,19 +253,53 @@ function SearchAndProducts() {
         </form>
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-2">
-        {regionOptions.map((r) => (
-          <button
-            key={r.id}
-            onClick={() => setRegion(r.id)}
-            className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all ${
-              region === r.id ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-primary"
-            }`}
-          >
-            {r.label}
-          </button>
-        ))}
+      <div className="mb-3 -mx-4 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex gap-2 md:flex-wrap">
+          {regionOptions.map((r) => (
+            <button
+              key={r.id}
+              onClick={() => selectRegion(r.id)}
+              className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
+                region === r.id
+                  ? "border-primary bg-primary text-primary-foreground scale-[1.03]"
+                  : "border-border bg-background hover:border-primary"
+              }`}
+            >
+              {r.label}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {region !== "todos" && clubsInRegion.length > 0 && (
+        <div className="mb-4 -mx-4 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden animate-in fade-in slide-in-from-top-1 duration-200">
+          <div className="flex gap-2 md:flex-wrap">
+            <button
+              onClick={() => setClub("todos")}
+              className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
+                club === "todos"
+                  ? "border-primary bg-primary text-primary-foreground scale-[1.03]"
+                  : "border-border bg-background hover:border-primary"
+              }`}
+            >
+              Todos
+            </button>
+            {clubsInRegion.map((c) => (
+              <button
+                key={c}
+                onClick={() => setClub(c)}
+                className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
+                  club === c
+                    ? "border-primary bg-primary text-primary-foreground scale-[1.03]"
+                    : "border-border bg-background hover:border-primary"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mb-6 grid gap-3 rounded-2xl border border-border bg-secondary/30 p-3 sm:flex sm:flex-wrap sm:items-center">
         <div className="flex flex-wrap items-center gap-2">
