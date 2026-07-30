@@ -186,16 +186,14 @@ button, a.btn-glow, button.btn-glow {
 .premium-glow::before {
   content: "";
   position: absolute;
-  inset: -14px;
+  inset: 6px;
   z-index: 0;
-  border-radius: 1.5rem;
-  background: radial-gradient(
-    60% 60% at 50% 45%,
-    color-mix(in oklab, var(--brand) 38%, transparent),
-    color-mix(in oklab, white 30%, transparent) 55%,
-    transparent 78%
-  );
-  filter: blur(14px);
+  border-radius: 0.9rem;
+  background: color-mix(in oklab, var(--brand) 70%, white);
+  box-shadow:
+    0 0 26px 10px color-mix(in oklab, var(--brand) 45%, transparent),
+    0 0 60px 24px color-mix(in oklab, var(--brand) 18%, transparent);
+  filter: blur(6px);
   opacity: 0.55;
   will-change: opacity, transform;
   animation: premium-glow-breathe 6s ease-in-out infinite;
