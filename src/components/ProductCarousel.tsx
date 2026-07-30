@@ -25,16 +25,27 @@ export function ProductCarousel({ items }: { items: Product[] }) {
   const maxIndex = Math.max(0, items.length - perView);
 
   useEffect(() => {
-    if (paused) return;
-    const id = window.setInterval(() => {
+    if (paused || maxIndex <= 0) return;
+    let id = window.setInterval(tick, 3000);
+    function tick() {
+      if (typeof document !== "undefined" && document.hidden) return;
       setIndex((i) => (i >= maxIndex ? 0 : i + 1));
-    }, 3000);
-    return () => clearInterval(id);
+    }
+    const onVisibility = () => {
+      window.clearInterval(id);
+      id = window.setInterval(tick, 3000);
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, [paused, maxIndex]);
 
   useEffect(() => {
     if (index > maxIndex) setIndex(0);
   }, [maxIndex, index]);
+
 
   const nudge = (dir: 1 | -1) => {
     setPaused(true);
@@ -72,7 +83,7 @@ export function ProductCarousel({ items }: { items: Product[] }) {
         >
           {items.map((p) => (
             <div key={p.slug} className="shrink-0 px-2" style={{ width: `${100 / perView}%` }}>
-              <ProductCard p={p} />
+              <ProductCard p={p} glow />
             </div>
           ))}
         </div>
