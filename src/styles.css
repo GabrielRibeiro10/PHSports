@@ -191,10 +191,10 @@ button, a.btn-glow, button.btn-glow {
   border-radius: 0.9rem;
   background: color-mix(in oklab, var(--brand) 70%, white);
   box-shadow:
-    0 0 26px 10px color-mix(in oklab, var(--brand) 45%, transparent),
-    0 0 60px 24px color-mix(in oklab, var(--brand) 18%, transparent);
-  filter: blur(6px);
-  opacity: 0.55;
+    0 0 34px 14px color-mix(in oklab, var(--brand) 70%, transparent),
+    0 0 80px 36px color-mix(in oklab, var(--brand) 32%, transparent);
+  filter: blur(8px);
+  opacity: 0.85;
   will-change: opacity, transform;
   animation: premium-glow-breathe 6s ease-in-out infinite;
   pointer-events: none;
