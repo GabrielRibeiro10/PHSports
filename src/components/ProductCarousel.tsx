@@ -83,7 +83,7 @@ export function ProductCarousel({ items }: { items: Product[] }) {
         >
           {items.map((p) => (
             <div key={p.slug} className="shrink-0 px-2" style={{ width: `${100 / perView}%` }}>
-              <ProductCard p={p} />
+              <ProductCard p={p} glow />
             </div>
           ))}
         </div>
