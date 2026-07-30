@@ -80,7 +80,7 @@ function SobrePage() {
       <section className="reveal-up mt-16 rounded-2xl border border-border bg-secondary/40 p-8 text-center">
         <h2 className="text-2xl font-black">Vista o seu clube com a PH Sports</h2>
         <p className="mx-auto mt-2 max-w-lg text-sm text-muted-foreground">
-          Todas as camisas por R$ 99,90 com envio para todo o Brasil e atendimento pelo WhatsApp.
+          Todas as camisas por R$ 179,90 com envio para todo o Brasil e atendimento pelo WhatsApp.
         </p>
         <Link
           to="/"
