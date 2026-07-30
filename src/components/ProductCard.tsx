@@ -2,7 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Zap } from "lucide-react";
 import { formatBRL, type Product } from "@/lib/products";
 
-export function ProductCard({ p, priority = false }: { p: Product; priority?: boolean }) {
+export function ProductCard({ p, priority = false, glow = false }: { p: Product; priority?: boolean; glow?: boolean }) {
   const nav = useNavigate();
 
   const goToProduct = (e: React.MouseEvent) => {
@@ -16,7 +16,7 @@ export function ProductCard({ p, priority = false }: { p: Product; priority?: bo
     <Link
       to="/produto/$slug"
       params={{ slug: p.slug }}
-      className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-all hover:shadow-[var(--shadow-premium)] hover:-translate-y-0.5"
+      className={`group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-all hover:shadow-[var(--shadow-premium)] hover:-translate-y-0.5 ${glow ? "premium-glow" : ""}`}
     >
       <div className="relative aspect-square overflow-hidden bg-secondary/40">
         <img
