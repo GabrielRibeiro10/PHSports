@@ -253,8 +253,9 @@ function SearchAndProducts() {
         </form>
       </div>
 
-      <div className="mb-3 -mx-4 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <div className="flex gap-2 md:flex-wrap">
+      <div className="mb-3">
+        <div className="flex flex-wrap gap-2">
+
           {regionOptions.map((r) => (
             <button
               key={r.id}
