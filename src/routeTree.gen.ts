@@ -23,6 +23,7 @@ import { Route as AdminProdutosRouteImport } from './routes/admin/produtos'
 import { Route as AdminPedidosRouteImport } from './routes/admin/pedidos'
 import { Route as AdminMarcasRouteImport } from './routes/admin/marcas'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as AdminCuponsRouteImport } from './routes/admin/cupons'
 import { Route as AdminClientesRouteImport } from './routes/admin/clientes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin/categorias'
 
@@ -96,6 +97,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminCuponsRoute = AdminCuponsRouteImport.update({
+  id: '/admin/cupons',
+  path: '/admin/cupons',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminClientesRoute = AdminClientesRouteImport.update({
   id: '/admin/clientes',
   path: '/admin/clientes',
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/termos': typeof TermosRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clientes': typeof AdminClientesRoute
+  '/admin/cupons': typeof AdminCuponsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/marcas': typeof AdminMarcasRoute
   '/admin/pedidos': typeof AdminPedidosRoute
@@ -135,6 +142,7 @@ export interface FileRoutesByTo {
   '/termos': typeof TermosRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clientes': typeof AdminClientesRoute
+  '/admin/cupons': typeof AdminCuponsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/marcas': typeof AdminMarcasRoute
   '/admin/pedidos': typeof AdminPedidosRoute
@@ -154,6 +162,7 @@ export interface FileRoutesById {
   '/termos': typeof TermosRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clientes': typeof AdminClientesRoute
+  '/admin/cupons': typeof AdminCuponsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/marcas': typeof AdminMarcasRoute
   '/admin/pedidos': typeof AdminPedidosRoute
@@ -174,6 +183,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/admin/categorias'
     | '/admin/clientes'
+    | '/admin/cupons'
     | '/admin/login'
     | '/admin/marcas'
     | '/admin/pedidos'
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/admin/categorias'
     | '/admin/clientes'
+    | '/admin/cupons'
     | '/admin/login'
     | '/admin/marcas'
     | '/admin/pedidos'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/admin/categorias'
     | '/admin/clientes'
+    | '/admin/cupons'
     | '/admin/login'
     | '/admin/marcas'
     | '/admin/pedidos'
@@ -229,6 +241,7 @@ export interface RootRouteChildren {
   TermosRoute: typeof TermosRoute
   AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminClientesRoute: typeof AdminClientesRoute
+  AdminCuponsRoute: typeof AdminCuponsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMarcasRoute: typeof AdminMarcasRoute
   AdminPedidosRoute: typeof AdminPedidosRoute
@@ -338,6 +351,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/cupons': {
+      id: '/admin/cupons'
+      path: '/admin/cupons'
+      fullPath: '/admin/cupons'
+      preLoaderRoute: typeof AdminCuponsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/clientes': {
       id: '/admin/clientes'
       path: '/admin/clientes'
@@ -365,6 +385,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermosRoute: TermosRoute,
   AdminCategoriasRoute: AdminCategoriasRoute,
   AdminClientesRoute: AdminClientesRoute,
+  AdminCuponsRoute: AdminCuponsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMarcasRoute: AdminMarcasRoute,
   AdminPedidosRoute: AdminPedidosRoute,
