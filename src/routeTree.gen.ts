@@ -25,6 +25,7 @@ import { Route as AdminMarcasRouteImport } from './routes/admin/marcas'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminFretesRouteImport } from './routes/admin/fretes'
 import { Route as AdminCuponsRouteImport } from './routes/admin/cupons'
+import { Route as AdminConfiguracoesRouteImport } from './routes/admin/configuracoes'
 import { Route as AdminClientesRouteImport } from './routes/admin/clientes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin/categorias'
 import { Route as AdminAvaliacoesRouteImport } from './routes/admin/avaliacoes'
@@ -109,6 +110,11 @@ const AdminCuponsRoute = AdminCuponsRouteImport.update({
   path: '/admin/cupons',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
+  id: '/admin/configuracoes',
+  path: '/admin/configuracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminClientesRoute = AdminClientesRouteImport.update({
   id: '/admin/clientes',
   path: '/admin/clientes',
@@ -136,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/admin/avaliacoes': typeof AdminAvaliacoesRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clientes': typeof AdminClientesRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/cupons': typeof AdminCuponsRoute
   '/admin/fretes': typeof AdminFretesRoute
   '/admin/login': typeof AdminLoginRoute
@@ -157,6 +164,7 @@ export interface FileRoutesByTo {
   '/admin/avaliacoes': typeof AdminAvaliacoesRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clientes': typeof AdminClientesRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/cupons': typeof AdminCuponsRoute
   '/admin/fretes': typeof AdminFretesRoute
   '/admin/login': typeof AdminLoginRoute
@@ -179,6 +187,7 @@ export interface FileRoutesById {
   '/admin/avaliacoes': typeof AdminAvaliacoesRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clientes': typeof AdminClientesRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/cupons': typeof AdminCuponsRoute
   '/admin/fretes': typeof AdminFretesRoute
   '/admin/login': typeof AdminLoginRoute
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
     | '/admin/avaliacoes'
     | '/admin/categorias'
     | '/admin/clientes'
+    | '/admin/configuracoes'
     | '/admin/cupons'
     | '/admin/fretes'
     | '/admin/login'
@@ -223,6 +233,7 @@ export interface FileRouteTypes {
     | '/admin/avaliacoes'
     | '/admin/categorias'
     | '/admin/clientes'
+    | '/admin/configuracoes'
     | '/admin/cupons'
     | '/admin/fretes'
     | '/admin/login'
@@ -244,6 +255,7 @@ export interface FileRouteTypes {
     | '/admin/avaliacoes'
     | '/admin/categorias'
     | '/admin/clientes'
+    | '/admin/configuracoes'
     | '/admin/cupons'
     | '/admin/fretes'
     | '/admin/login'
@@ -266,6 +278,7 @@ export interface RootRouteChildren {
   AdminAvaliacoesRoute: typeof AdminAvaliacoesRoute
   AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminClientesRoute: typeof AdminClientesRoute
+  AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
   AdminCuponsRoute: typeof AdminCuponsRoute
   AdminFretesRoute: typeof AdminFretesRoute
   AdminLoginRoute: typeof AdminLoginRoute
@@ -391,6 +404,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCuponsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/configuracoes': {
+      id: '/admin/configuracoes'
+      path: '/admin/configuracoes'
+      fullPath: '/admin/configuracoes'
+      preLoaderRoute: typeof AdminConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/clientes': {
       id: '/admin/clientes'
       path: '/admin/clientes'
@@ -426,6 +446,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminAvaliacoesRoute: AdminAvaliacoesRoute,
   AdminCategoriasRoute: AdminCategoriasRoute,
   AdminClientesRoute: AdminClientesRoute,
+  AdminConfiguracoesRoute: AdminConfiguracoesRoute,
   AdminCuponsRoute: AdminCuponsRoute,
   AdminFretesRoute: AdminFretesRoute,
   AdminLoginRoute: AdminLoginRoute,
