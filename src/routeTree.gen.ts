@@ -26,6 +26,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminCuponsRouteImport } from './routes/admin/cupons'
 import { Route as AdminClientesRouteImport } from './routes/admin/clientes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin/categorias'
+import { Route as AdminAvaliacoesRouteImport } from './routes/admin/avaliacoes'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -112,6 +113,11 @@ const AdminCategoriasRoute = AdminCategoriasRouteImport.update({
   path: '/admin/categorias',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminAvaliacoesRoute = AdminAvaliacoesRouteImport.update({
+  id: '/admin/avaliacoes',
+  path: '/admin/avaliacoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/rastreio': typeof RastreioRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/admin/avaliacoes': typeof AdminAvaliacoesRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clientes': typeof AdminClientesRoute
   '/admin/cupons': typeof AdminCuponsRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/rastreio': typeof RastreioRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/admin/avaliacoes': typeof AdminAvaliacoesRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clientes': typeof AdminClientesRoute
   '/admin/cupons': typeof AdminCuponsRoute
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/rastreio': typeof RastreioRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/admin/avaliacoes': typeof AdminAvaliacoesRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clientes': typeof AdminClientesRoute
   '/admin/cupons': typeof AdminCuponsRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/rastreio'
     | '/sobre'
     | '/termos'
+    | '/admin/avaliacoes'
     | '/admin/categorias'
     | '/admin/clientes'
     | '/admin/cupons'
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/rastreio'
     | '/sobre'
     | '/termos'
+    | '/admin/avaliacoes'
     | '/admin/categorias'
     | '/admin/clientes'
     | '/admin/cupons'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/rastreio'
     | '/sobre'
     | '/termos'
+    | '/admin/avaliacoes'
     | '/admin/categorias'
     | '/admin/clientes'
     | '/admin/cupons'
@@ -239,6 +251,7 @@ export interface RootRouteChildren {
   RastreioRoute: typeof RastreioRoute
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
+  AdminAvaliacoesRoute: typeof AdminAvaliacoesRoute
   AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminClientesRoute: typeof AdminClientesRoute
   AdminCuponsRoute: typeof AdminCuponsRoute
@@ -372,6 +385,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/avaliacoes': {
+      id: '/admin/avaliacoes'
+      path: '/admin/avaliacoes'
+      fullPath: '/admin/avaliacoes'
+      preLoaderRoute: typeof AdminAvaliacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -383,6 +403,7 @@ const rootRouteChildren: RootRouteChildren = {
   RastreioRoute: RastreioRoute,
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
+  AdminAvaliacoesRoute: AdminAvaliacoesRoute,
   AdminCategoriasRoute: AdminCategoriasRoute,
   AdminClientesRoute: AdminClientesRoute,
   AdminCuponsRoute: AdminCuponsRoute,
