@@ -44,8 +44,42 @@ export type Database = {
         }
         Relationships: []
       }
+      brands: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          logo_url: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          logo_url?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          logo_url?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
+          active: boolean
           emoji: string
           id: Database["public"]["Enums"]["product_category"]
           image_url: string
@@ -56,6 +90,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          active?: boolean
           emoji?: string
           id: Database["public"]["Enums"]["product_category"]
           image_url?: string
@@ -66,6 +101,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          active?: boolean
           emoji?: string
           id?: Database["public"]["Enums"]["product_category"]
           image_url?: string
@@ -77,60 +113,357 @@ export type Database = {
         }
         Relationships: []
       }
+      coupons: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          discount_type: string
+          discount_value: number
+          expires_at: string | null
+          id: string
+          max_uses: number
+          min_order_value: number
+          updated_at: string
+          used_count: number
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          discount_type?: string
+          discount_value?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number
+          min_order_value?: number
+          updated_at?: string
+          used_count?: number
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          discount_type?: string
+          discount_value?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number
+          min_order_value?: number
+          updated_at?: string
+          used_count?: number
+        }
+        Relationships: []
+      }
+      customers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          notes: string | null
+          updated_at: string
+          whatsapp: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string
+          id?: string
+          name: string
+          notes?: string | null
+          updated_at?: string
+          whatsapp?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          updated_at?: string
+          whatsapp?: string
+        }
+        Relationships: []
+      }
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string
+          product_id: string | null
+          product_name: string
+          quantity: number
+          size: string | null
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id: string
+          product_id?: string | null
+          product_name: string
+          quantity?: number
+          size?: string | null
+          unit_price?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          size?: string | null
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          code: string
+          created_at: string
+          customer_id: string | null
+          customer_name: string
+          customer_whatsapp: string
+          id: string
+          notes: string | null
+          payment_method: string
+          shipping: number
+          status: Database["public"]["Enums"]["order_status"]
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          code?: string
+          created_at?: string
+          customer_id?: string | null
+          customer_name?: string
+          customer_whatsapp?: string
+          id?: string
+          notes?: string | null
+          payment_method?: string
+          shipping?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          customer_id?: string | null
+          customer_name?: string
+          customer_whatsapp?: string
+          id?: string
+          notes?: string | null
+          payment_method?: string
+          shipping?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           active: boolean
+          brand_id: string | null
           category: Database["public"]["Enums"]["product_category"]
           club: string
           colors: string[]
           created_at: string
           description: string | null
           discount: number
+          featured: boolean
           id: string
           image_url: string
+          image_url_2: string
+          image_url_3: string
+          image_url_4: string
           name: string
           old_price: number
           price: number
           sizes: string[] | null
           slug: string
           sort_order: number
+          stock: number
           updated_at: string
         }
         Insert: {
           active?: boolean
+          brand_id?: string | null
           category: Database["public"]["Enums"]["product_category"]
           club: string
           colors?: string[]
           created_at?: string
           description?: string | null
           discount?: number
+          featured?: boolean
           id?: string
           image_url?: string
+          image_url_2?: string
+          image_url_3?: string
+          image_url_4?: string
           name: string
           old_price?: number
           price?: number
           sizes?: string[] | null
           slug: string
           sort_order?: number
+          stock?: number
           updated_at?: string
         }
         Update: {
           active?: boolean
+          brand_id?: string | null
           category?: Database["public"]["Enums"]["product_category"]
           club?: string
           colors?: string[]
           created_at?: string
           description?: string | null
           discount?: number
+          featured?: boolean
           id?: string
           image_url?: string
+          image_url_2?: string
+          image_url_3?: string
+          image_url_4?: string
           name?: string
           old_price?: number
           price?: number
           sizes?: string[] | null
           slug?: string
           sort_order?: number
+          stock?: number
           updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          author_name: string
+          comment: string
+          created_at: string
+          id: string
+          product_id: string | null
+          rating: number
+          reply: string | null
+          status: Database["public"]["Enums"]["review_status"]
+          updated_at: string
+        }
+        Insert: {
+          author_name?: string
+          comment?: string
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          rating?: number
+          reply?: string | null
+          status?: Database["public"]["Enums"]["review_status"]
+          updated_at?: string
+        }
+        Update: {
+          author_name?: string
+          comment?: string
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          rating?: number
+          reply?: string | null
+          status?: Database["public"]["Enums"]["review_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shipping_zones: {
+        Row: {
+          active: boolean
+          created_at: string
+          delivery_days: string
+          free_above: number
+          id: string
+          price: number
+          region: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          delivery_days?: string
+          free_above?: number
+          id?: string
+          price?: number
+          region: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          delivery_days?: string
+          free_above?: number
+          id?: string
+          price?: number
+          region?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      store_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
         }
         Relationships: []
       }
@@ -170,12 +503,14 @@ export type Database = {
     }
     Enums: {
       app_role: "admin"
+      order_status: "pendente" | "pago" | "enviado" | "entregue" | "cancelado"
       product_category:
         | "masculino"
         | "feminino"
         | "retro"
         | "caneleiras"
         | "jogador"
+      review_status: "pendente" | "aprovada" | "reprovada"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -304,6 +639,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin"],
+      order_status: ["pendente", "pago", "enviado", "entregue", "cancelado"],
       product_category: [
         "masculino",
         "feminino",
@@ -311,6 +647,7 @@ export const Constants = {
         "caneleiras",
         "jogador",
       ],
+      review_status: ["pendente", "aprovada", "reprovada"],
     },
   },
 } as const
