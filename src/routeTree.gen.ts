@@ -19,8 +19,16 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
+import { Route as AdminProdutosRouteImport } from './routes/admin/produtos'
+import { Route as AdminPedidosRouteImport } from './routes/admin/pedidos'
+import { Route as AdminMarcasRouteImport } from './routes/admin/marcas'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as AdminFretesRouteImport } from './routes/admin/fretes'
+import { Route as AdminCuponsRouteImport } from './routes/admin/cupons'
+import { Route as AdminConfiguracoesRouteImport } from './routes/admin/configuracoes'
+import { Route as AdminClientesRouteImport } from './routes/admin/clientes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin/categorias'
+import { Route as AdminAvaliacoesRouteImport } from './routes/admin/avaliacoes'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -72,14 +80,54 @@ const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
   path: '/categoria/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminProdutosRoute = AdminProdutosRouteImport.update({
+  id: '/admin/produtos',
+  path: '/admin/produtos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPedidosRoute = AdminPedidosRouteImport.update({
+  id: '/admin/pedidos',
+  path: '/admin/pedidos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminMarcasRoute = AdminMarcasRouteImport.update({
+  id: '/admin/marcas',
+  path: '/admin/marcas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminFretesRoute = AdminFretesRouteImport.update({
+  id: '/admin/fretes',
+  path: '/admin/fretes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCuponsRoute = AdminCuponsRouteImport.update({
+  id: '/admin/cupons',
+  path: '/admin/cupons',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
+  id: '/admin/configuracoes',
+  path: '/admin/configuracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminClientesRoute = AdminClientesRouteImport.update({
+  id: '/admin/clientes',
+  path: '/admin/clientes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminCategoriasRoute = AdminCategoriasRouteImport.update({
   id: '/admin/categorias',
   path: '/admin/categorias',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAvaliacoesRoute = AdminAvaliacoesRouteImport.update({
+  id: '/admin/avaliacoes',
+  path: '/admin/avaliacoes',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -91,8 +139,16 @@ export interface FileRoutesByFullPath {
   '/rastreio': typeof RastreioRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/admin/avaliacoes': typeof AdminAvaliacoesRoute
   '/admin/categorias': typeof AdminCategoriasRoute
+  '/admin/clientes': typeof AdminClientesRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/cupons': typeof AdminCuponsRoute
+  '/admin/fretes': typeof AdminFretesRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/marcas': typeof AdminMarcasRoute
+  '/admin/pedidos': typeof AdminPedidosRoute
+  '/admin/produtos': typeof AdminProdutosRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -105,8 +161,16 @@ export interface FileRoutesByTo {
   '/rastreio': typeof RastreioRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/admin/avaliacoes': typeof AdminAvaliacoesRoute
   '/admin/categorias': typeof AdminCategoriasRoute
+  '/admin/clientes': typeof AdminClientesRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/cupons': typeof AdminCuponsRoute
+  '/admin/fretes': typeof AdminFretesRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/marcas': typeof AdminMarcasRoute
+  '/admin/pedidos': typeof AdminPedidosRoute
+  '/admin/produtos': typeof AdminProdutosRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/admin': typeof AdminIndexRoute
@@ -120,8 +184,16 @@ export interface FileRoutesById {
   '/rastreio': typeof RastreioRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/admin/avaliacoes': typeof AdminAvaliacoesRoute
   '/admin/categorias': typeof AdminCategoriasRoute
+  '/admin/clientes': typeof AdminClientesRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/cupons': typeof AdminCuponsRoute
+  '/admin/fretes': typeof AdminFretesRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/marcas': typeof AdminMarcasRoute
+  '/admin/pedidos': typeof AdminPedidosRoute
+  '/admin/produtos': typeof AdminProdutosRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -136,8 +208,16 @@ export interface FileRouteTypes {
     | '/rastreio'
     | '/sobre'
     | '/termos'
+    | '/admin/avaliacoes'
     | '/admin/categorias'
+    | '/admin/clientes'
+    | '/admin/configuracoes'
+    | '/admin/cupons'
+    | '/admin/fretes'
     | '/admin/login'
+    | '/admin/marcas'
+    | '/admin/pedidos'
+    | '/admin/produtos'
     | '/categoria/$slug'
     | '/produto/$slug'
     | '/admin/'
@@ -150,8 +230,16 @@ export interface FileRouteTypes {
     | '/rastreio'
     | '/sobre'
     | '/termos'
+    | '/admin/avaliacoes'
     | '/admin/categorias'
+    | '/admin/clientes'
+    | '/admin/configuracoes'
+    | '/admin/cupons'
+    | '/admin/fretes'
     | '/admin/login'
+    | '/admin/marcas'
+    | '/admin/pedidos'
+    | '/admin/produtos'
     | '/categoria/$slug'
     | '/produto/$slug'
     | '/admin'
@@ -164,8 +252,16 @@ export interface FileRouteTypes {
     | '/rastreio'
     | '/sobre'
     | '/termos'
+    | '/admin/avaliacoes'
     | '/admin/categorias'
+    | '/admin/clientes'
+    | '/admin/configuracoes'
+    | '/admin/cupons'
+    | '/admin/fretes'
     | '/admin/login'
+    | '/admin/marcas'
+    | '/admin/pedidos'
+    | '/admin/produtos'
     | '/categoria/$slug'
     | '/produto/$slug'
     | '/admin/'
@@ -179,8 +275,16 @@ export interface RootRouteChildren {
   RastreioRoute: typeof RastreioRoute
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
+  AdminAvaliacoesRoute: typeof AdminAvaliacoesRoute
   AdminCategoriasRoute: typeof AdminCategoriasRoute
+  AdminClientesRoute: typeof AdminClientesRoute
+  AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
+  AdminCuponsRoute: typeof AdminCuponsRoute
+  AdminFretesRoute: typeof AdminFretesRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminMarcasRoute: typeof AdminMarcasRoute
+  AdminPedidosRoute: typeof AdminPedidosRoute
+  AdminProdutosRoute: typeof AdminProdutosRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -258,6 +362,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/produtos': {
+      id: '/admin/produtos'
+      path: '/admin/produtos'
+      fullPath: '/admin/produtos'
+      preLoaderRoute: typeof AdminProdutosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/pedidos': {
+      id: '/admin/pedidos'
+      path: '/admin/pedidos'
+      fullPath: '/admin/pedidos'
+      preLoaderRoute: typeof AdminPedidosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/marcas': {
+      id: '/admin/marcas'
+      path: '/admin/marcas'
+      fullPath: '/admin/marcas'
+      preLoaderRoute: typeof AdminMarcasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/admin/login'
@@ -265,11 +390,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/fretes': {
+      id: '/admin/fretes'
+      path: '/admin/fretes'
+      fullPath: '/admin/fretes'
+      preLoaderRoute: typeof AdminFretesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/cupons': {
+      id: '/admin/cupons'
+      path: '/admin/cupons'
+      fullPath: '/admin/cupons'
+      preLoaderRoute: typeof AdminCuponsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/configuracoes': {
+      id: '/admin/configuracoes'
+      path: '/admin/configuracoes'
+      fullPath: '/admin/configuracoes'
+      preLoaderRoute: typeof AdminConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/clientes': {
+      id: '/admin/clientes'
+      path: '/admin/clientes'
+      fullPath: '/admin/clientes'
+      preLoaderRoute: typeof AdminClientesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/categorias': {
       id: '/admin/categorias'
       path: '/admin/categorias'
       fullPath: '/admin/categorias'
       preLoaderRoute: typeof AdminCategoriasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/avaliacoes': {
+      id: '/admin/avaliacoes'
+      path: '/admin/avaliacoes'
+      fullPath: '/admin/avaliacoes'
+      preLoaderRoute: typeof AdminAvaliacoesRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -283,8 +443,16 @@ const rootRouteChildren: RootRouteChildren = {
   RastreioRoute: RastreioRoute,
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
+  AdminAvaliacoesRoute: AdminAvaliacoesRoute,
   AdminCategoriasRoute: AdminCategoriasRoute,
+  AdminClientesRoute: AdminClientesRoute,
+  AdminConfiguracoesRoute: AdminConfiguracoesRoute,
+  AdminCuponsRoute: AdminCuponsRoute,
+  AdminFretesRoute: AdminFretesRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminMarcasRoute: AdminMarcasRoute,
+  AdminPedidosRoute: AdminPedidosRoute,
+  AdminProdutosRoute: AdminProdutosRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
   AdminIndexRoute: AdminIndexRoute,

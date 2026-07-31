@@ -95,26 +95,61 @@ function safeSlug(input: string) {
     .slice(0, 64) || "img";
 }
 
-export async function uploadProductImage(file: File, slugHint: string): Promise<string> {
-  const { ext, mime } = await validateImageFile(file);
-  const path = `products/${safeSlug(slugHint)}-${Date.now()}.${ext}`;
+/**
+ * Downscale + re-encode to WebP before upload (best effort, browser only).
+ * Falls back to the original file whenever the canvas pipeline is unavailable.
+ */
+async function compressImage(file: File): Promise<{ blob: Blob; ext: string; mime: string }> {
+  const fallback = async () => {
+    const { ext, mime } = await validateImageFile(file);
+    return { blob: file as Blob, ext, mime };
+  };
+  if (typeof document === "undefined" || file.type === "image/gif") return fallback();
+  try {
+    const bitmap = await createImageBitmap(file);
+    const MAX = 1600;
+    const scale = Math.min(1, MAX / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return fallback();
+    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, "image/webp", 0.86),
+    );
+    if (!blob || blob.size === 0) return fallback();
+    return { blob, ext: "webp", mime: "image/webp" };
+  } catch {
+    return fallback();
+  }
+}
+
+async function uploadTo(prefix: string, file: File, hint: string): Promise<string> {
+  await validateImageFile(file);
+  const { blob, ext, mime } = await compressImage(file);
+  const path = `${prefix}/${safeSlug(hint)}-${Date.now()}.${ext}`;
   const { error } = await supabase.storage
     .from("product-images")
-    .upload(path, file, { upsert: true, cacheControl: "3600", contentType: mime });
+    .upload(path, blob, { upsert: true, cacheControl: "3600", contentType: mime });
   if (error) throw error;
-  void writeAudit("product.upload_image", { entity: "storage", metadata: { path, size: file.size } });
+  void writeAudit(`${prefix}.upload_image`, {
+    entity: "storage",
+    metadata: { path, size: blob.size },
+  });
   return supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl;
 }
 
+export async function uploadProductImage(file: File, slugHint: string): Promise<string> {
+  return uploadTo("products", file, slugHint);
+}
+
 export async function uploadCategoryImage(file: File, id: string): Promise<string> {
-  const { ext, mime } = await validateImageFile(file);
-  const path = `categories/${safeSlug(id)}-${Date.now()}.${ext}`;
-  const { error } = await supabase.storage
-    .from("product-images")
-    .upload(path, file, { upsert: true, cacheControl: "3600", contentType: mime });
-  if (error) throw error;
-  void writeAudit("category.upload_image", { entity: "storage", metadata: { path, size: file.size } });
-  return supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl;
+  return uploadTo("categories", file, id);
+}
+
+export async function uploadBrandImage(file: File, id: string): Promise<string> {
+  return uploadTo("brands", file, id);
 }
 
 export type ProductFormValues = {
@@ -122,9 +157,15 @@ export type ProductFormValues = {
   name: string;
   club: string;
   image_url: string;
+  image_url_2: string;
+  image_url_3: string;
+  image_url_4: string;
   price: number;
   old_price: number;
   category: CategoryId;
+  brand_id: string | null;
+  stock: number;
+  featured: boolean;
   colors: string[];
   sizes: string[] | null;
   description: string | null;
@@ -177,12 +218,20 @@ export type CategoryFormValues = {
   tagline: string;
   emoji: string;
   image_url: string;
+  active?: boolean;
+  sort_order?: number;
 };
 
 export async function updateCategory(id: CategoryId, values: CategoryFormValues) {
   const { error } = await supabase.from("categories").update(values).eq("id", id);
   if (error) throw error;
   void writeAudit("category.update", { entity: "categories", entityId: id, metadata: { name: values.name } });
+}
+
+export async function setCategoryActive(id: CategoryId, active: boolean) {
+  const { error } = await supabase.from("categories").update({ active }).eq("id", id);
+  if (error) throw error;
+  void writeAudit("category.toggle_active", { entity: "categories", entityId: id, metadata: { active } });
 }
 
 export function slugify(text: string) {
@@ -194,3 +243,4 @@ export function slugify(text: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 }
+

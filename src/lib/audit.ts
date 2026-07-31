@@ -7,14 +7,13 @@ export type AuditAction =
   | "admin.login.success"
   | "admin.login.failure"
   | "admin.logout"
-  | "product.create"
-  | "product.update"
-  | "product.delete"
-  | "product.toggle_active"
-  | "product.upload_image"
-  | "category.update"
-  | "category.upload_image"
-  | "upload.rejected";
+  | "upload.rejected"
+  | `${string}.create`
+  | `${string}.update`
+  | `${string}.delete`
+  | `${string}.toggle_active`
+  | `${string}.upload_image`;
+
 
 export async function writeAudit(
   action: AuditAction,
