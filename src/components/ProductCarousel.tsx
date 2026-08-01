@@ -28,17 +28,15 @@ export function ProductCarousel({ items }: { items: Product[] }) {
     if (paused || maxIndex <= 0) return;
 
     let id: number | null = null;
-    let initialId: number | null = null;
 
     function tick() {
       if (document.hidden) return;
       setIndex((i) => (i >= maxIndex ? 0 : i + 1));
     }
 
-    function start(advanceImmediately = false) {
+    function start() {
       if (document.hidden) return;
       if (id !== null) return;
-      if (advanceImmediately) initialId = window.setTimeout(tick, 0);
       id = window.setInterval(tick, 3000);
     }
 
@@ -46,24 +44,21 @@ export function ProductCarousel({ items }: { items: Product[] }) {
       if (id === null) return;
       window.clearInterval(id);
       id = null;
-      if (initialId !== null) {
-        window.clearTimeout(initialId);
-        initialId = null;
-      }
     }
 
     const onVisibility = () => {
       if (document.hidden) stop();
-      else start(true);
+      else start();
     };
 
-    const onPageShow = () => start(true);
+    const onPageShow = () => start();
 
-    start(true);
+    const firstFrame = window.requestAnimationFrame(() => start());
     document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("pageshow", onPageShow);
 
     return () => {
+      window.cancelAnimationFrame(firstFrame);
       stop();
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("pageshow", onPageShow);
