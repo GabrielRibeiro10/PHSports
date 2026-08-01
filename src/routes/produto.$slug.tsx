@@ -38,6 +38,10 @@ function ProductPage() {
   const nav = useNavigate();
   const [size, setSize] = useState<Size | null>(null);
   const [qty, setQty] = useState(1);
+  const [selected, setSelected] = useState<string | null>(null);
+
+  const thumbs = [product.image, ...(product.gallery ?? [])].filter(Boolean);
+  const activeImage = selected && thumbs.includes(selected) ? selected : product.image;
 
   const ensureSize = () => {
     if (!size) {
