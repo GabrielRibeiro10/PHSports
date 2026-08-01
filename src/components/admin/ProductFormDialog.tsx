@@ -163,7 +163,7 @@ export function ProductFormDialog({ open, onOpenChange, product }: Props) {
               Galeria de imagens
             </h3>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {["Principal", "Secundária", "Terciária", "Quaternária"].map((label, i) => (
+              {["Imagem Principal", "Secundária 1", "Secundária 2", "Secundária 3"].map((label, i) => (
                 <ImageSlot
                   key={label}
                   label={label}

@@ -14,6 +14,7 @@ export type Product = {
   name: string;
   club: string;
   image: string;
+  gallery: string[];
   price: number;
   oldPrice: number;
   discount: number;
