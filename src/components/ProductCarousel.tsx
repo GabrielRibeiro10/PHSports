@@ -99,11 +99,7 @@ export function ProductCarousel({ items }: { items: Product[] }) {
   };
 
   return (
-    <div
-      className="relative"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
+    <div className="relative">
       <div className="overflow-hidden" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         <div
           className="carousel-track flex"
