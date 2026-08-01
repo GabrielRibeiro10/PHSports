@@ -36,7 +36,7 @@ export function ProductCarousel({ items }: { items: Product[] }) {
 
     function start() {
       if (document.hidden) return;
-      if (id !== null) window.clearInterval(id);
+      if (id !== null) return;
       id = window.setInterval(tick, 3000);
     }
 
@@ -56,13 +56,11 @@ export function ProductCarousel({ items }: { items: Product[] }) {
     start();
     document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("pageshow", onPageShow);
-    if (document.readyState !== "complete") window.addEventListener("load", start, { once: true });
 
     return () => {
       stop();
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("pageshow", onPageShow);
-      window.removeEventListener("load", start);
     };
   }, [paused, maxIndex]);
 
