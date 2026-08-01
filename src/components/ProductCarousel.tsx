@@ -28,6 +28,7 @@ export function ProductCarousel({ items }: { items: Product[] }) {
     if (paused || maxIndex <= 0) return;
 
     let id: number | null = null;
+    let initialId: number | null = null;
 
     function tick() {
       if (document.hidden) return;
@@ -37,7 +38,7 @@ export function ProductCarousel({ items }: { items: Product[] }) {
     function start(advanceImmediately = false) {
       if (document.hidden) return;
       if (id !== null) return;
-      if (advanceImmediately) tick();
+      if (advanceImmediately) initialId = window.setTimeout(tick, 0);
       id = window.setInterval(tick, 3000);
     }
 
@@ -45,6 +46,10 @@ export function ProductCarousel({ items }: { items: Product[] }) {
       if (id === null) return;
       window.clearInterval(id);
       id = null;
+      if (initialId !== null) {
+        window.clearTimeout(initialId);
+        initialId = null;
+      }
     }
 
     const onVisibility = () => {
