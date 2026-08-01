@@ -36,7 +36,7 @@ export function ProductCarousel({ items }: { items: Product[] }) {
 
     function start() {
       if (document.hidden) return;
-      if (id !== null) window.clearInterval(id);
+      if (id !== null) return;
       id = window.setInterval(tick, 3000);
     }
 
@@ -53,16 +53,15 @@ export function ProductCarousel({ items }: { items: Product[] }) {
 
     const onPageShow = () => start();
 
-    start();
+    const firstFrame = window.requestAnimationFrame(() => start());
     document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("pageshow", onPageShow);
-    if (document.readyState !== "complete") window.addEventListener("load", start, { once: true });
 
     return () => {
+      window.cancelAnimationFrame(firstFrame);
       stop();
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("pageshow", onPageShow);
-      window.removeEventListener("load", start);
     };
   }, [paused, maxIndex]);
 
@@ -99,11 +98,7 @@ export function ProductCarousel({ items }: { items: Product[] }) {
   };
 
   return (
-    <div
-      className="relative"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
+    <div className="relative">
       <div className="overflow-hidden" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         <div
           className="carousel-track flex"
