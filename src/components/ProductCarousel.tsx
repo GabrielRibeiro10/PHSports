@@ -34,9 +34,10 @@ export function ProductCarousel({ items }: { items: Product[] }) {
       setIndex((i) => (i >= maxIndex ? 0 : i + 1));
     }
 
-    function start() {
+    function start(advanceImmediately = false) {
       if (document.hidden) return;
       if (id !== null) return;
+      if (advanceImmediately) tick();
       id = window.setInterval(tick, 3000);
     }
 
@@ -48,12 +49,12 @@ export function ProductCarousel({ items }: { items: Product[] }) {
 
     const onVisibility = () => {
       if (document.hidden) stop();
-      else start();
+      else start(true);
     };
 
-    const onPageShow = () => start();
+    const onPageShow = () => start(true);
 
-    start();
+    start(true);
     document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("pageshow", onPageShow);
 
