@@ -26,21 +26,49 @@ export function ProductCarousel({ items }: { items: Product[] }) {
 
   useEffect(() => {
     if (paused || maxIndex <= 0) return;
-    let id = window.setInterval(tick, 3000);
+
+    let id: number | null = null;
+
     function tick() {
-      if (typeof document !== "undefined" && document.hidden) return;
+      if (document.hidden) return;
       setIndex((i) => (i >= maxIndex ? 0 : i + 1));
     }
-    const onVisibility = () => {
-      window.clearInterval(id);
+
+    function start() {
+      if (document.hidden) return;
+      if (id !== null) window.clearInterval(id);
       id = window.setInterval(tick, 3000);
-    };
-    document.addEventListener("visibilitychange", onVisibility);
-    return () => {
+    }
+
+    function stop() {
+      if (id === null) return;
       window.clearInterval(id);
+      id = null;
+    }
+
+    const onVisibility = () => {
+      if (document.hidden) stop();
+      else start();
+    };
+
+    const onPageShow = () => start();
+
+    start();
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pageshow", onPageShow);
+    if (document.readyState !== "complete") window.addEventListener("load", start, { once: true });
+
+    return () => {
+      stop();
       document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pageshow", onPageShow);
+      window.removeEventListener("load", start);
     };
   }, [paused, maxIndex]);
+
+  useEffect(() => () => {
+    if (resumeTimer.current !== null) window.clearTimeout(resumeTimer.current);
+  }, []);
 
   useEffect(() => {
     if (index > maxIndex) setIndex(0);
