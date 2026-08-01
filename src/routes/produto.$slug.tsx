@@ -76,11 +76,12 @@ function ProductPage() {
         <div>
           <div className="relative overflow-hidden rounded-2xl border border-border bg-secondary/40">
             <img
-              src={product.image}
+              key={activeImage}
+              src={activeImage}
               alt={product.name}
               width={800}
               height={800}
-              className="aspect-square w-full object-cover"
+              className="aspect-square w-full animate-[fade-in_0.35s_ease-out] object-cover transition-opacity duration-300"
               fetchPriority="high"
             />
             <span className="absolute left-4 top-4 rounded-full bg-brand px-3 py-1 text-xs font-black uppercase tracking-wider text-brand-foreground">
@@ -90,16 +91,23 @@ function ProductPage() {
               -{product.discount}%
             </span>
           </div>
-          <div className="mt-3 grid grid-cols-4 gap-3">
-            {[0, 1, 2, 3].map((i) => (
-              <button
-                key={i}
-                className="overflow-hidden rounded-lg border border-border bg-secondary/40 transition hover:border-primary"
-              >
-                <img src={product.image} alt="" loading="lazy" className="aspect-square w-full object-cover" />
-              </button>
-            ))}
-          </div>
+          {thumbs.length > 1 && (
+            <div className="mt-3 flex gap-3">
+              {thumbs.map((src, i) => (
+                <button
+                  key={`${src}-${i}`}
+                  type="button"
+                  onClick={() => setSelected(src)}
+                  aria-label={`Ver imagem ${i + 1} de ${product.name}`}
+                  className={`w-full max-w-[25%] flex-1 overflow-hidden rounded-lg border bg-secondary/40 transition hover:border-primary ${
+                    activeImage === src ? "border-primary" : "border-border"
+                  }`}
+                >
+                  <img src={src} alt="" loading="lazy" className="aspect-square w-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Info */}
