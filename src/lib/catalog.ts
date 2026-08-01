@@ -10,6 +10,9 @@ function mapProductRow(row: Tables<"products">): Product {
     name: row.name,
     club: row.club,
     image: row.image_url,
+    gallery: [row.image_url_2, row.image_url_3, row.image_url_4].filter(
+      (u): u is string => !!u && u.trim().length > 0,
+    ),
     price: Number(row.price),
     oldPrice: Number(row.old_price),
     discount: row.discount,
