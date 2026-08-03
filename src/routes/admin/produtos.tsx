@@ -191,7 +191,7 @@ function AdminProductsPage() {
                   <tr key={p.id} className="border-b border-border transition-colors last:border-0 hover:bg-secondary/30">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <img src={p.image_url} alt="" className="size-12 rounded-lg border border-border object-cover" />
+                        <img src={safeImageUrl(p.image_url) ?? ""} alt="" className="size-12 rounded-lg border border-border object-cover" />
                         <div className="min-w-0">
                           <p className="truncate font-bold">
                             {p.name} {p.featured && <span className="text-primary">★</span>}

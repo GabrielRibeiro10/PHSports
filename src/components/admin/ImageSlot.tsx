@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { ImagePlus, Loader2, RefreshCw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { safeImageUrl } from "@/lib/input-safety";
 
 type Props = {
   label: string;
@@ -56,7 +57,7 @@ export function ImageSlot({ label, value, onChange, upload, className }: Props) 
         )}
       >
         {value ? (
-          <img src={value} alt={label} className="size-full object-cover" />
+          <img src={safeImageUrl(value) ?? ""} alt={label} className="size-full object-cover" />
         ) : (
           <div className="grid place-items-center gap-1 p-2 text-center text-muted-foreground">
             <ImagePlus className="size-5" />

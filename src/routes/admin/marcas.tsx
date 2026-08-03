@@ -96,7 +96,7 @@ function BrandsPage() {
             {brands.map((b) => (
               <li key={b.id} className="flex items-center gap-4 px-4 py-3">
                 {b.logo_url ? (
-                  <img src={b.logo_url} alt="" className="size-10 rounded-lg border border-border object-contain" />
+                  <img src={safeImageUrl(b.logo_url) ?? ""} alt="" className="size-10 rounded-lg border border-border object-contain" />
                 ) : (
                   <span className="grid size-10 place-items-center rounded-lg bg-secondary text-xs font-black">
                     {b.name.slice(0, 2).toUpperCase()}
