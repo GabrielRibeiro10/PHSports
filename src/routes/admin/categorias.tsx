@@ -7,6 +7,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { safeImageUrl } from "@/lib/input-safety";
 import {
   adminCategoriesQueryOptions,
   uploadCategoryImage,
@@ -94,7 +95,7 @@ function CategoryCard({ category }: { category: AdminCategoryRow }) {
     >
       <div className="flex items-center gap-3">
         <img
-          src={imagePreview}
+          src={safeImageUrl(imagePreview) ?? ""}
           alt=""
           className="size-16 shrink-0 rounded-md border border-border object-cover"
         />
