@@ -31,6 +31,60 @@ export function safeRedirectPath(raw: unknown): string {
   return raw.slice(0, 512);
 }
 
+// --- URL hardening (XSS via href/src) ------------------------------------
+// Blocks javascript:, vbscript:, data: (except images) and other exotic
+// schemes that can execute script when placed in href/src attributes.
+
+const SAFE_IMAGE_DATA = /^data:image\/(png|jpe?g|gif|webp|avif|svg\+xml);base64,[a-z0-9+/=\s]+$/i;
+
+function normalizeScheme(raw: string): string {
+  // Strip control chars/whitespace attackers use to smuggle "java\tscript:"
+  return raw.replace(CONTROL_CHARS, "").replace(/\s/g, "").toLowerCase();
+}
+
+/**
+ * Sanitize a URL for use in an `href`. Allows http(s), mailto, tel and
+ * same-origin relative paths. Returns `undefined` when unsafe.
+ */
+export function safeUrl(raw: unknown): string | undefined {
+  if (typeof raw !== "string") return undefined;
+  const value = raw.trim().slice(0, 2048);
+  if (!value) return undefined;
+  const probe = normalizeScheme(value);
+  if (/^(javascript|vbscript|data|blob|file|about):/i.test(probe)) return undefined;
+  if (value.startsWith("/") && !value.startsWith("//")) return value;
+  if (value.startsWith("#")) return value;
+  if (/^(https?|mailto|tel):/i.test(probe)) return value;
+  return undefined;
+}
+
+/**
+ * Sanitize a URL for use in an `<img src>`. Same rules as safeUrl but also
+ * accepts base64 image data URLs and blob: previews (admin upload preview).
+ */
+export function safeImageUrl(raw: unknown): string | undefined {
+  if (typeof raw !== "string") return undefined;
+  const value = raw.trim().slice(0, 5_000_000);
+  if (!value) return undefined;
+  if (value.startsWith("blob:")) return value;
+  if (SAFE_IMAGE_DATA.test(value)) return value;
+  const probe = normalizeScheme(value);
+  if (/^(javascript|vbscript|data|file|about):/i.test(probe)) return undefined;
+  if (value.startsWith("/") && !value.startsWith("//")) return value;
+  if (/^https?:/i.test(probe)) return value;
+  return undefined;
+}
+
+/** CSS color/token allowlist for any value interpolated into a <style> tag. */
+export function safeCssColor(raw: unknown): string | undefined {
+  if (typeof raw !== "string") return undefined;
+  const v = raw.trim().slice(0, 64);
+  return /^(#[0-9a-f]{3,8}|(rgb|rgba|hsl|hsla|oklch|var)\([a-z0-9%.,\s\-_]*\)|[a-z]{3,20})$/i.test(v)
+    ? v
+    : undefined;
+}
+
+
 // --- Progressive backoff (client-side, e.g. admin login) -----------------
 // Persists across reloads so a page refresh doesn't reset the counter.
 type Attempt = { count: number; blockedUntil: number };
