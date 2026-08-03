@@ -1,9 +1,17 @@
 import { formatBRL, STORE_PHONE, type Product } from "./products";
 import type { CartItem } from "./cart";
 
-export function whatsappHref(text: string) {
-  return `https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(text)}`;
+const MAX_WA_TEXT = 1500;
+
+/** Builds a wa.me link. Message text is stripped of control chars, capped and encoded. */
+export function whatsappHref(text: unknown) {
+  const safe = (typeof text === "string" ? text : "")
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, " ")
+    .slice(0, MAX_WA_TEXT);
+  const phone = String(STORE_PHONE).replace(/\D/g, "");
+  return `https://wa.me/${phone}?text=${encodeURIComponent(safe)}`;
 }
+
 
 export const TRACKING_MESSAGE =
   "Olá! Gostaria de acompanhar o status do meu pedido. Poderiam me ajudar com as informações de rastreamento?";
