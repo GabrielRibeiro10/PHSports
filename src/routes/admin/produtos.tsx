@@ -28,6 +28,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { formatBRL } from "@/lib/products";
+import { safeImageUrl } from "@/lib/input-safety";
 import {
   adminProductsQueryOptions,
   deleteProduct,

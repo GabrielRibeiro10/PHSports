@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { ImageSlot } from "@/components/admin/ImageSlot";
 import { slugify, uploadBrandImage } from "@/lib/adminCatalog";
 import { brandsQueryOptions, deleteBrand, upsertBrand, type BrandRow } from "@/lib/adminData";
+import { safeImageUrl } from "@/lib/input-safety";
 
 export const Route = createFileRoute("/admin/marcas")({
   head: () => ({
