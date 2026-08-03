@@ -3,36 +3,47 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import type { Category, CategoryId, Product } from "@/lib/products";
+import { sanitizeText, safeImageUrl } from "@/lib/input-safety";
+
+/** Any string coming from the database is treated as untrusted content. */
+function text(raw: unknown, max = 300): string {
+  return sanitizeText(raw, max);
+}
+
+function img(raw: unknown): string {
+  return safeImageUrl(raw) ?? "";
+}
 
 function mapProductRow(row: Tables<"products">): Product {
   return {
-    slug: row.slug,
-    name: row.name,
-    club: row.club,
-    image: row.image_url,
-    gallery: [row.image_url_2, row.image_url_3, row.image_url_4].filter(
-      (u): u is string => !!u && u.trim().length > 0,
-    ),
+    slug: text(row.slug, 120),
+    name: text(row.name, 160),
+    club: text(row.club, 120),
+    image: img(row.image_url),
+    gallery: [row.image_url_2, row.image_url_3, row.image_url_4]
+      .map((u) => safeImageUrl(u))
+      .filter((u): u is string => !!u && u.trim().length > 0),
     price: Number(row.price),
     oldPrice: Number(row.old_price),
     discount: row.discount,
-    colors: row.colors ?? [],
+    colors: (row.colors ?? []).map((c) => text(c, 40)).filter(Boolean),
     category: row.category,
-    sizes: row.sizes ?? undefined,
-    description: row.description ?? undefined,
+    sizes: row.sizes ? row.sizes.map((s) => text(s, 20)).filter(Boolean) : undefined,
+    description: row.description ? text(row.description, 2000) : undefined,
   };
 }
 
 function mapCategoryRow(row: Tables<"categories">): Category {
   return {
     id: row.id,
-    slug: row.slug,
-    name: row.name,
-    emoji: row.emoji,
-    image: row.image_url,
-    tagline: row.tagline,
+    slug: text(row.slug, 120),
+    name: text(row.name, 120),
+    emoji: text(row.emoji, 16),
+    image: img(row.image_url),
+    tagline: text(row.tagline, 200),
   };
 }
+
 
 export async function fetchProducts(): Promise<Product[]> {
   const { data, error } = await supabase
