@@ -206,3 +206,7 @@ button, a.btn-glow, button.btn-glow {
 @media (prefers-reduced-motion: reduce) {
   .premium-glow::before { animation: none; }
 }
+/* Sem glow no mobile — apenas desktop */
+@media (max-width: 767px) {
+  .premium-glow::before { display: none; }
+}
