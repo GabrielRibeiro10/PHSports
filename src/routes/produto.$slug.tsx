@@ -221,9 +221,14 @@ function ProductPage() {
                 <p><span className="font-bold">Lavagem:</span> Máquina até 30°C, sem alvejante</p>
               </div>
             )}
-            <details className="text-sm">
-              <summary className="cursor-pointer font-bold">Tabela de medidas</summary>
-              {product.category === "feminino" ? (
+            <details
+              id="tabela-medidas"
+              className="text-sm"
+              open={sizeTableOpen}
+              onToggle={(e) => setSizeTableOpen((e.currentTarget as HTMLDetailsElement).open)}
+            >
+              <summary className="cursor-pointer font-bold text-brand transition-colors hover:text-brand/80">Tabela de medidas</summary>
+              {isFemale && product.category !== "caneleiras" ? (
                 <table className="mt-2 w-full text-xs">
                   <thead className="text-left text-muted-foreground">
                     <tr><th className="py-1">Tam.</th><th>Compr.</th><th>Largura</th><th>Altura</th></tr>
