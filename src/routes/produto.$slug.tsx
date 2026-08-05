@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Check, ChevronRight, Ruler, RefreshCw, ShieldCheck, ShoppingBag, Zap } from "lucide-react";
-import { formatBRL, SIZES, type Size } from "@/lib/products";
+import { formatBRL } from "@/lib/products";
 import { getProduct, productsQueryOptions } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
 import { ProductCard } from "@/components/ProductCard";
@@ -36,34 +36,37 @@ function ProductPage() {
   const product = getProduct(products, initialProduct.slug) ?? initialProduct;
   const { add } = useCart();
   const nav = useNavigate();
-  const [size, setSize] = useState<Size | null>(null);
+  const [gender, setGender] = useState<"Masculino" | "Feminino" | null>(null);
   const [qty, setQty] = useState(1);
   const [selected, setSelected] = useState<string | null>(null);
+  const [sizeTableOpen, setSizeTableOpen] = useState(false);
 
   const thumbs = [product.image, ...(product.gallery ?? [])].filter(Boolean);
   const activeImage = selected && thumbs.includes(selected) ? selected : product.image;
 
   const ensureSize = () => {
-    if (!size) {
-      toast.error("Selecione um tamanho");
+    if (!gender) {
+      toast.error("Selecione o gênero");
       return false;
     }
     return true;
   };
   const onAdd = () => {
     if (!ensureSize()) return;
-    add(product.slug, size!, qty);
+    add(product.slug, gender!, qty);
     toast.success("Adicionado ao carrinho");
   };
   const onBuy = () => {
     if (!ensureSize()) return;
-    add(product.slug, size!, qty);
+    add(product.slug, gender!, qty);
     nav({ to: "/carrinho" });
   };
 
-  const sizeOptions = product.sizes ?? SIZES;
+  const genderOptions = ["Masculino", "Feminino"] as const;
+  const isFemale = gender === "Feminino" || (!gender && product.category === "feminino");
   const related = products.filter((p) => p.slug !== product.slug && p.category === product.category).slice(0, 4);
   const relatedFinal = related.length ? related : products.filter((p) => p.slug !== product.slug).slice(0, 4);
+
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
@@ -128,30 +131,38 @@ function ProductPage() {
             ou 6x de <span className="font-semibold text-foreground">{formatBRL(product.price / 6)}</span> sem juros
           </p>
 
-          {/* Size */}
+          {/* Gender */}
           <div className="mt-6">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-bold">Tamanho</span>
-              <button className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-brand">
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-sm font-bold">Gênero</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setSizeTableOpen(true);
+                  document.getElementById("tabela-medidas")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                }}
+                className="inline-flex items-center gap-1.5 rounded-full border border-brand/40 bg-brand/10 px-3 py-1.5 text-xs font-bold text-brand transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand hover:text-brand-foreground hover:shadow-[0_8px_24px_-8px_oklch(0.55_0.22_27_/_0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 active:translate-y-0"
+              >
                 <Ruler className="size-3.5" /> Tabela de medidas
               </button>
             </div>
             <div className="mt-2 flex flex-wrap gap-2">
-              {sizeOptions.map((s: string) => (
+              {genderOptions.map((g) => (
                 <button
-                  key={s}
-                  onClick={() => setSize(s)}
-                  className={`min-w-11 rounded-md border px-4 py-2.5 text-sm font-bold transition-colors ${
-                    size === s
+                  key={g}
+                  onClick={() => setGender(g)}
+                  className={`min-w-24 rounded-md border px-4 py-2.5 text-sm font-bold transition-colors ${
+                    gender === g
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-border bg-background hover:border-primary"
                   }`}
                 >
-                  {s}
+                  {g}
                 </button>
               ))}
             </div>
           </div>
+
 
           {/* Qty */}
           <div className="mt-5">
@@ -206,13 +217,18 @@ function ProductPage() {
             {product.category !== "caneleiras" && (
               <div className="grid gap-1 text-xs">
                 <p><span className="font-bold">Material:</span> 100% poliéster dry-fit</p>
-                <p><span className="font-bold">Modelagem:</span> {product.category === "feminino" ? "Feminina slim" : product.category === "jogador" ? "Slim atlética (player)" : "Unissex torcedor"}</p>
+                <p><span className="font-bold">Modelagem:</span> {isFemale ? "Feminina slim" : product.category === "jogador" ? "Slim atlética (player)" : "Masculina torcedor"}</p>
                 <p><span className="font-bold">Lavagem:</span> Máquina até 30°C, sem alvejante</p>
               </div>
             )}
-            <details className="text-sm">
-              <summary className="cursor-pointer font-bold">Tabela de medidas</summary>
-              {product.category === "feminino" ? (
+            <details
+              id="tabela-medidas"
+              className="text-sm"
+              open={sizeTableOpen}
+              onToggle={(e) => setSizeTableOpen((e.currentTarget as HTMLDetailsElement).open)}
+            >
+              <summary className="cursor-pointer font-bold text-brand transition-colors hover:text-brand/80">Tabela de medidas</summary>
+              {isFemale && product.category !== "caneleiras" ? (
                 <table className="mt-2 w-full text-xs">
                   <thead className="text-left text-muted-foreground">
                     <tr><th className="py-1">Tam.</th><th>Compr.</th><th>Largura</th><th>Altura</th></tr>
