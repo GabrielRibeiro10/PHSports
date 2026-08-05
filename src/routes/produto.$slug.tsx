@@ -36,34 +36,37 @@ function ProductPage() {
   const product = getProduct(products, initialProduct.slug) ?? initialProduct;
   const { add } = useCart();
   const nav = useNavigate();
-  const [size, setSize] = useState<Size | null>(null);
+  const [gender, setGender] = useState<"Masculino" | "Feminino" | null>(null);
   const [qty, setQty] = useState(1);
   const [selected, setSelected] = useState<string | null>(null);
+  const [sizeTableOpen, setSizeTableOpen] = useState(false);
 
   const thumbs = [product.image, ...(product.gallery ?? [])].filter(Boolean);
   const activeImage = selected && thumbs.includes(selected) ? selected : product.image;
 
   const ensureSize = () => {
-    if (!size) {
-      toast.error("Selecione um tamanho");
+    if (!gender) {
+      toast.error("Selecione o gênero");
       return false;
     }
     return true;
   };
   const onAdd = () => {
     if (!ensureSize()) return;
-    add(product.slug, size!, qty);
+    add(product.slug, gender!, qty);
     toast.success("Adicionado ao carrinho");
   };
   const onBuy = () => {
     if (!ensureSize()) return;
-    add(product.slug, size!, qty);
+    add(product.slug, gender!, qty);
     nav({ to: "/carrinho" });
   };
 
-  const sizeOptions = product.sizes ?? SIZES;
+  const genderOptions = ["Masculino", "Feminino"] as const;
+  const isFemale = gender === "Feminino" || (!gender && product.category === "feminino");
   const related = products.filter((p) => p.slug !== product.slug && p.category === product.category).slice(0, 4);
   const relatedFinal = related.length ? related : products.filter((p) => p.slug !== product.slug).slice(0, 4);
+
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
