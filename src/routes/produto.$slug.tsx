@@ -131,30 +131,38 @@ function ProductPage() {
             ou 6x de <span className="font-semibold text-foreground">{formatBRL(product.price / 6)}</span> sem juros
           </p>
 
-          {/* Size */}
+          {/* Gender */}
           <div className="mt-6">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-bold">Tamanho</span>
-              <button className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-brand">
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-sm font-bold">Gênero</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setSizeTableOpen(true);
+                  document.getElementById("tabela-medidas")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                }}
+                className="inline-flex items-center gap-1.5 rounded-full border border-brand/40 bg-brand/10 px-3 py-1.5 text-xs font-bold text-brand transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand hover:text-brand-foreground hover:shadow-[0_8px_24px_-8px_oklch(0.55_0.22_27_/_0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 active:translate-y-0"
+              >
                 <Ruler className="size-3.5" /> Tabela de medidas
               </button>
             </div>
             <div className="mt-2 flex flex-wrap gap-2">
-              {sizeOptions.map((s: string) => (
+              {genderOptions.map((g) => (
                 <button
-                  key={s}
-                  onClick={() => setSize(s)}
-                  className={`min-w-11 rounded-md border px-4 py-2.5 text-sm font-bold transition-colors ${
-                    size === s
+                  key={g}
+                  onClick={() => setGender(g)}
+                  className={`min-w-24 rounded-md border px-4 py-2.5 text-sm font-bold transition-colors ${
+                    gender === g
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-border bg-background hover:border-primary"
                   }`}
                 >
-                  {s}
+                  {g}
                 </button>
               ))}
             </div>
           </div>
+
 
           {/* Qty */}
           <div className="mt-5">
