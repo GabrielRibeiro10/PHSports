@@ -215,11 +215,11 @@ function ProductPage() {
               {product.category === "feminino" ? (
                 <table className="mt-2 w-full text-xs">
                   <thead className="text-left text-muted-foreground">
-                    <tr><th className="py-1">Tamanho</th><th>Busto (cm)</th><th>Comprimento (cm)</th></tr>
+                    <tr><th className="py-1">Tam.</th><th>Compr.</th><th>Largura</th><th>Altura</th></tr>
                   </thead>
                   <tbody>
-                    {[["P",44,62],["M",47,64],["G",50,66],["GG",53,68],["XG",56,70]].map(([s,p,c]) => (
-                      <tr key={String(s)} className="border-t border-border/60"><td className="py-1 font-semibold">{s}</td><td>{p}</td><td>{c}</td></tr>
+                    {[["P (S)","61–63 cm","40–41 cm","150–160 cm"],["M (M)","63–66 cm","41–44 cm","160–165 cm"],["G (L)","66–69 cm","44–47 cm","165–170 cm"],["GG (XL)","69–71 cm","47–50 cm","170–175 cm"]].map(([s,c,l,a]) => (
+                      <tr key={s} className="border-t border-border/60"><td className="py-1 font-semibold">{s}</td><td>{c}</td><td>{l}</td><td>{a}</td></tr>
                     ))}
                   </tbody>
                 </table>
