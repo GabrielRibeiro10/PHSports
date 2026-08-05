@@ -414,7 +414,7 @@ function SearchAndProducts() {
       </div>
 
       <div className="grid animate-in fade-in duration-300 grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {filtered.map((p, i) => (
+        {visible.map((p, i) => (
           <ProductCard key={p.slug} p={p} priority={i < 4} />
         ))}
         {filtered.length === 0 && (
@@ -423,6 +423,33 @@ function SearchAndProducts() {
           </p>
         )}
       </div>
+
+      {hasMore && (
+        <div className="mt-10 flex flex-col items-center gap-3">
+          <button
+            type="button"
+            onClick={loadMore}
+            disabled={loadingMore}
+            aria-busy={loadingMore}
+            className="btn-glow inline-flex items-center justify-center gap-2 rounded-full bg-brand px-8 py-3.5 text-sm font-black uppercase tracking-wider text-brand-foreground shadow-[var(--shadow-premium)] transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] disabled:opacity-70"
+          >
+            {loadingMore ? (
+              <>
+                <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden />
+                Carregando...
+              </>
+            ) : (
+              <>
+                Carregar mais <ArrowRight className="size-4" />
+              </>
+            )}
+          </button>
+          <p className="text-[11px] font-semibold text-muted-foreground">
+            Exibindo {visible.length} de {filtered.length} produtos
+          </p>
+        </div>
+      )}
+
     </section>
   );
 }
