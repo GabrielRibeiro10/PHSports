@@ -217,7 +217,7 @@ function ProductPage() {
             {product.category !== "caneleiras" && (
               <div className="grid gap-1 text-xs">
                 <p><span className="font-bold">Material:</span> 100% poliéster dry-fit</p>
-                <p><span className="font-bold">Modelagem:</span> {product.category === "feminino" ? "Feminina slim" : product.category === "jogador" ? "Slim atlética (player)" : "Unissex torcedor"}</p>
+                <p><span className="font-bold">Modelagem:</span> {isFemale ? "Feminina slim" : product.category === "jogador" ? "Slim atlética (player)" : "Masculina torcedor"}</p>
                 <p><span className="font-bold">Lavagem:</span> Máquina até 30°C, sem alvejante</p>
               </div>
             )}
