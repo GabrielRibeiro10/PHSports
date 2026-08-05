@@ -171,6 +171,44 @@ function regionOf(club: string): Region {
   return "todos";
 }
 
+/** Stable seeded shuffle so the order stays consistent across "load more" clicks. */
+function seededShuffle<T>(items: T[], seed: number): T[] {
+  const arr = [...items];
+  let s = seed || 1;
+  for (let i = arr.length - 1; i > 0; i--) {
+    s = (s * 1664525 + 1013904223) % 4294967296;
+    const j = s % (i + 1);
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/** Round-robin interleave by category so no category clusters in sequence. */
+function interleaveByCategory(items: Product[], seed: number): Product[] {
+  const order: CategoryId[] = ["masculino", "feminino", "retro", "jogador"];
+  const buckets = new Map<string, Product[]>();
+  for (const p of seededShuffle(items, seed)) {
+    const key = order.includes(p.category as CategoryId) ? p.category : "outros";
+    if (!buckets.has(key)) buckets.set(key, []);
+    buckets.get(key)!.push(p);
+  }
+  const keys = [...order.filter((k) => buckets.has(k)), ...[...buckets.keys()].filter((k) => !order.includes(k as CategoryId))];
+  const out: Product[] = [];
+  let added = true;
+  while (added) {
+    added = false;
+    for (const k of keys) {
+      const b = buckets.get(k);
+      const next = b?.shift();
+      if (next) {
+        out.push(next);
+        added = true;
+      }
+    }
+  }
+  return out;
+}
+
 function SearchAndProducts() {
   const nav = useNavigate();
   const { data: products = [] } = useQuery(productsQueryOptions);
@@ -179,6 +217,21 @@ function SearchAndProducts() {
   const [club, setClub] = useState<string>("todos");
   const [gender, setGender] = useState<Gender>("todos");
   const [size, setSize] = useState<SizeFilter>("todos");
+
+  // Page size: 40 on desktop, 22 on tablet/mobile. Resolved after mount to avoid SSR mismatch.
+  const [pageSize, setPageSize] = useState(22);
+  useEffect(() => {
+    const apply = () => setPageSize(window.innerWidth >= 1024 ? 40 : 22);
+    apply();
+    window.addEventListener("resize", apply);
+    return () => window.removeEventListener("resize", apply);
+  }, []);
+
+  const [pages, setPages] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  // Shuffled once per page load; stays stable while browsing.
+  const seed = useRef(Math.floor(Math.random() * 4294967295) || 7).current;
 
   const term = sanitizeSearch(q).toLowerCase();
 
@@ -190,7 +243,14 @@ function SearchAndProducts() {
     return Array.from(set).sort((a, b) => a.localeCompare(b, "pt-BR"));
   })();
 
-  const filtered = products.filter((p) => {
+  const isAllTab = region === "todos" && club === "todos" && gender === "todos" && size === "todos" && !term;
+
+  const base = useMemo(
+    () => (isAllTab ? interleaveByCategory(products, seed) : products),
+    [products, isAllTab, seed],
+  );
+
+  const filtered = base.filter((p) => {
     if (region !== "todos" && regionOf(p.club) !== region) return false;
     if (region !== "todos" && club !== "todos" && p.club !== club) return false;
     if (gender === "masculino" && p.category !== "masculino" && p.category !== "jogador" && p.category !== "retro") return false;
@@ -199,6 +259,24 @@ function SearchAndProducts() {
     if (term && !(p.club.toLowerCase().includes(term) || p.name.toLowerCase().includes(term))) return false;
     return true;
   });
+
+  useEffect(() => {
+    setPages(1);
+  }, [region, club, gender, size, term, pageSize]);
+
+  const visibleCount = pages * pageSize;
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = filtered.length > visible.length;
+
+  const loadMore = () => {
+    if (loadingMore) return;
+    setLoadingMore(true);
+    window.setTimeout(() => {
+      setPages((n) => n + 1);
+      setLoadingMore(false);
+    }, 350);
+  };
+
 
   const selectRegion = (id: Region) => {
     setRegion(id);
