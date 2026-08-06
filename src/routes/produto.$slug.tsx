@@ -36,7 +36,7 @@ function ProductPage() {
   const product = getProduct(products, initialProduct.slug) ?? initialProduct;
   const { add } = useCart();
   const nav = useNavigate();
-  const [gender, setGender] = useState<"Masculino" | "Feminino" | null>(null);
+  const [size, setSize] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
   const [selected, setSelected] = useState<string | null>(null);
   const [sizeTableOpen, setSizeTableOpen] = useState(false);
@@ -45,25 +45,25 @@ function ProductPage() {
   const activeImage = selected && thumbs.includes(selected) ? selected : product.image;
 
   const ensureSize = () => {
-    if (!gender) {
-      toast.error("Selecione o gênero");
+    if (!size) {
+      toast.error("Selecione o tamanho");
       return false;
     }
     return true;
   };
   const onAdd = () => {
     if (!ensureSize()) return;
-    add(product.slug, gender!, qty);
+    add(product.slug, size!, qty);
     toast.success("Adicionado ao carrinho");
   };
   const onBuy = () => {
     if (!ensureSize()) return;
-    add(product.slug, gender!, qty);
+    add(product.slug, size!, qty);
     nav({ to: "/carrinho" });
   };
 
-  const genderOptions = ["Masculino", "Feminino"] as const;
-  const isFemale = gender === "Feminino" || (!gender && product.category === "feminino");
+  const sizeOptions = product.sizes?.length ? product.sizes : [...SIZES];
+  const isFemale = product.category === "feminino";
   const related = products.filter((p) => p.slug !== product.slug && p.category === product.category).slice(0, 4);
   const relatedFinal = related.length ? related : products.filter((p) => p.slug !== product.slug).slice(0, 4);
 
