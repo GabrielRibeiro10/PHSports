@@ -397,21 +397,8 @@ function SearchAndProducts() {
             </button>
           ))}
         </div>
-        <div className="flex flex-wrap items-center gap-2 sm:ml-6">
-          <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Tamanho</span>
-          {sizeOptions.map((s) => (
-            <button
-              key={s}
-              onClick={() => setSize(s)}
-              className={`rounded-full border px-3 py-1 text-xs font-semibold transition-all ${
-                size === s ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:border-primary"
-              }`}
-            >
-              {s === "todos" ? "Todos" : s}
-            </button>
-          ))}
-        </div>
       </div>
+
 
       <div className="grid animate-in fade-in duration-300 grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {visible.map((p, i) => (
