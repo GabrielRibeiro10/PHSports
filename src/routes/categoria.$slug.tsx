@@ -33,7 +33,9 @@ export const Route = createFileRoute("/categoria/$slug")({
         { name: "description", content: description },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
+        { property: "og:url", content: `https://www.phsports.com.br/categoria/${category.slug}` },
       ],
+      links: [{ rel: "canonical", href: `https://www.phsports.com.br/categoria/${category.slug}` }],
     };
   },
   component: CategoryPage,

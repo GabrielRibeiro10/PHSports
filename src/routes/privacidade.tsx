@@ -10,7 +10,7 @@ export const Route = createFileRoute("/privacidade")({
       { property: "og:description", content: "Nosso compromisso com a privacidade e a segurança dos seus dados." },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "canonical", href: "https://phsports.com.br/privacidade" }],
+    links: [{ rel: "canonical", href: "https://www.phsports.com.br/privacidade" }],
   }),
   component: PrivacidadePage,
 });
