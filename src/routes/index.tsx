@@ -164,7 +164,6 @@ const NATIONAL_TEAMS = new Set([
 
 type Region = "todos" | "brasileiros" | "europeus" | "selecoes";
 type Gender = "todos" | "masculino" | "feminino";
-type SizeFilter = "todos" | "P" | "M" | "G" | "GG" | "XG";
 
 function regionOf(club: string): Region {
   if (NATIONAL_TEAMS.has(club)) return "selecoes";
@@ -218,7 +217,6 @@ function SearchAndProducts() {
   const [region, setRegion] = useState<Region>("todos");
   const [club, setClub] = useState<string>("todos");
   const [gender, setGender] = useState<Gender>("todos");
-  const [size, setSize] = useState<SizeFilter>("todos");
 
   // Page size: 40 on desktop, 22 on tablet/mobile. Resolved after mount to avoid SSR mismatch.
   const [pageSize, setPageSize] = useState(22);
@@ -245,7 +243,7 @@ function SearchAndProducts() {
     return Array.from(set).sort((a, b) => a.localeCompare(b, "pt-BR"));
   })();
 
-  const isAllTab = region === "todos" && club === "todos" && gender === "todos" && size === "todos" && !term;
+  const isAllTab = region === "todos" && club === "todos" && gender === "todos" && !term;
 
   const base = useMemo(
     () => (isAllTab ? interleaveByCategory(products, seed) : products),
@@ -257,14 +255,13 @@ function SearchAndProducts() {
     if (region !== "todos" && club !== "todos" && p.club !== club) return false;
     if (gender === "masculino" && p.category !== "masculino" && p.category !== "jogador" && p.category !== "retro") return false;
     if (gender === "feminino" && p.category !== "feminino") return false;
-    if (size !== "todos" && !(p.sizes ?? []).includes(size)) return false;
     if (term && !(p.club.toLowerCase().includes(term) || p.name.toLowerCase().includes(term))) return false;
     return true;
   });
 
   useEffect(() => {
     setPages(1);
-  }, [region, club, gender, size, term, pageSize]);
+  }, [region, club, gender, term, pageSize]);
 
   const visibleCount = pages * pageSize;
   const visible = filtered.slice(0, visibleCount);
@@ -309,7 +306,6 @@ function SearchAndProducts() {
     { id: "masculino", label: "Masculino" },
     { id: "feminino", label: "Feminino" },
   ];
-  const sizeOptions: SizeFilter[] = ["todos", "P", "M", "G", "GG", "XG"];
 
   return (
     <section id="produtos" className="mx-auto max-w-7xl px-4 py-14">
