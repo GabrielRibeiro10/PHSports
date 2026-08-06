@@ -33,7 +33,23 @@ export const Route = createFileRoute("/produto/$slug")({
   component: ProductPage,
 });
 
+function categoryDescription(category: string, club: string, name: string) {
+  switch (category) {
+    case "feminino":
+      return `Camisa feminina do ${club} desenhada para valorizar a silhueta sem abrir mão do conforto. A modelagem slim acompanha o corpo com leveza, o tecido dry-fit de alta densidade mantém a pele seca e o toque é macio do primeiro ao último uso. Escudo aplicado com precisão, costuras reforçadas e cores vivas que não desbotam — perfeita para o estádio, para o dia a dia ou para treinar com estilo.`;
+    case "retro":
+      return `Uma viagem no tempo: a camisa retrô ${name.replace("Camisa Retrô ", "")} resgata fielmente os detalhes que marcaram época — gola clássica, tipografia original e cores tratadas para lembrar exatamente o brilho daquela temporada. Confeccionada em tecido premium com caimento amplo e nostálgico, escudo bordado e acabamento artesanal. Mais que uma camisa: uma relíquia para quem respeita a história do futebol.`;
+    case "jogador":
+      return `Versão jogador do ${club}: a mesma proposta usada em campo, feita para performance real. Modelagem slim atlética, tecido ultraleve com ventilação estratégica e tecnologia de secagem rápida que expulsa o suor no ritmo do jogo. Costuras planas para zero atrito, escudo em alta definição e liberdade total de movimento. Para quem joga sério — e quer parecer profissional em qualquer campo.`;
+    case "caneleiras":
+      return `Caneleiras profissionais com casco rígido de alto impacto e espuma interna de absorção que protege a canela sem travar o movimento. Encaixe anatômico, presilhas ajustáveis e peso reduzido para você esquecer que está usando. Proteção confiável do aquecimento ao apito final.`;
+    default:
+      return `Camisa oficial do ${club} versão torcedor 2026, feita para quem veste a camisa de verdade. Poliéster premium de alta densidade com tecnologia dry-fit, que respira, seca rápido e mantém o conforto os 90 minutos inteiros. Escudo bordado, acabamento profissional e modelagem torcedor unissex com caimento impecável — do sofá à arquibancada, sempre no time principal.`;
+  }
+}
+
 function ProductPage() {
+
   const { product: initialProduct } = Route.useLoaderData();
   const { data: products = [] } = useQuery(productsQueryOptions);
   const product = getProduct(products, initialProduct.slug) ?? initialProduct;
