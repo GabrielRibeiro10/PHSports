@@ -131,10 +131,10 @@ function ProductPage() {
             ou 6x de <span className="font-semibold text-foreground">{formatBRL(product.price / 6)}</span> sem juros
           </p>
 
-          {/* Gender */}
+          {/* Size */}
           <div className="mt-6">
             <div className="flex items-center justify-between gap-3">
-              <span className="text-sm font-bold">Gênero</span>
+              <span className="text-sm font-bold">Tamanho</span>
               <button
                 type="button"
                 onClick={() => {
@@ -147,21 +147,22 @@ function ProductPage() {
               </button>
             </div>
             <div className="mt-2 flex flex-wrap gap-2">
-              {genderOptions.map((g) => (
+              {sizeOptions.map((s: string) => (
                 <button
-                  key={g}
-                  onClick={() => setGender(g)}
-                  className={`min-w-24 rounded-md border px-4 py-2.5 text-sm font-bold transition-colors ${
-                    gender === g
+                  key={s}
+                  onClick={() => setSize(s)}
+                  className={`min-w-14 rounded-md border px-4 py-2.5 text-sm font-bold transition-colors ${
+                    size === s
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-border bg-background hover:border-primary"
                   }`}
                 >
-                  {g}
+                  {s}
                 </button>
               ))}
             </div>
           </div>
+
 
 
           {/* Qty */}
