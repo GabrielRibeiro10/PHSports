@@ -315,7 +315,7 @@ function SearchAndProducts() {
         <div>
           <p className="text-xs font-bold uppercase tracking-widest text-brand">Catálogo</p>
           <h2 className="text-2xl font-black md:text-3xl">Camisas dos grandes clubes</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Todas por R$ 179,90 com etiqueta de promoção.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Camisas dos grandes clubes a partir de R$ 179,90.</p>
         </div>
         <form onSubmit={onSearch} className="flex w-full items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2 md:w-80">
           <Search className="size-4 text-muted-foreground" />
