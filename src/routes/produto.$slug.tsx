@@ -211,13 +211,9 @@ function ProductPage() {
           <div className="mt-6 grid gap-3 rounded-xl border border-border bg-secondary/40 p-4 text-sm">
             <p className="font-bold">Descrição</p>
             <p className="text-muted-foreground">
-              {product.description ??
-                (product.category === "feminino"
-                  ? `Camisa feminina do ${product.club} com modelagem slim e caimento premium. Tecido dry-fit de alta densidade, com respirabilidade e conforto o dia todo.`
-                  : product.category === "retro"
-                  ? `Camisa retrô ${product.name.replace("Camisa Retrô ", "")} — reedição clássica com acabamento vintage, gola de época e escudo bordado.`
-                  : `Camisa oficial do ${product.club} versão torcedor 2026. Confeccionada em poliéster premium de alta densidade, com tecnologia de secagem rápida.`)}
+              {product.description ?? categoryDescription(product.category, product.club, product.name)}
             </p>
+
             {product.category !== "caneleiras" && (
               <div className="grid gap-1 text-xs">
                 <p><span className="font-bold">Material:</span> 100% poliéster dry-fit</p>
