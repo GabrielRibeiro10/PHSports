@@ -24,7 +24,10 @@ export const Route = createFileRoute("/produto/$slug")({
         { name: "description", content: `${p.name} com acabamento premium por ${formatBRL(p.price)}. Envio rápido e troca fácil na PH Sports.` },
         { property: "og:title", content: `${p.name} — PH Sports` },
         { property: "og:description", content: `Camisa ${p.club} por ${formatBRL(p.price)}.` },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: `https://www.phsports.com.br/produto/${p.slug}` },
       ],
+      links: [{ rel: "canonical", href: `https://www.phsports.com.br/produto/${p.slug}` }],
     };
   },
   component: ProductPage,

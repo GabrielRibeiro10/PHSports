@@ -20,11 +20,13 @@ export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(productsQueryOptions),
   head: () => ({
     meta: [
-      { title: "PH Sports — Camisas de Futebol Premium dos Maiores Clubes" },
+      { title: "Camisas de Futebol Premium por R$ 179,90 | PH Sports" },
       { name: "description", content: "Camisas premium dos maiores clubes brasileiros por R$ 179,90. Envio para todo o Brasil e atendimento humanizado via WhatsApp." },
-      { property: "og:title", content: "PH Sports — Camisas de Futebol Premium dos Maiores Clubes" },
+      { property: "og:title", content: "Camisas de Futebol Premium por R$ 179,90 | PH Sports" },
       { property: "og:description", content: "Camisas premium dos maiores clubes brasileiros por R$ 179,90. Envio para todo o Brasil e atendimento humanizado via WhatsApp." },
+      { property: "og:url", content: "https://www.phsports.com.br/" },
     ],
+    links: [{ rel: "canonical", href: "https://www.phsports.com.br/" }],
   }),
   component: Home,
 });

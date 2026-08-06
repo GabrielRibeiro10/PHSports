@@ -10,7 +10,7 @@ export const Route = createFileRoute("/sobre")({
       { property: "og:description", content: "Paixão pelo futebol, qualidade premium e atendimento próximo. Conheça a PH Sports." },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "canonical", href: "https://phsports.com.br/sobre" }],
+    links: [{ rel: "canonical", href: "https://www.phsports.com.br/sobre" }],
   }),
   component: SobrePage,
 });
