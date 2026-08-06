@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Check, ChevronRight, Ruler, RefreshCw, ShieldCheck, ShoppingBag, Zap } from "lucide-react";
-import { formatBRL } from "@/lib/products";
+import { formatBRL, SIZES } from "@/lib/products";
 import { getProduct, productsQueryOptions } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
 import { ProductCard } from "@/components/ProductCard";
@@ -36,7 +36,7 @@ function ProductPage() {
   const product = getProduct(products, initialProduct.slug) ?? initialProduct;
   const { add } = useCart();
   const nav = useNavigate();
-  const [gender, setGender] = useState<"Masculino" | "Feminino" | null>(null);
+  const [size, setSize] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
   const [selected, setSelected] = useState<string | null>(null);
   const [sizeTableOpen, setSizeTableOpen] = useState(false);
@@ -45,25 +45,25 @@ function ProductPage() {
   const activeImage = selected && thumbs.includes(selected) ? selected : product.image;
 
   const ensureSize = () => {
-    if (!gender) {
-      toast.error("Selecione o gênero");
+    if (!size) {
+      toast.error("Selecione o tamanho");
       return false;
     }
     return true;
   };
   const onAdd = () => {
     if (!ensureSize()) return;
-    add(product.slug, gender!, qty);
+    add(product.slug, size!, qty);
     toast.success("Adicionado ao carrinho");
   };
   const onBuy = () => {
     if (!ensureSize()) return;
-    add(product.slug, gender!, qty);
+    add(product.slug, size!, qty);
     nav({ to: "/carrinho" });
   };
 
-  const genderOptions = ["Masculino", "Feminino"] as const;
-  const isFemale = gender === "Feminino" || (!gender && product.category === "feminino");
+  const sizeOptions = product.sizes?.length ? product.sizes : [...SIZES];
+  const isFemale = product.category === "feminino";
   const related = products.filter((p) => p.slug !== product.slug && p.category === product.category).slice(0, 4);
   const relatedFinal = related.length ? related : products.filter((p) => p.slug !== product.slug).slice(0, 4);
 
@@ -131,10 +131,10 @@ function ProductPage() {
             ou 6x de <span className="font-semibold text-foreground">{formatBRL(product.price / 6)}</span> sem juros
           </p>
 
-          {/* Gender */}
+          {/* Size */}
           <div className="mt-6">
             <div className="flex items-center justify-between gap-3">
-              <span className="text-sm font-bold">Gênero</span>
+              <span className="text-sm font-bold">Tamanho</span>
               <button
                 type="button"
                 onClick={() => {
@@ -147,21 +147,22 @@ function ProductPage() {
               </button>
             </div>
             <div className="mt-2 flex flex-wrap gap-2">
-              {genderOptions.map((g) => (
+              {sizeOptions.map((s: string) => (
                 <button
-                  key={g}
-                  onClick={() => setGender(g)}
-                  className={`min-w-24 rounded-md border px-4 py-2.5 text-sm font-bold transition-colors ${
-                    gender === g
+                  key={s}
+                  onClick={() => setSize(s)}
+                  className={`min-w-14 rounded-md border px-4 py-2.5 text-sm font-bold transition-colors ${
+                    size === s
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-border bg-background hover:border-primary"
                   }`}
                 >
-                  {g}
+                  {s}
                 </button>
               ))}
             </div>
           </div>
+
 
 
           {/* Qty */}
