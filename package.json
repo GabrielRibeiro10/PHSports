@@ -9,7 +9,10 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:security": "vitest run src/lib/input-safety.test.ts src/lib/search-safety.test.ts src/lib/whatsapp.test.ts src/lib/catalog.test.ts src/components/ProductCard.xss.test.tsx"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
