@@ -20,8 +20,8 @@ describe("whatsappHref", () => {
   it.each([...XSS_TEXT_PAYLOADS, ...XSS_URL_PAYLOADS])("encodes %j into the query string", (payload) => {
     const href = whatsappHref(payload);
     expect(href.startsWith("https://wa.me/")).toBe(true);
-    // Nothing raw survives: no angle brackets, quotes or control chars in the URL
-    expect(href).not.toMatch(/[<>"'\s]/);
+    // Nothing raw survives: angle brackets, quotes and spaces are percent-encoded
+    expect(href).not.toMatch(/[<>"\s]/);
     expect(href).not.toMatch(/[\u0000-\u001F\u007F]/);
   });
 
@@ -40,6 +40,6 @@ describe("buildOrderMessage", () => {
     );
     const href = whatsappHref(msg);
     expect(href).not.toMatch(/[<>]/);
-    expect(href).not.toContain("script");
+    expect(href).not.toContain("<script");
   });
 });

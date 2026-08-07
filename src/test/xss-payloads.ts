@@ -42,16 +42,16 @@ export const XSS_URL_PAYLOADS = [
 /** Assert a DOM subtree contains no executable/injected markup. */
 export function expectNoUnsafeMarkup(root: HTMLElement | Document) {
   const scope = root instanceof Document ? root.body : root;
-  const html = scope.innerHTML;
 
   if (scope.querySelector("script, iframe, object, embed")) {
     throw new Error("Rendered output contains an executable element");
   }
-  if (/\son(error|load|click|focus|mouseover)\s*=/i.test(html)) {
-    throw new Error("Rendered output contains an inline event handler");
-  }
   for (const el of Array.from(scope.querySelectorAll("*"))) {
     for (const attr of Array.from(el.attributes)) {
+      const name = attr.name.toLowerCase();
+      if (name.startsWith("on")) {
+        throw new Error(`Inline event handler ${name} on <${el.tagName.toLowerCase()}>`);
+      }
       const v = attr.value.replace(/[\u0000-\u001F\s]/g, "").toLowerCase();
       if (v.startsWith("javascript:") || v.startsWith("vbscript:") || v.startsWith("data:text/html")) {
         throw new Error(`Unsafe attribute value on <${el.tagName.toLowerCase()} ${attr.name}>`);

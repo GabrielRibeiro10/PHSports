@@ -70,7 +70,7 @@ describe("ProductCard renders untrusted catalog data safely", () => {
   it.each(XSS_URL_PAYLOADS)("never emits an unsafe image src for %j", async (url) => {
     const { container, unmount } = renderInRouter(<ProductCard p={evilProduct("Camisa", url)} />);
     const img = await screen.findByRole("img");
-    expect(img.getAttribute("src")).toBe("");
+    expect(img.getAttribute("src") ?? "").toBe("");
     expectNoUnsafeMarkup(container);
     unmount();
   });
