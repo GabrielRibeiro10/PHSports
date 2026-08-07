@@ -14,7 +14,7 @@ function img(raw: unknown): string {
   return safeImageUrl(raw) ?? "";
 }
 
-function mapProductRow(row: Tables<"products">): Product {
+export function mapProductRow(row: Tables<"products">): Product {
   return {
     slug: text(row.slug, 120),
     name: text(row.name, 160),
@@ -33,7 +33,7 @@ function mapProductRow(row: Tables<"products">): Product {
   };
 }
 
-function mapCategoryRow(row: Tables<"categories">): Category {
+export function mapCategoryRow(row: Tables<"categories">): Category {
   return {
     id: row.id,
     slug: text(row.slug, 120),
