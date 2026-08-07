@@ -266,6 +266,41 @@ function ProductPage() {
                     ))}
                   </tbody>
                 </table>
+              ) : product.category === "masculino" || product.category === "retro" ? (
+                <div className="mt-3 overflow-x-auto rounded-xl border border-border bg-background">
+                  <table className="w-full min-w-[420px] border-collapse text-xs">
+                    <thead>
+                      <tr className="bg-obsidian text-left uppercase tracking-wider text-white">
+                        <th className="px-3 py-2.5 font-black">Tamanho</th>
+                        <th className="px-3 py-2.5 font-bold">Compr. (cm)</th>
+                        <th className="px-3 py-2.5 font-bold">Largura (cm)</th>
+                        <th className="px-3 py-2.5 font-bold">Altura (cm)</th>
+                        <th className="px-3 py-2.5 font-bold">Peso (kg)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        ["P (S)", "69–71", "53–55", "162–170", "50–62"],
+                        ["M (M)", "71–73", "55–57", "170–176", "62–78"],
+                        ["G (L)", "73–75", "57–58", "176–182", "78–83"],
+                        ["GG (XL)", "75–78", "58–60", "182–190", "83–90"],
+                        ["2XL", "78–81", "60–62", "190–195", "90–97"],
+                        ["3XL", "81–83", "62–64", "192–197", "97–104"],
+                      ].map(([t, c, l, a, p], i) => (
+                        <tr
+                          key={t}
+                          className={`border-t border-border/60 ${i % 2 ? "bg-secondary/40" : ""}`}
+                        >
+                          <td className="px-3 py-2.5 font-bold text-brand">{t}</td>
+                          <td className="px-3 py-2.5 text-muted-foreground">{c}</td>
+                          <td className="px-3 py-2.5 text-muted-foreground">{l}</td>
+                          <td className="px-3 py-2.5 text-muted-foreground">{a}</td>
+                          <td className="px-3 py-2.5 text-muted-foreground">{p}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               ) : (
                 <table className="mt-2 w-full text-xs">
                   <thead className="text-left text-muted-foreground">
