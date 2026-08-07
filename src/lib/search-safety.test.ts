@@ -13,6 +13,8 @@ describe("sanitizeSearch", () => {
   it("keeps normal queries intact", () => {
     expect(sanitizeSearch("  camisa   flamengo ")).toBe("camisa flamengo");
     expect(isValidSearch(sanitizeSearch("retro"))).toBe(true);
-    expect(isValidSearch(sanitizeSearch("<script>"))).toBe(false);
+    // Markup is reduced to inert plain text before it can reach any renderer
+    expect(sanitizeSearch("<script>alert(1)</script>")).toBe("script alert(1) \/script");
+    expect(isValidSearch(sanitizeSearch(""))).toBe(false);
   });
 });
