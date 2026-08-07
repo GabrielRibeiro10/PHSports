@@ -245,16 +245,28 @@ function ProductPage() {
             >
               <summary className="cursor-pointer font-bold text-brand transition-colors hover:text-brand/80">Tabela de medidas</summary>
               {isFemale && product.category !== "caneleiras" ? (
-                <table className="mt-2 w-full text-xs">
-                  <thead className="text-left text-muted-foreground">
-                    <tr><th className="py-1">Tam.</th><th>Compr.</th><th>Largura</th><th>Altura</th></tr>
-                  </thead>
-                  <tbody>
-                    {[["P (S)","61–63 cm","40–41 cm","150–160 cm"],["M (M)","63–66 cm","41–44 cm","160–165 cm"],["G (L)","66–69 cm","44–47 cm","165–170 cm"],["GG (XL)","69–71 cm","47–50 cm","170–175 cm"]].map(([s,c,l,a]) => (
-                      <tr key={s} className="border-t border-border/60"><td className="py-1 font-semibold">{s}</td><td>{c}</td><td>{l}</td><td>{a}</td></tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div className="mt-3 overflow-x-auto rounded-xl border border-border bg-background">
+                  <table className="w-full min-w-[420px] border-collapse text-xs">
+                    <thead>
+                      <tr className="bg-obsidian text-left uppercase tracking-wider text-white">
+                        <th className="px-3 py-2.5 font-black">Tamanho</th>
+                        <th className="px-3 py-2.5 font-bold">Compr. (cm)</th>
+                        <th className="px-3 py-2.5 font-bold">Largura (cm)</th>
+                        <th className="px-3 py-2.5 font-bold">Altura (cm)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[["P (S)","61–63 cm","40–41 cm","150–160 cm"],["M (M)","63–66 cm","41–44 cm","160–165 cm"],["G (L)","66–69 cm","44–47 cm","165–170 cm"],["GG (XL)","69–71 cm","47–50 cm","170–175 cm"]].map(([s,c,l,a], i) => (
+                        <tr key={s} className={`border-t border-border/60 ${i % 2 ? "bg-secondary/40" : ""}`}>
+                          <td className="px-3 py-2.5 font-bold text-brand">{s}</td>
+                          <td className="px-3 py-2.5 text-muted-foreground">{c}</td>
+                          <td className="px-3 py-2.5 text-muted-foreground">{l}</td>
+                          <td className="px-3 py-2.5 text-muted-foreground">{a}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               ) : product.category === "caneleiras" ? (
                 <table className="mt-2 w-full text-xs">
                   <thead className="text-left text-muted-foreground">
