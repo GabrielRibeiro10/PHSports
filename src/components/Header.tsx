@@ -3,7 +3,7 @@ import { Search, ShoppingBag, Menu, X, Truck } from "lucide-react";
 import { useState, type FormEvent, type MouseEvent } from "react";
 import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
-import { MAX_SEARCH_LEN, sanitizeSearch, checkSearchRate } from "@/lib/search-safety";
+import { MAX_SEARCH_LEN, sanitizeSearch, sanitizeSearchTyping, checkSearchRate } from "@/lib/search-safety";
 import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
 
 export function Header() {
@@ -75,7 +75,7 @@ export function Header() {
           <Search className="size-4 text-muted-foreground" />
           <input
             value={q}
-            onChange={(e) => setQ(sanitizeSearch(e.target.value))}
+            onChange={(e) => setQ(sanitizeSearchTyping(e.target.value))}
             maxLength={MAX_SEARCH_LEN}
             inputMode="search"
             placeholder="Buscar camisa, clube..."
@@ -106,7 +106,7 @@ export function Header() {
               <Search className="size-4 text-muted-foreground" />
               <input
                 value={q}
-                onChange={(e) => setQ(sanitizeSearch(e.target.value))}
+                onChange={(e) => setQ(sanitizeSearchTyping(e.target.value))}
                 maxLength={MAX_SEARCH_LEN}
                 inputMode="search"
                 placeholder="Buscar camisa, clube..."

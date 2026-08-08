@@ -11,7 +11,7 @@ import { productsQueryOptions } from "@/lib/catalog";
 import { ProductCard } from "@/components/ProductCard";
 import { Ticker } from "@/components/Ticker";
 import { ProductCarousel } from "@/components/ProductCarousel";
-import { MAX_SEARCH_LEN, sanitizeSearch, checkSearchRate } from "@/lib/search-safety";
+import { MAX_SEARCH_LEN, sanitizeSearch, sanitizeSearchTyping, checkSearchRate } from "@/lib/search-safety";
 import { BenefitsMarquee } from "@/components/BenefitsMarquee";
 import { Reviews } from "@/components/Reviews";
 import { CategoryCarousel } from "@/components/CategoryCarousel";
@@ -321,7 +321,7 @@ function SearchAndProducts() {
           <Search className="size-4 text-muted-foreground" />
           <input
             value={q}
-            onChange={(e) => setQ(sanitizeSearch(e.target.value))}
+            onChange={(e) => setQ(sanitizeSearchTyping(e.target.value))}
             maxLength={MAX_SEARCH_LEN}
             inputMode="search"
             placeholder="Buscar clube..."

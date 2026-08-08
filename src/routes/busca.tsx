@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { productsQueryOptions } from "@/lib/catalog";
 import { ProductCard } from "@/components/ProductCard";
-import { MAX_SEARCH_LEN, sanitizeSearch, checkSearchRate } from "@/lib/search-safety";
+import { MAX_SEARCH_LEN, sanitizeSearch, sanitizeSearchTyping, checkSearchRate } from "@/lib/search-safety";
 
 const searchSchema = z.object({
   q: fallback(z.string().max(MAX_SEARCH_LEN).transform(sanitizeSearch), "").default(""),
@@ -98,7 +98,7 @@ function SearchPage() {
         <Search className="size-4 text-muted-foreground" />
         <input
           value={input}
-          onChange={(e) => setInput(sanitizeSearch(e.target.value))}
+          onChange={(e) => setInput(sanitizeSearchTyping(e.target.value))}
           maxLength={MAX_SEARCH_LEN}
           inputMode="search"
           placeholder="Buscar clube, camisa, categoria..."
