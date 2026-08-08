@@ -97,7 +97,7 @@ function ProductPage() {
         <span className="text-foreground">{product.name}</span>
       </nav>
 
-      <div className="grid gap-10 md:grid-cols-2">
+      <div className="grid min-w-0 gap-10 md:grid-cols-2">
         {/* Gallery */}
         <div>
           <div className="relative overflow-hidden rounded-2xl border border-border bg-secondary/40">
@@ -224,7 +224,7 @@ function ProductPage() {
             <li className="inline-flex items-center gap-2"><Check className="size-3.5 text-brand" /> Modelagem torcedor unissex</li>
           </ul>
 
-          <div className="mt-6 grid gap-3 rounded-xl border border-border bg-secondary/40 p-4 text-sm">
+          <div className="mt-6 grid min-w-0 gap-3 rounded-xl border border-border bg-secondary/40 p-4 text-sm">
             <p className="font-bold">Descrição</p>
             <p className="text-muted-foreground">
               {product.description ?? categoryDescription(product.category, product.club, product.name)}
@@ -239,16 +239,16 @@ function ProductPage() {
             )}
             <details
               id="tabela-medidas"
-              className="text-sm"
+              className="min-w-0 text-sm"
               open={sizeTableOpen}
               onToggle={(e) => setSizeTableOpen((e.currentTarget as HTMLDetailsElement).open)}
             >
               <summary className="cursor-pointer font-bold text-brand transition-colors hover:text-brand/80">Tabela de medidas</summary>
               {isFemale && product.category !== "caneleiras" ? (
-                <div className="-mx-1 mt-3 overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-background px-0 [-webkit-overflow-scrolling:touch]">
-                  <table className="w-full min-w-[360px] border-collapse text-[11px] sm:text-xs">
+                <div className="mt-3 w-full max-w-full min-w-0 overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-background [-webkit-overflow-scrolling:touch]">
+                  <table className="w-max min-w-full border-collapse text-[11px] sm:text-xs">
                     <thead>
-                      <tr className="sticky top-0 z-10 bg-obsidian text-left uppercase tracking-wider text-white">
+                      <tr className="bg-obsidian text-left uppercase tracking-wider text-white">
                         <th className="whitespace-nowrap px-2 py-2 text-[10px] font-black sm:px-3 sm:py-2">Tamanho</th>
                         <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Compr. (cm)</th>
                         <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Largura (cm)</th>
@@ -279,10 +279,10 @@ function ProductPage() {
                   </tbody>
                 </table>
               ) : product.category === "masculino" || product.category === "retro" || product.category === "jogador" ? (
-                <div className="-mx-1 mt-3 overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-background px-0 [-webkit-overflow-scrolling:touch]">
-                  <table className="w-full min-w-[360px] border-collapse text-[11px] sm:text-xs">
+                <div className="mt-3 w-full max-w-full min-w-0 overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-background [-webkit-overflow-scrolling:touch]">
+                  <table className="w-max min-w-full border-collapse text-[11px] sm:text-xs">
                     <thead>
-                      <tr className="sticky top-0 z-10 bg-obsidian text-left uppercase tracking-wider text-white">
+                      <tr className="bg-obsidian text-left uppercase tracking-wider text-white">
                         <th className="whitespace-nowrap px-2 py-2 text-[10px] font-black sm:px-3 sm:py-2">Tamanho</th>
                         <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Compr. (cm)</th>
                         <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Largura (cm)</th>
