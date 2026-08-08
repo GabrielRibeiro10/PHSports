@@ -246,29 +246,29 @@ function ProductPage() {
               <summary className="cursor-pointer font-bold text-brand transition-colors hover:text-brand/80">Tabela de medidas</summary>
               {isFemale && product.category !== "caneleiras" ? (
                 <div className="-mx-1 mt-3 overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-background px-0 [-webkit-overflow-scrolling:touch]">
-                  <table className="w-full min-w-[440px] border-collapse text-[13px] sm:text-xs">
+                  <table className="w-full min-w-[360px] border-collapse text-[11px] sm:text-xs">
                     <thead>
                       <tr className="sticky top-0 z-10 bg-obsidian text-left uppercase tracking-wider text-white">
-                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-black sm:py-2.5">Tamanho</th>
-                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-bold sm:py-2.5">Compr. (cm)</th>
-                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-bold sm:py-2.5">Largura (cm)</th>
-                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-bold sm:py-2.5">Altura (cm)</th>
+                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-black sm:px-3 sm:py-2">Tamanho</th>
+                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Compr. (cm)</th>
+                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Largura (cm)</th>
+                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Altura (cm)</th>
                       </tr>
                     </thead>
                     <tbody>
                       {[["P (S)","61–63 cm","40–41 cm","150–160 cm"],["M (M)","63–66 cm","41–44 cm","160–165 cm"],["G (L)","66–69 cm","44–47 cm","165–170 cm"],["GG (XL)","69–71 cm","47–50 cm","170–175 cm"]].map(([s,c,l,a], i) => (
                         <tr key={s} className={`border-t border-border/60 ${i % 2 ? "bg-secondary/40" : ""}`}>
-                          <td className="whitespace-nowrap px-3 py-3 font-bold text-brand sm:py-2.5">{s}</td>
-                          <td className="whitespace-nowrap px-3 py-3 text-muted-foreground sm:py-2.5">{c}</td>
-                          <td className="whitespace-nowrap px-3 py-3 text-muted-foreground sm:py-2.5">{l}</td>
-                          <td className="whitespace-nowrap px-3 py-3 text-muted-foreground sm:py-2.5">{a}</td>
+                          <td className="whitespace-nowrap px-2 py-1.5 font-bold text-brand sm:px-3 sm:py-2">{s}</td>
+                          <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{c}</td>
+                          <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{l}</td>
+                          <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{a}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
               ) : product.category === "caneleiras" ? (
-                <table className="mt-2 w-full text-[13px] sm:text-xs">
+                <table className="mt-2 w-full text-[11px] sm:text-xs">
                   <thead className="text-left text-muted-foreground">
                     <tr><th className="py-2">Tamanho</th><th className="py-2">Altura recomendada</th></tr>
                   </thead>
@@ -280,14 +280,14 @@ function ProductPage() {
                 </table>
               ) : product.category === "masculino" || product.category === "retro" || product.category === "jogador" ? (
                 <div className="-mx-1 mt-3 overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-background px-0 [-webkit-overflow-scrolling:touch]">
-                  <table className="w-full min-w-[440px] border-collapse text-[13px] sm:text-xs">
+                  <table className="w-full min-w-[360px] border-collapse text-[11px] sm:text-xs">
                     <thead>
                       <tr className="sticky top-0 z-10 bg-obsidian text-left uppercase tracking-wider text-white">
-                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-black sm:py-2.5">Tamanho</th>
-                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-bold sm:py-2.5">Compr. (cm)</th>
-                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-bold sm:py-2.5">Largura (cm)</th>
-                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-bold sm:py-2.5">Altura (cm)</th>
-                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-bold sm:py-2.5">Peso (kg)</th>
+                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-black sm:px-3 sm:py-2">Tamanho</th>
+                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Compr. (cm)</th>
+                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Largura (cm)</th>
+                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Altura (cm)</th>
+                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Peso (kg)</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -313,18 +313,18 @@ function ProductPage() {
                           key={t}
                           className={`border-t border-border/60 ${i % 2 ? "bg-secondary/40" : ""}`}
                         >
-                          <td className="whitespace-nowrap px-3 py-3 font-bold text-brand sm:py-2.5">{t}</td>
-                          <td className="whitespace-nowrap px-3 py-3 text-muted-foreground sm:py-2.5">{c}</td>
-                          <td className="whitespace-nowrap px-3 py-3 text-muted-foreground sm:py-2.5">{l}</td>
-                          <td className="whitespace-nowrap px-3 py-3 text-muted-foreground sm:py-2.5">{a}</td>
-                          <td className="whitespace-nowrap px-3 py-3 text-muted-foreground sm:py-2.5">{p}</td>
+                          <td className="whitespace-nowrap px-2 py-1.5 font-bold text-brand sm:px-3 sm:py-2">{t}</td>
+                          <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{c}</td>
+                          <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{l}</td>
+                          <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{a}</td>
+                          <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{p}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
               ) : (
-                <table className="mt-2 w-full text-[13px] sm:text-xs">
+                <table className="mt-2 w-full text-[11px] sm:text-xs">
                   <thead className="text-left text-muted-foreground">
                     <tr><th className="py-2">Tamanho</th><th className="py-2">Peito (cm)</th><th className="py-2">Comprimento (cm)</th></tr>
                   </thead>
