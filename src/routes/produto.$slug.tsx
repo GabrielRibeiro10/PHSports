@@ -245,49 +245,49 @@ function ProductPage() {
             >
               <summary className="cursor-pointer font-bold text-brand transition-colors hover:text-brand/80">Tabela de medidas</summary>
               {isFemale && product.category !== "caneleiras" ? (
-                <div className="mt-3 overflow-x-auto rounded-xl border border-border bg-background">
-                  <table className="w-full min-w-[420px] border-collapse text-xs">
+                <div className="-mx-1 mt-3 overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-background px-0 [-webkit-overflow-scrolling:touch]">
+                  <table className="w-full min-w-[440px] border-collapse text-[13px] sm:text-xs">
                     <thead>
-                      <tr className="bg-obsidian text-left uppercase tracking-wider text-white">
-                        <th className="px-3 py-2.5 font-black">Tamanho</th>
-                        <th className="px-3 py-2.5 font-bold">Compr. (cm)</th>
-                        <th className="px-3 py-2.5 font-bold">Largura (cm)</th>
-                        <th className="px-3 py-2.5 font-bold">Altura (cm)</th>
+                      <tr className="sticky top-0 z-10 bg-obsidian text-left uppercase tracking-wider text-white">
+                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-black sm:py-2.5">Tamanho</th>
+                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-bold sm:py-2.5">Compr. (cm)</th>
+                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-bold sm:py-2.5">Largura (cm)</th>
+                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-bold sm:py-2.5">Altura (cm)</th>
                       </tr>
                     </thead>
                     <tbody>
                       {[["P (S)","61–63 cm","40–41 cm","150–160 cm"],["M (M)","63–66 cm","41–44 cm","160–165 cm"],["G (L)","66–69 cm","44–47 cm","165–170 cm"],["GG (XL)","69–71 cm","47–50 cm","170–175 cm"]].map(([s,c,l,a], i) => (
                         <tr key={s} className={`border-t border-border/60 ${i % 2 ? "bg-secondary/40" : ""}`}>
-                          <td className="px-3 py-2.5 font-bold text-brand">{s}</td>
-                          <td className="px-3 py-2.5 text-muted-foreground">{c}</td>
-                          <td className="px-3 py-2.5 text-muted-foreground">{l}</td>
-                          <td className="px-3 py-2.5 text-muted-foreground">{a}</td>
+                          <td className="whitespace-nowrap px-3 py-3 font-bold text-brand sm:py-2.5">{s}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-muted-foreground sm:py-2.5">{c}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-muted-foreground sm:py-2.5">{l}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-muted-foreground sm:py-2.5">{a}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
               ) : product.category === "caneleiras" ? (
-                <table className="mt-2 w-full text-xs">
+                <table className="mt-2 w-full text-[13px] sm:text-xs">
                   <thead className="text-left text-muted-foreground">
-                    <tr><th className="py-1">Tamanho</th><th>Altura recomendada</th></tr>
+                    <tr><th className="py-2">Tamanho</th><th className="py-2">Altura recomendada</th></tr>
                   </thead>
                   <tbody>
                     {[["S","1,40m – 1,60m"],["M","1,60m – 1,75m"],["L","1,75m – 1,90m"]].map(([s,h]) => (
-                      <tr key={s} className="border-t border-border/60"><td className="py-1 font-semibold">{s}</td><td>{h}</td></tr>
+                      <tr key={s} className="border-t border-border/60"><td className="py-2 font-semibold">{s}</td><td className="py-2">{h}</td></tr>
                     ))}
                   </tbody>
                 </table>
               ) : product.category === "masculino" || product.category === "retro" || product.category === "jogador" ? (
-                <div className="mt-3 overflow-x-auto rounded-xl border border-border bg-background">
-                  <table className="w-full min-w-[420px] border-collapse text-xs">
+                <div className="-mx-1 mt-3 overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-background px-0 [-webkit-overflow-scrolling:touch]">
+                  <table className="w-full min-w-[440px] border-collapse text-[13px] sm:text-xs">
                     <thead>
-                      <tr className="bg-obsidian text-left uppercase tracking-wider text-white">
-                        <th className="px-3 py-2.5 font-black">Tamanho</th>
-                        <th className="px-3 py-2.5 font-bold">Compr. (cm)</th>
-                        <th className="px-3 py-2.5 font-bold">Largura (cm)</th>
-                        <th className="px-3 py-2.5 font-bold">Altura (cm)</th>
-                        <th className="px-3 py-2.5 font-bold">Peso (kg)</th>
+                      <tr className="sticky top-0 z-10 bg-obsidian text-left uppercase tracking-wider text-white">
+                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-black sm:py-2.5">Tamanho</th>
+                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-bold sm:py-2.5">Compr. (cm)</th>
+                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-bold sm:py-2.5">Largura (cm)</th>
+                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-bold sm:py-2.5">Altura (cm)</th>
+                        <th className="whitespace-nowrap px-3 py-3 text-[11px] font-bold sm:py-2.5">Peso (kg)</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -313,24 +313,24 @@ function ProductPage() {
                           key={t}
                           className={`border-t border-border/60 ${i % 2 ? "bg-secondary/40" : ""}`}
                         >
-                          <td className="px-3 py-2.5 font-bold text-brand">{t}</td>
-                          <td className="px-3 py-2.5 text-muted-foreground">{c}</td>
-                          <td className="px-3 py-2.5 text-muted-foreground">{l}</td>
-                          <td className="px-3 py-2.5 text-muted-foreground">{a}</td>
-                          <td className="px-3 py-2.5 text-muted-foreground">{p}</td>
+                          <td className="whitespace-nowrap px-3 py-3 font-bold text-brand sm:py-2.5">{t}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-muted-foreground sm:py-2.5">{c}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-muted-foreground sm:py-2.5">{l}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-muted-foreground sm:py-2.5">{a}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-muted-foreground sm:py-2.5">{p}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
               ) : (
-                <table className="mt-2 w-full text-xs">
+                <table className="mt-2 w-full text-[13px] sm:text-xs">
                   <thead className="text-left text-muted-foreground">
-                    <tr><th className="py-1">Tamanho</th><th>Peito (cm)</th><th>Comprimento (cm)</th></tr>
+                    <tr><th className="py-2">Tamanho</th><th className="py-2">Peito (cm)</th><th className="py-2">Comprimento (cm)</th></tr>
                   </thead>
                   <tbody>
                     {[["P",50,70],["M",53,72],["G",56,74],["GG",59,76],["XG",62,78]].map(([s,p,c]) => (
-                      <tr key={String(s)} className="border-t border-border/60"><td className="py-1 font-semibold">{s}</td><td>{p}</td><td>{c}</td></tr>
+                      <tr key={String(s)} className="border-t border-border/60"><td className="py-2 font-semibold">{s}</td><td className="py-2">{p}</td><td className="py-2">{c}</td></tr>
                     ))}
                   </tbody>
                 </table>

@@ -24,6 +24,20 @@ export function sanitizeSearch(raw: unknown): string {
   return cleaned.slice(0, MAX_SEARCH_LEN);
 }
 
+// Versão "enquanto digita": mantém o espaço pressionado pelo usuário
+// (inclusive no fim), permitindo nomes compostos como "São Paulo".
+// O trim final acontece apenas no momento da busca (sanitizeSearch).
+export function sanitizeSearchTyping(raw: unknown): string {
+  if (typeof raw !== "string") return "";
+  const cleaned = raw
+    .replace(CONTROL_CHARS, " ")
+    .replace(DANGEROUS_CHARS, " ")
+    .replace(/[^\S ]+/g, " ")
+    .replace(/ {2,}/g, " ")
+    .replace(/^ +/, "");
+  return cleaned.slice(0, MAX_SEARCH_LEN);
+}
+
 export function isValidSearch(v: string): boolean {
   return v.length > 0 && v.length <= MAX_SEARCH_LEN;
 }
