@@ -60,6 +60,8 @@ function ProductPage() {
   const [qty, setQty] = useState(1);
   const [selected, setSelected] = useState<string | null>(null);
   const [sizeTableOpen, setSizeTableOpen] = useState(false);
+  const [mobileTableOpen, setMobileTableOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const thumbs = [product.image, ...(product.gallery ?? [])].filter(Boolean);
   const activeImage = selected && thumbs.includes(selected) ? selected : product.image;
