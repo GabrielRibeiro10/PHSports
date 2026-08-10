@@ -333,30 +333,39 @@ function ProductPage() {
       {mobileTableOpen && (
         <div
           className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4 animate-[fade-in_0.18s_ease-out] md:hidden"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Tabela de medidas"
           onClick={() => setMobileTableOpen(false)}
         >
           <div
+            ref={modalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={modalTitleId}
+            tabIndex={-1}
             className="relative w-full max-w-[92vw] overflow-hidden rounded-2xl border border-border bg-background p-3 shadow-2xl animate-[fade-in_0.18s_ease-out]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-2 flex items-center justify-between gap-2 pr-8">
-              <p className="text-sm font-black">Tabela de medidas</p>
+              <h2 id={modalTitleId} className="text-sm font-black">Tabela de medidas</h2>
             </div>
             <button
+              ref={closeBtnRef}
               type="button"
               onClick={() => setMobileTableOpen(false)}
-              aria-label="Fechar"
-              className="absolute right-2 top-2 grid size-8 place-items-center rounded-full border border-border bg-secondary/60 text-foreground transition-colors hover:bg-brand hover:text-brand-foreground"
+              aria-label="Fechar tabela de medidas"
+              className="absolute right-2 top-2 grid size-8 place-items-center rounded-full border border-border bg-secondary/60 text-foreground transition-colors hover:bg-brand hover:text-brand-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
             >
-              <X className="size-4" />
+              <X className="size-4" aria-hidden="true" />
             </button>
-            <div className="min-w-0 [&_table]:text-[10px] [&_td]:px-1.5 [&_td]:py-1 [&_th]:px-1.5 [&_th]:py-1.5 [&_th]:text-[9px]">
+            <div
+              tabIndex={0}
+              role="group"
+              aria-label="Medidas — role horizontalmente para ver todas as colunas"
+              className="min-w-0 [&_table]:text-[10px] [&_td]:px-1.5 [&_td]:py-1 [&_th]:px-1.5 [&_th]:py-1.5 [&_th]:text-[9px]"
+            >
               <SizeTable product={product} isFemale={isFemale} />
             </div>
           </div>
+        </div>
         </div>
       )}
     </div>
