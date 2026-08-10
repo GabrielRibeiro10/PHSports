@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Check, ChevronRight, Ruler, RefreshCw, ShieldCheck, ShoppingBag, X, Zap } from "lucide-react";
 import { formatBRL, SIZES } from "@/lib/products";
@@ -62,6 +62,56 @@ function ProductPage() {
   const [sizeTableOpen, setSizeTableOpen] = useState(false);
   const [mobileTableOpen, setMobileTableOpen] = useState(false);
   const isMobile = useIsMobile();
+  const sizeTableBtnRef = useRef<HTMLButtonElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const modalTitleId = useId();
+
+  useEffect(() => {
+    if (!mobileTableOpen) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    closeBtnRef.current?.focus();
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        setMobileTableOpen(false);
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const root = modalRef.current;
+      if (!root) return;
+      const focusables = Array.from(
+        root.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((el) => el.offsetParent !== null || el === document.activeElement);
+      if (focusables.length === 0) {
+        e.preventDefault();
+        return;
+      }
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      if (e.shiftKey && (active === first || !root.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (active === last || !root.contains(active))) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown, true);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown, true);
+      document.body.style.overflow = prevOverflow;
+      (previouslyFocused ?? sizeTableBtnRef.current)?.focus?.();
+    };
+  }, [mobileTableOpen]);
 
   const thumbs = [product.image, ...(product.gallery ?? [])].filter(Boolean);
   const activeImage = selected && thumbs.includes(selected) ? selected : product.image;
@@ -158,7 +208,10 @@ function ProductPage() {
             <div className="flex items-center justify-between gap-3">
               <span className="text-sm font-bold">Tamanho</span>
               <button
+                ref={sizeTableBtnRef}
                 type="button"
+                aria-haspopup="dialog"
+                aria-expanded={isMobile ? mobileTableOpen : sizeTableOpen}
                 onClick={() => {
                   if (isMobile) {
                     setMobileTableOpen(true);
@@ -169,7 +222,7 @@ function ProductPage() {
                 }}
                 className="inline-flex items-center gap-1.5 rounded-full border border-brand/40 bg-brand/10 px-3 py-1.5 text-xs font-bold text-brand transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand hover:text-brand-foreground hover:shadow-[0_8px_24px_-8px_oklch(0.55_0.22_27_/_0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 active:translate-y-0"
               >
-                <Ruler className="size-3.5" /> Tabela de medidas
+                <Ruler className="size-3.5" aria-hidden="true" /> Tabela de medidas
               </button>
             </div>
             <div className="mt-2 flex flex-wrap gap-2">
@@ -280,27 +333,35 @@ function ProductPage() {
       {mobileTableOpen && (
         <div
           className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4 animate-[fade-in_0.18s_ease-out] md:hidden"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Tabela de medidas"
           onClick={() => setMobileTableOpen(false)}
         >
           <div
+            ref={modalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={modalTitleId}
+            tabIndex={-1}
             className="relative w-full max-w-[92vw] overflow-hidden rounded-2xl border border-border bg-background p-3 shadow-2xl animate-[fade-in_0.18s_ease-out]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-2 flex items-center justify-between gap-2 pr-8">
-              <p className="text-sm font-black">Tabela de medidas</p>
+              <h2 id={modalTitleId} className="text-sm font-black">Tabela de medidas</h2>
             </div>
             <button
+              ref={closeBtnRef}
               type="button"
               onClick={() => setMobileTableOpen(false)}
-              aria-label="Fechar"
-              className="absolute right-2 top-2 grid size-8 place-items-center rounded-full border border-border bg-secondary/60 text-foreground transition-colors hover:bg-brand hover:text-brand-foreground"
+              aria-label="Fechar tabela de medidas"
+              className="absolute right-2 top-2 grid size-8 place-items-center rounded-full border border-border bg-secondary/60 text-foreground transition-colors hover:bg-brand hover:text-brand-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
             >
-              <X className="size-4" />
+              <X className="size-4" aria-hidden="true" />
             </button>
-            <div className="min-w-0 [&_table]:text-[10px] [&_td]:px-1.5 [&_td]:py-1 [&_th]:px-1.5 [&_th]:py-1.5 [&_th]:text-[9px]">
+            <div
+              tabIndex={0}
+              role="group"
+              aria-label="Medidas — role horizontalmente para ver todas as colunas"
+              className="min-w-0 [&_table]:text-[10px] [&_td]:px-1.5 [&_td]:py-1 [&_th]:px-1.5 [&_th]:py-1.5 [&_th]:text-[9px]"
+            >
               <SizeTable product={product} isFemale={isFemale} />
             </div>
           </div>
