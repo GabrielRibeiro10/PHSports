@@ -2,10 +2,11 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Check, ChevronRight, Ruler, RefreshCw, ShieldCheck, ShoppingBag, Zap } from "lucide-react";
+import { Check, ChevronRight, Ruler, RefreshCw, ShieldCheck, ShoppingBag, X, Zap } from "lucide-react";
 import { formatBRL, SIZES } from "@/lib/products";
 import { getProduct, productsQueryOptions } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { ProductCard } from "@/components/ProductCard";
 
 export const Route = createFileRoute("/produto/$slug")({
