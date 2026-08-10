@@ -2,10 +2,11 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Check, ChevronRight, Ruler, RefreshCw, ShieldCheck, ShoppingBag, Zap } from "lucide-react";
+import { Check, ChevronRight, Ruler, RefreshCw, ShieldCheck, ShoppingBag, X, Zap } from "lucide-react";
 import { formatBRL, SIZES } from "@/lib/products";
 import { getProduct, productsQueryOptions } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { ProductCard } from "@/components/ProductCard";
 
 export const Route = createFileRoute("/produto/$slug")({
@@ -59,6 +60,8 @@ function ProductPage() {
   const [qty, setQty] = useState(1);
   const [selected, setSelected] = useState<string | null>(null);
   const [sizeTableOpen, setSizeTableOpen] = useState(false);
+  const [mobileTableOpen, setMobileTableOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const thumbs = [product.image, ...(product.gallery ?? [])].filter(Boolean);
   const activeImage = selected && thumbs.includes(selected) ? selected : product.image;
@@ -157,6 +160,10 @@ function ProductPage() {
               <button
                 type="button"
                 onClick={() => {
+                  if (isMobile) {
+                    setMobileTableOpen(true);
+                    return;
+                  }
                   setSizeTableOpen(true);
                   document.getElementById("tabela-medidas")?.scrollIntoView({ behavior: "smooth", block: "center" });
                 }}
@@ -239,103 +246,14 @@ function ProductPage() {
             )}
             <details
               id="tabela-medidas"
-              className="min-w-0 text-sm"
+              className="hidden min-w-0 text-sm md:block"
               open={sizeTableOpen}
               onToggle={(e) => setSizeTableOpen((e.currentTarget as HTMLDetailsElement).open)}
             >
               <summary className="cursor-pointer font-bold text-brand transition-colors hover:text-brand/80">Tabela de medidas</summary>
-              {isFemale && product.category !== "caneleiras" ? (
-                <div className="mt-3 w-full max-w-full min-w-0 overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-background [-webkit-overflow-scrolling:touch]">
-                  <table className="w-max min-w-full border-collapse text-[11px] sm:text-xs">
-                    <thead>
-                      <tr className="bg-obsidian text-left uppercase tracking-wider text-white">
-                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-black sm:px-3 sm:py-2">Tamanho</th>
-                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Compr. (cm)</th>
-                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Largura (cm)</th>
-                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Altura (cm)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[["P (S)","61–63 cm","40–41 cm","150–160 cm"],["M (M)","63–66 cm","41–44 cm","160–165 cm"],["G (L)","66–69 cm","44–47 cm","165–170 cm"],["GG (XL)","69–71 cm","47–50 cm","170–175 cm"]].map(([s,c,l,a], i) => (
-                        <tr key={s} className={`border-t border-border/60 ${i % 2 ? "bg-secondary/40" : ""}`}>
-                          <td className="whitespace-nowrap px-2 py-1.5 font-bold text-brand sm:px-3 sm:py-2">{s}</td>
-                          <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{c}</td>
-                          <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{l}</td>
-                          <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{a}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : product.category === "caneleiras" ? (
-                <table className="mt-2 w-full text-[11px] sm:text-xs">
-                  <thead className="text-left text-muted-foreground">
-                    <tr><th className="py-2">Tamanho</th><th className="py-2">Altura recomendada</th></tr>
-                  </thead>
-                  <tbody>
-                    {[["S","1,40m – 1,60m"],["M","1,60m – 1,75m"],["L","1,75m – 1,90m"]].map(([s,h]) => (
-                      <tr key={s} className="border-t border-border/60"><td className="py-2 font-semibold">{s}</td><td className="py-2">{h}</td></tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : product.category === "masculino" || product.category === "retro" || product.category === "jogador" ? (
-                <div className="mt-3 w-full max-w-full min-w-0 overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-background [-webkit-overflow-scrolling:touch]">
-                  <table className="w-max min-w-full border-collapse text-[11px] sm:text-xs">
-                    <thead>
-                      <tr className="bg-obsidian text-left uppercase tracking-wider text-white">
-                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-black sm:px-3 sm:py-2">Tamanho</th>
-                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Compr. (cm)</th>
-                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Largura (cm)</th>
-                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Altura (cm)</th>
-                        <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Peso (kg)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(product.category === "jogador"
-                        ? [
-                            ["P", "67–69", "49–51", "162–170", "50–62"],
-                            ["M", "69–71", "51–53", "170–175", "62–75"],
-                            ["G", "71–73", "53–55", "175–180", "75–80"],
-                            ["GG", "73–76", "55–57", "180–185", "80–85"],
-                            ["2GG", "76–78", "57–60", "185–190", "85–90"],
-                            ["3GG", "78–79", "60–63", "190–195", "90–95"],
-                          ]
-                        : [
-                            ["P (S)", "69–71", "53–55", "162–170", "50–62"],
-                            ["M (M)", "71–73", "55–57", "170–176", "62–78"],
-                            ["G (L)", "73–75", "57–58", "176–182", "78–83"],
-                            ["GG (XL)", "75–78", "58–60", "182–190", "83–90"],
-                            ["2XL", "78–81", "60–62", "190–195", "90–97"],
-                            ["3XL", "81–83", "62–64", "192–197", "97–104"],
-                          ]
-                      ).map(([t, c, l, a, p], i) => (
-                        <tr
-                          key={t}
-                          className={`border-t border-border/60 ${i % 2 ? "bg-secondary/40" : ""}`}
-                        >
-                          <td className="whitespace-nowrap px-2 py-1.5 font-bold text-brand sm:px-3 sm:py-2">{t}</td>
-                          <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{c}</td>
-                          <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{l}</td>
-                          <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{a}</td>
-                          <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{p}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <table className="mt-2 w-full text-[11px] sm:text-xs">
-                  <thead className="text-left text-muted-foreground">
-                    <tr><th className="py-2">Tamanho</th><th className="py-2">Peito (cm)</th><th className="py-2">Comprimento (cm)</th></tr>
-                  </thead>
-                  <tbody>
-                    {[["P",50,70],["M",53,72],["G",56,74],["GG",59,76],["XG",62,78]].map(([s,p,c]) => (
-                      <tr key={String(s)} className="border-t border-border/60"><td className="py-2 font-semibold">{s}</td><td className="py-2">{p}</td><td className="py-2">{c}</td></tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
+              <SizeTable product={product} isFemale={isFemale} />
             </details>
+
             <div id="trocas" className="flex items-start gap-2 text-xs">
               <RefreshCw className="mt-0.5 size-4 shrink-0 text-brand" />
               <span><strong>Troca e devolução:</strong> até 7 dias após o recebimento, sem burocracia.</span>
@@ -357,6 +275,142 @@ function ProductPage() {
           ))}
         </div>
       </section>
+
+      {/* Mobile size table modal */}
+      {mobileTableOpen && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4 animate-[fade-in_0.18s_ease-out] md:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Tabela de medidas"
+          onClick={() => setMobileTableOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-[92vw] overflow-hidden rounded-2xl border border-border bg-background p-3 shadow-2xl animate-[fade-in_0.18s_ease-out]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-2 flex items-center justify-between gap-2 pr-8">
+              <p className="text-sm font-black">Tabela de medidas</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setMobileTableOpen(false)}
+              aria-label="Fechar"
+              className="absolute right-2 top-2 grid size-8 place-items-center rounded-full border border-border bg-secondary/60 text-foreground transition-colors hover:bg-brand hover:text-brand-foreground"
+            >
+              <X className="size-4" />
+            </button>
+            <div className="min-w-0 [&_table]:text-[10px] [&_td]:px-1.5 [&_td]:py-1 [&_th]:px-1.5 [&_th]:py-1.5 [&_th]:text-[9px]">
+              <SizeTable product={product} isFemale={isFemale} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
+function SizeTable({ product, isFemale }: { product: { category: string }; isFemale: boolean }) {
+  if (isFemale && product.category !== "caneleiras") {
+    return (
+      <div className="mt-3 w-full max-w-full min-w-0 overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-background [-webkit-overflow-scrolling:touch]">
+        <table className="w-max min-w-full border-collapse text-[11px] sm:text-xs">
+          <thead>
+            <tr className="bg-obsidian text-left uppercase tracking-wider text-white">
+              <th className="whitespace-nowrap px-2 py-2 text-[10px] font-black sm:px-3 sm:py-2">Tamanho</th>
+              <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Compr. (cm)</th>
+              <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Largura (cm)</th>
+              <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Altura (cm)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[["P (S)","61–63 cm","40–41 cm","150–160 cm"],["M (M)","63–66 cm","41–44 cm","160–165 cm"],["G (L)","66–69 cm","44–47 cm","165–170 cm"],["GG (XL)","69–71 cm","47–50 cm","170–175 cm"]].map(([s,c,l,a], i) => (
+              <tr key={s} className={`border-t border-border/60 ${i % 2 ? "bg-secondary/40" : ""}`}>
+                <td className="whitespace-nowrap px-2 py-1.5 font-bold text-brand sm:px-3 sm:py-2">{s}</td>
+                <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{c}</td>
+                <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{l}</td>
+                <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{a}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  if (product.category === "caneleiras") {
+    return (
+      <table className="mt-2 w-full text-[11px] sm:text-xs">
+        <thead className="text-left text-muted-foreground">
+          <tr><th className="py-2">Tamanho</th><th className="py-2">Altura recomendada</th></tr>
+        </thead>
+        <tbody>
+          {[["S","1,40m – 1,60m"],["M","1,60m – 1,75m"],["L","1,75m – 1,90m"]].map(([s,h]) => (
+            <tr key={s} className="border-t border-border/60"><td className="py-2 font-semibold">{s}</td><td className="py-2">{h}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  }
+
+  if (product.category === "masculino" || product.category === "retro" || product.category === "jogador") {
+    return (
+      <div className="mt-3 w-full max-w-full min-w-0 overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-background [-webkit-overflow-scrolling:touch]">
+        <table className="w-max min-w-full border-collapse text-[11px] sm:text-xs">
+          <thead>
+            <tr className="bg-obsidian text-left uppercase tracking-wider text-white">
+              <th className="whitespace-nowrap px-2 py-2 text-[10px] font-black sm:px-3 sm:py-2">Tamanho</th>
+              <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Compr. (cm)</th>
+              <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Largura (cm)</th>
+              <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Altura (cm)</th>
+              <th className="whitespace-nowrap px-2 py-2 text-[10px] font-bold sm:px-3 sm:py-2">Peso (kg)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(product.category === "jogador"
+              ? [
+                  ["P", "67–69", "49–51", "162–170", "50–62"],
+                  ["M", "69–71", "51–53", "170–175", "62–75"],
+                  ["G", "71–73", "53–55", "175–180", "75–80"],
+                  ["GG", "73–76", "55–57", "180–185", "80–85"],
+                  ["2GG", "76–78", "57–60", "185–190", "85–90"],
+                  ["3GG", "78–79", "60–63", "190–195", "90–95"],
+                ]
+              : [
+                  ["P (S)", "69–71", "53–55", "162–170", "50–62"],
+                  ["M (M)", "71–73", "55–57", "170–176", "62–78"],
+                  ["G (L)", "73–75", "57–58", "176–182", "78–83"],
+                  ["GG (XL)", "75–78", "58–60", "182–190", "83–90"],
+                  ["2XL", "78–81", "60–62", "190–195", "90–97"],
+                  ["3XL", "81–83", "62–64", "192–197", "97–104"],
+                ]
+            ).map(([t, c, l, a, p], i) => (
+              <tr key={t} className={`border-t border-border/60 ${i % 2 ? "bg-secondary/40" : ""}`}>
+                <td className="whitespace-nowrap px-2 py-1.5 font-bold text-brand sm:px-3 sm:py-2">{t}</td>
+                <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{c}</td>
+                <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{l}</td>
+                <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{a}</td>
+                <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground sm:px-3 sm:py-2">{p}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  return (
+    <table className="mt-2 w-full text-[11px] sm:text-xs">
+      <thead className="text-left text-muted-foreground">
+        <tr><th className="py-2">Tamanho</th><th className="py-2">Peito (cm)</th><th className="py-2">Comprimento (cm)</th></tr>
+      </thead>
+      <tbody>
+        {[["P",50,70],["M",53,72],["G",56,74],["GG",59,76],["XG",62,78]].map(([s,p,c]) => (
+          <tr key={String(s)} className="border-t border-border/60"><td className="py-2 font-semibold">{s}</td><td className="py-2">{p}</td><td className="py-2">{c}</td></tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+
