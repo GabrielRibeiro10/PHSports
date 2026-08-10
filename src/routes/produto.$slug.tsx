@@ -158,6 +158,10 @@ function ProductPage() {
               <button
                 type="button"
                 onClick={() => {
+                  if (isMobile) {
+                    setMobileTableOpen(true);
+                    return;
+                  }
                   setSizeTableOpen(true);
                   document.getElementById("tabela-medidas")?.scrollIntoView({ behavior: "smooth", block: "center" });
                 }}
