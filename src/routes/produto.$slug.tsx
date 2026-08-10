@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Check, ChevronRight, Ruler, RefreshCw, ShieldCheck, ShoppingBag, X, Zap } from "lucide-react";
 import { formatBRL, SIZES } from "@/lib/products";
@@ -62,6 +62,56 @@ function ProductPage() {
   const [sizeTableOpen, setSizeTableOpen] = useState(false);
   const [mobileTableOpen, setMobileTableOpen] = useState(false);
   const isMobile = useIsMobile();
+  const sizeTableBtnRef = useRef<HTMLButtonElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const modalTitleId = useId();
+
+  useEffect(() => {
+    if (!mobileTableOpen) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    closeBtnRef.current?.focus();
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        setMobileTableOpen(false);
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const root = modalRef.current;
+      if (!root) return;
+      const focusables = Array.from(
+        root.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((el) => el.offsetParent !== null || el === document.activeElement);
+      if (focusables.length === 0) {
+        e.preventDefault();
+        return;
+      }
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      if (e.shiftKey && (active === first || !root.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (active === last || !root.contains(active))) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown, true);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown, true);
+      document.body.style.overflow = prevOverflow;
+      (previouslyFocused ?? sizeTableBtnRef.current)?.focus?.();
+    };
+  }, [mobileTableOpen]);
 
   const thumbs = [product.image, ...(product.gallery ?? [])].filter(Boolean);
   const activeImage = selected && thumbs.includes(selected) ? selected : product.image;
