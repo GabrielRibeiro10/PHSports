@@ -208,7 +208,10 @@ function ProductPage() {
             <div className="flex items-center justify-between gap-3">
               <span className="text-sm font-bold">Tamanho</span>
               <button
+                ref={sizeTableBtnRef}
                 type="button"
+                aria-haspopup="dialog"
+                aria-expanded={isMobile ? mobileTableOpen : sizeTableOpen}
                 onClick={() => {
                   if (isMobile) {
                     setMobileTableOpen(true);
@@ -219,7 +222,7 @@ function ProductPage() {
                 }}
                 className="inline-flex items-center gap-1.5 rounded-full border border-brand/40 bg-brand/10 px-3 py-1.5 text-xs font-bold text-brand transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand hover:text-brand-foreground hover:shadow-[0_8px_24px_-8px_oklch(0.55_0.22_27_/_0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 active:translate-y-0"
               >
-                <Ruler className="size-3.5" /> Tabela de medidas
+                <Ruler className="size-3.5" aria-hidden="true" /> Tabela de medidas
               </button>
             </div>
             <div className="mt-2 flex flex-wrap gap-2">
