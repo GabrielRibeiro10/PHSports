@@ -26,7 +26,46 @@ export const Route = createFileRoute("/carrinho")({
 function CartPage() {
   const { items, setQty, remove, changeSize, subtotal, hydrated, clear, getProduct } = useCart();
   const { data: products = [] } = useQuery(productsQueryOptions);
-  const msg = useMemo(() => buildOrderMessage(items, subtotal, products), [items, subtotal, products]);
+
+  const [couponInput, setCouponInput] = useState("");
+  const [applied, setApplied] = useState<{ code: string; discount: number } | null>(null);
+  const [couponError, setCouponError] = useState("");
+  const [checking, setChecking] = useState(false);
+
+  const discount = applied ? Math.min(applied.discount, subtotal) : 0;
+  const total = Math.max(subtotal - discount, 0);
+  const msg = useMemo(() => buildOrderMessage(items, total, products), [items, total, products]);
+
+  async function applyCoupon(e: React.FormEvent) {
+    e.preventDefault();
+    const code = couponInput.replace(/[^A-Za-z0-9_-]/g, "").toUpperCase().slice(0, 40);
+    if (!code || checking) return;
+    setChecking(true);
+    setCouponError("");
+    try {
+      const res = await validateCoupon({ data: { code, subtotal } });
+      if (res.ok) {
+        setApplied({ code: res.code, discount: res.discount });
+        setCouponInput("");
+        toast.success("Cupom aplicado", { description: `${res.code} • -${formatBRL(res.discount)}` });
+      } else {
+        setApplied(null);
+        setCouponError(res.message);
+      }
+    } catch {
+      setApplied(null);
+      setCouponError("Cupom inválido ou expirado. Verifique o código e tente novamente.");
+    } finally {
+      setChecking(false);
+    }
+  }
+
+  function removeCoupon() {
+    setApplied(null);
+    setCouponError("");
+    toast.success("Cupom removido");
+  }
+
 
   if (!hydrated) {
     return <div className="mx-auto max-w-4xl px-4 py-16 text-center text-muted-foreground">Carregando…</div>;
