@@ -169,13 +169,68 @@ function CartPage() {
 
         <aside className="space-y-4">
           <div className="rounded-xl border border-border bg-card p-5">
+            <div className="mb-4 border-b border-border pb-4">
+              <p className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                <Ticket className="size-3.5 text-brand" /> Cupom de desconto
+              </p>
+              {applied ? (
+                <div className="flex items-center gap-2 rounded-lg border border-brand/30 bg-brand/5 px-3 py-2 animate-in fade-in duration-200">
+                  <Check className="size-4 shrink-0 text-brand" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-black uppercase">{applied.code}</p>
+                    <p className="text-[11px] font-semibold text-muted-foreground">Cupom aplicado — {formatBRL(discount)} de desconto</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={removeCoupon}
+                    aria-label="Remover cupom"
+                    className="grid size-7 shrink-0 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                  >
+                    <X className="size-4" />
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={applyCoupon} className="flex flex-col gap-2 sm:flex-row">
+                  <input
+                    value={couponInput}
+                    onChange={(e) => {
+                      setCouponInput(e.target.value.toUpperCase());
+                      setCouponError("");
+                    }}
+                    placeholder="Digite seu cupom"
+                    maxLength={40}
+                    autoComplete="off"
+                    aria-label="Código do cupom"
+                    aria-invalid={couponError ? true : undefined}
+                    className="min-w-0 flex-1 rounded-md border border-border bg-background px-3 py-2.5 text-sm font-semibold uppercase tracking-wide outline-none transition-colors placeholder:font-normal placeholder:normal-case placeholder:tracking-normal placeholder:text-muted-foreground focus:border-brand"
+                  />
+                  <button
+                    type="submit"
+                    disabled={checking || !couponInput.trim()}
+                    className="btn-glow inline-flex items-center justify-center gap-1.5 rounded-md bg-brand px-5 py-2.5 text-sm font-black text-brand-foreground shadow-sm disabled:opacity-50"
+                  >
+                    {checking ? <Loader2 className="size-4 animate-spin" /> : null} Aplicar
+                  </button>
+                </form>
+              )}
+              {couponError ? (
+                <p role="alert" className="mt-2 text-xs font-semibold text-destructive animate-in fade-in duration-200">{couponError}</p>
+              ) : null}
+            </div>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-muted-foreground">Produtos</span><span className="font-semibold">{formatBRL(subtotal)}</span></div>
+              {discount > 0 ? (
+                <div className="flex justify-between text-brand">
+                  <span className="font-semibold">Desconto ({applied?.code})</span>
+                  <span className="font-black">-{formatBRL(discount)}</span>
+                </div>
+              ) : null}
               <div className="mt-2 flex items-baseline justify-between border-t border-border pt-3">
                 <span className="text-sm font-bold">Total</span>
-                <span className="text-2xl font-black">{formatBRL(subtotal)}</span>
+                <span className="text-2xl font-black">{formatBRL(total)}</span>
               </div>
-              <p className="text-xs text-muted-foreground">ou 6x de {formatBRL(subtotal / 6)} sem juros</p>
+              <p className="text-xs text-muted-foreground">ou 6x de {formatBRL(total / 6)} sem juros</p>
+
             </div>
             <a
               href={whatsappHref(msg)}
