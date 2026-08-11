@@ -124,6 +124,7 @@ export type Database = {
           id: string
           max_uses: number
           min_order_value: number
+          starts_at: string | null
           updated_at: string
           used_count: number
         }
@@ -137,6 +138,7 @@ export type Database = {
           id?: string
           max_uses?: number
           min_order_value?: number
+          starts_at?: string | null
           updated_at?: string
           used_count?: number
         }
@@ -150,6 +152,7 @@ export type Database = {
           id?: string
           max_uses?: number
           min_order_value?: number
+          starts_at?: string | null
           updated_at?: string
           used_count?: number
         }
@@ -500,6 +503,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      redeem_coupon: { Args: { _code: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin"

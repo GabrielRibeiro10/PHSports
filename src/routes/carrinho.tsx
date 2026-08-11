@@ -1,13 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Minus, Plus, Trash2, ShoppingBag, MessageCircle, Ticket, X, Check, Loader2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { formatBRL, SIZES } from "@/lib/products";
 import { productsQueryOptions } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
 import { buildOrderMessage, whatsappHref } from "@/lib/whatsapp";
-import { validateCoupon } from "@/lib/coupons.functions";
+import { redeemCoupon, validateCoupon } from "@/lib/coupons.functions";
+import { useServerFn } from "@tanstack/react-start";
 
 
 export const Route = createFileRoute("/carrinho")({
@@ -31,6 +32,8 @@ function CartPage() {
   const [applied, setApplied] = useState<{ code: string; discount: number } | null>(null);
   const [couponError, setCouponError] = useState("");
   const [checking, setChecking] = useState(false);
+  const validate = useServerFn(validateCoupon);
+  const redeem = useServerFn(redeemCoupon);
 
   const discount = applied ? Math.min(applied.discount, subtotal) : 0;
   const total = Math.max(subtotal - discount, 0);
@@ -43,7 +46,7 @@ function CartPage() {
     setChecking(true);
     setCouponError("");
     try {
-      const res = await validateCoupon({ data: { code, subtotal } });
+      const res = await validate({ data: { code, subtotal } });
       if (res.ok) {
         setApplied({ code: res.code, discount: res.discount });
         setCouponInput("");
@@ -59,6 +62,27 @@ function CartPage() {
       setChecking(false);
     }
   }
+
+  // Cart changes must never keep a stale discount: re-check on the server.
+  useEffect(() => {
+    if (!applied) return;
+    let cancelled = false;
+    void validate({ data: { code: applied.code, subtotal } })
+      .then((res) => {
+        if (cancelled) return;
+        if (res.ok) {
+          if (res.discount !== applied.discount) setApplied({ code: res.code, discount: res.discount });
+        } else {
+          setApplied(null);
+          setCouponError(res.message);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subtotal, applied?.code]);
 
   function removeCoupon() {
     setApplied(null);
@@ -234,6 +258,10 @@ function CartPage() {
             </div>
             <a
               href={whatsappHref(msg)}
+              onClick={() => {
+                // Usage is only recorded when the order is actually finalized.
+                if (applied) void redeem({ data: { code: applied.code } }).catch(() => {});
+              }}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-glow mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-brand px-6 py-3.5 text-sm font-black text-brand-foreground shadow-md"
