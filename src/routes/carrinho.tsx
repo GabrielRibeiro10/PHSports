@@ -1,12 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Minus, Plus, Trash2, ShoppingBag, MessageCircle } from "lucide-react";
-import { useMemo } from "react";
+import { Minus, Plus, Trash2, ShoppingBag, MessageCircle, Ticket, X, Check, Loader2 } from "lucide-react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { formatBRL, SIZES } from "@/lib/products";
 import { productsQueryOptions } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
 import { buildOrderMessage, whatsappHref } from "@/lib/whatsapp";
+import { validateCoupon } from "@/lib/coupons.functions";
+
 
 export const Route = createFileRoute("/carrinho")({
   head: () => ({
