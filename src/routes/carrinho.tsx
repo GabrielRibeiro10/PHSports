@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Minus, Plus, Trash2, ShoppingBag, MessageCircle, Ticket, X, Check, Loader2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { formatBRL, SIZES } from "@/lib/products";
 import { productsQueryOptions } from "@/lib/catalog";
@@ -62,6 +62,27 @@ function CartPage() {
       setChecking(false);
     }
   }
+
+  // Cart changes must never keep a stale discount: re-check on the server.
+  useEffect(() => {
+    if (!applied) return;
+    let cancelled = false;
+    void validate({ data: { code: applied.code, subtotal } })
+      .then((res) => {
+        if (cancelled) return;
+        if (res.ok) {
+          if (res.discount !== applied.discount) setApplied({ code: res.code, discount: res.discount });
+        } else {
+          setApplied(null);
+          setCouponError(res.message);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subtotal, applied?.code]);
 
   function removeCoupon() {
     setApplied(null);
