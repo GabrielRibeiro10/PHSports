@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestIP } from "@tanstack/react-start/server";
 import {
   couponSchema,
   evaluateCoupon,
@@ -12,13 +11,9 @@ import {
 
 export type { CouponResult } from "@/lib/coupons.server";
 
-function clientIP(): string {
-  try {
-    return getRequestIP({ xForwardedFor: true }) ?? "unknown";
-  } catch {
-    return "unknown";
-  }
-}
+// NOTE: request-context helpers (getRequestIP/getRequestHeader) throw
+// "No Start context found in AsyncLocalStorage" in the production Worker
+// runtime, so throttling is keyed by the coupon code per worker instance.
 
 export const validateCoupon = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => couponSchema.parse(input))
@@ -26,7 +21,7 @@ export const validateCoupon = createServerFn({ method: "POST" })
     const code = normalizeCode(data.code);
     if (!code) return { ok: false, message: GENERIC_ERROR };
 
-    if (throttled(clientIP())) {
+    if (throttled(`validate:${code}`, 60)) {
       return { ok: false, message: "Muitas tentativas. Aguarde um instante e tente novamente." };
     }
 
@@ -50,7 +45,7 @@ export const redeemCoupon = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<{ ok: boolean }> => {
     const code = normalizeCode(data.code);
     if (!code) return { ok: false };
-    if (throttled(`redeem:${clientIP()}`, 20)) return { ok: false };
+    if (throttled(`redeem:${code}`, 60)) return { ok: false };
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: ok, error } = await supabaseAdmin.rpc("redeem_coupon", { _code: code });
