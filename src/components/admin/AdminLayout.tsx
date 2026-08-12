@@ -26,6 +26,7 @@ const NAV = [
   { to: "/admin/categorias", label: "Categorias", icon: Tag },
   { to: "/admin/marcas", label: "Marcas", icon: BarChart3 },
   { to: "/admin/pedidos", label: "Pedidos", icon: ShoppingCart },
+  { to: "/admin/pedidos-demo", label: "Pedidos (Prévia)", icon: ShoppingCart },
   { to: "/admin/clientes", label: "Clientes", icon: Users },
   { to: "/admin/cupons", label: "Cupons", icon: Ticket },
   { to: "/admin/avaliacoes", label: "Avaliações", icon: Star },

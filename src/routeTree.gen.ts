@@ -20,6 +20,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as AdminProdutosRouteImport } from './routes/admin/produtos'
+import { Route as AdminPedidosDemoRouteImport } from './routes/admin/pedidos-demo'
 import { Route as AdminPedidosRouteImport } from './routes/admin/pedidos'
 import { Route as AdminMarcasRouteImport } from './routes/admin/marcas'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
@@ -85,6 +86,11 @@ const AdminProdutosRoute = AdminProdutosRouteImport.update({
   path: '/admin/produtos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminPedidosDemoRoute = AdminPedidosDemoRouteImport.update({
+  id: '/admin/pedidos-demo',
+  path: '/admin/pedidos-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminPedidosRoute = AdminPedidosRouteImport.update({
   id: '/admin/pedidos',
   path: '/admin/pedidos',
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/admin/marcas': typeof AdminMarcasRoute
   '/admin/pedidos': typeof AdminPedidosRoute
+  '/admin/pedidos-demo': typeof AdminPedidosDemoRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
@@ -170,6 +177,7 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/admin/marcas': typeof AdminMarcasRoute
   '/admin/pedidos': typeof AdminPedidosRoute
+  '/admin/pedidos-demo': typeof AdminPedidosDemoRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
@@ -193,6 +201,7 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/admin/marcas': typeof AdminMarcasRoute
   '/admin/pedidos': typeof AdminPedidosRoute
+  '/admin/pedidos-demo': typeof AdminPedidosDemoRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
@@ -217,6 +226,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/marcas'
     | '/admin/pedidos'
+    | '/admin/pedidos-demo'
     | '/admin/produtos'
     | '/categoria/$slug'
     | '/produto/$slug'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/marcas'
     | '/admin/pedidos'
+    | '/admin/pedidos-demo'
     | '/admin/produtos'
     | '/categoria/$slug'
     | '/produto/$slug'
@@ -261,6 +272,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/marcas'
     | '/admin/pedidos'
+    | '/admin/pedidos-demo'
     | '/admin/produtos'
     | '/categoria/$slug'
     | '/produto/$slug'
@@ -284,6 +296,7 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMarcasRoute: typeof AdminMarcasRoute
   AdminPedidosRoute: typeof AdminPedidosRoute
+  AdminPedidosDemoRoute: typeof AdminPedidosDemoRoute
   AdminProdutosRoute: typeof AdminProdutosRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
@@ -369,6 +382,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProdutosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/pedidos-demo': {
+      id: '/admin/pedidos-demo'
+      path: '/admin/pedidos-demo'
+      fullPath: '/admin/pedidos-demo'
+      preLoaderRoute: typeof AdminPedidosDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/pedidos': {
       id: '/admin/pedidos'
       path: '/admin/pedidos'
@@ -452,6 +472,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   AdminMarcasRoute: AdminMarcasRoute,
   AdminPedidosRoute: AdminPedidosRoute,
+  AdminPedidosDemoRoute: AdminPedidosDemoRoute,
   AdminProdutosRoute: AdminProdutosRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
