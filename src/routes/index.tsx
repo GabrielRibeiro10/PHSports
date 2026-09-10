@@ -100,7 +100,7 @@ function Hero() {
           </div>
         </div>
         <div className="relative">
-          <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-secondary/60 to-brand/5 blur-2xl" aria-hidden />
+          <div className="absolute -inset-4 rounded-[2rem] bg-secondary/50 blur-2xl" aria-hidden />
           <img
             src={hero}
             alt="Coleção premium PH Sports — camisa, chuteira e bola de futebol"
