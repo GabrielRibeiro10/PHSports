@@ -25,29 +25,29 @@ export function ProductCard({ p, priority = false, glow = false }: { p: Product;
           width={800}
           height={800}
           loading={priority ? "eager" : "lazy"}
-          className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="size-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
         />
-        <span className="absolute left-3 top-3 rounded-full bg-brand px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-brand-foreground shadow-sm">
+        <span className="absolute left-3 top-3 rounded-full bg-brand px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-brand-foreground">
           Oferta
         </span>
-        <span className="absolute right-3 top-3 rounded-full bg-primary px-2.5 py-1 text-[10px] font-black text-primary-foreground shadow-sm">
+        <span className="absolute right-3 top-3 rounded-full bg-primary px-2.5 py-1 text-[10px] font-black tabular-nums text-primary-foreground">
           -{p.discount}%
         </span>
       </div>
-      <div className="flex flex-col gap-1 p-4">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{p.club}</p>
-        <h3 className="text-sm font-bold text-foreground">{p.name}</h3>
-        <div className="mt-1 flex items-baseline gap-2">
-          <span className="text-lg font-black text-foreground">{formatBRL(p.price)}</span>
-          <span className="text-xs text-muted-foreground line-through">{formatBRL(p.oldPrice)}</span>
+      <div className="flex flex-1 flex-col gap-1.5 p-4">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">{p.club}</p>
+        <h3 className="text-[0.9375rem] font-bold leading-snug text-foreground">{p.name}</h3>
+        <div className="mt-1.5 flex items-baseline gap-2">
+          <span className="text-xl font-black tabular-nums tracking-tight text-foreground">{formatBRL(p.price)}</span>
+          <span className="text-xs tabular-nums text-muted-foreground line-through">{formatBRL(p.oldPrice)}</span>
         </div>
         <p className="text-[11px] font-semibold text-brand">Promoção — economize {formatBRL(p.oldPrice - p.price)}</p>
 
-        <div className="mt-3">
+        <div className="mt-auto pt-3.5">
           <button
             type="button"
             onClick={goToProduct}
-            className="btn-glow inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-brand px-3 py-2 text-[11px] font-black uppercase tracking-wider text-brand-foreground shadow-sm"
+            className="btn-glow inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-brand px-3 py-2.5 text-[11px] font-black uppercase tracking-[0.1em] text-brand-foreground"
           >
             <Zap className="size-3.5" /> Comprar
           </button>
