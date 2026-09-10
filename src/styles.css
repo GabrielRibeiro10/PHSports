@@ -91,7 +91,18 @@
     -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3, h4 {
-    letter-spacing: -0.02em;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+  h1 { line-height: 1.04; }
+  h2 { line-height: 1.12; }
+  h3, h4 { line-height: 1.25; }
+  p { text-wrap: pretty; }
+  /* Foco visível e consistente em toda a loja */
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 }
 
