@@ -12,6 +12,14 @@ export function Header() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const onSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -38,7 +46,11 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <header
+      className={`sticky top-0 z-40 border-b bg-background/95 backdrop-blur transition-[box-shadow,border-color] duration-300 supports-[backdrop-filter]:bg-background/80 ${
+        scrolled ? "border-border shadow-[var(--shadow-card)]" : "border-transparent"
+      }`}
+    >
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 md:py-4">
         <button
           type="button"
