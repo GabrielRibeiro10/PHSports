@@ -184,11 +184,25 @@ button, a.btn-glow, button.btn-glow {
               filter 200ms ease;
 }
 .btn-glow:hover {
-  transform: translateY(-1px) scale(1.03);
-  box-shadow: 0 10px 30px -10px oklch(0.55 0.22 27 / 0.55), 0 0 0 3px oklch(0.55 0.22 27 / 0.15);
-  filter: brightness(1.03);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-brand);
+  filter: brightness(1.04);
 }
-.btn-glow:active { transform: translateY(0) scale(0.99); }
+.btn-glow:active {
+  transform: translateY(0.5px);
+  box-shadow: var(--shadow-flat);
+  filter: brightness(0.98);
+}
+.btn-glow:disabled,
+.btn-glow[aria-disabled="true"] {
+  transform: none;
+  box-shadow: none;
+  filter: none;
+  cursor: not-allowed;
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-glow:hover, .btn-glow:active { transform: none; }
+}
 
 /* Utility */
 .no-scrollbar::-webkit-scrollbar { display: none; }
