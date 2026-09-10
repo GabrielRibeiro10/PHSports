@@ -65,8 +65,12 @@
   --obsidian: #0d0d0d;
   --whatsapp: oklch(0.55 0.22 27); /* per brief: whatsapp icon in brand red */
 
-  --shadow-premium: 0 20px 60px -20px oklch(0 0 0 / 0.25);
-  --shadow-card: 0 2px 8px -2px oklch(0 0 0 / 0.08);
+  /* Escala de sombras hierárquica (mais suave e em camadas) */
+  --shadow-flat: 0 1px 1px -1px oklch(0.145 0 0 / 0.05);
+  --shadow-card: 0 1px 2px -1px oklch(0.145 0 0 / 0.06), 0 4px 12px -8px oklch(0.145 0 0 / 0.1);
+  --shadow-raised: 0 2px 4px -2px oklch(0.145 0 0 / 0.08), 0 12px 28px -14px oklch(0.145 0 0 / 0.16);
+  --shadow-premium: 0 4px 10px -6px oklch(0.145 0 0 / 0.1), 0 24px 56px -28px oklch(0.145 0 0 / 0.24);
+  --shadow-brand: 0 8px 22px -12px oklch(0.55 0.22 27 / 0.45);
 }
 
 @layer base {
@@ -87,7 +91,18 @@
     -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3, h4 {
-    letter-spacing: -0.02em;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+  h1 { line-height: 1.04; }
+  h2 { line-height: 1.12; }
+  h3, h4 { line-height: 1.25; }
+  p { text-wrap: pretty; }
+  /* Foco visível e consistente em toda a loja */
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 }
 
@@ -169,11 +184,25 @@ button, a.btn-glow, button.btn-glow {
               filter 200ms ease;
 }
 .btn-glow:hover {
-  transform: translateY(-1px) scale(1.03);
-  box-shadow: 0 10px 30px -10px oklch(0.55 0.22 27 / 0.55), 0 0 0 3px oklch(0.55 0.22 27 / 0.15);
-  filter: brightness(1.03);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-brand);
+  filter: brightness(1.04);
 }
-.btn-glow:active { transform: translateY(0) scale(0.99); }
+.btn-glow:active {
+  transform: translateY(0.5px);
+  box-shadow: var(--shadow-flat);
+  filter: brightness(0.98);
+}
+.btn-glow:disabled,
+.btn-glow[aria-disabled="true"] {
+  transform: none;
+  box-shadow: none;
+  filter: none;
+  cursor: not-allowed;
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-glow:hover, .btn-glow:active { transform: none; }
+}
 
 /* Utility */
 .no-scrollbar::-webkit-scrollbar { display: none; }

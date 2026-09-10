@@ -68,39 +68,39 @@ function Hero() {
     <section className="relative overflow-hidden bg-background">
       <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-12 md:grid-cols-2 md:py-20">
         <div className="relative z-10">
-          <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/5 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand">
+          <span className="inline-flex items-center gap-2 border-l-2 border-brand pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-brand">
             Coleção 2026 • Edição Premium
           </span>
-          <h1 className="mt-5 text-4xl font-black leading-[1.02] tracking-tight text-foreground md:text-6xl">
+          <h1 className="mt-5 text-[2.5rem] font-black tracking-[-0.03em] text-foreground md:text-[3.75rem]">
             Vista as cores do <span className="text-brand">seu clube.</span>
           </h1>
-          <p className="mt-5 max-w-md text-base text-muted-foreground">
+          <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground">
             Camisas dos maiores clubes do Brasil com acabamento premium. Tudo por{" "}
-            <span className="font-black text-foreground">R$ 179,90</span> na PH Sports.
+            <span className="font-black tabular-nums text-foreground">R$ 179,90</span> na PH Sports.
           </p>
-          <div className="mt-7 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap gap-3">
             <Link
               to="/"
               hash="produtos"
-              className="btn-glow inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm font-bold text-brand-foreground shadow-[var(--shadow-premium)]"
+              className="btn-glow inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm font-bold text-brand-foreground shadow-[var(--shadow-raised)]"
             >
               Comprar agora <ArrowRight className="size-4" />
             </Link>
             <Link
               to="/"
               hash="clubes"
-              className="btn-glow inline-flex items-center gap-2 rounded-full border border-border bg-background px-7 py-3.5 text-sm font-semibold text-foreground hover:border-primary"
+              className="btn-glow inline-flex items-center gap-2 rounded-full border border-border bg-background px-7 py-3.5 text-sm font-semibold text-foreground transition-colors hover:border-foreground/30 hover:bg-secondary/60"
             >
               Ver clubes
             </Link>
           </div>
-          <div className="mt-7 flex flex-wrap items-center gap-5 text-xs text-muted-foreground">
+          <div className="mt-8 flex flex-wrap items-center gap-5 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1.5"><Truck className="size-4 text-brand" /> Envio para todo Brasil</span>
             <span className="inline-flex items-center gap-1.5"><ShieldCheck className="size-4 text-brand" /> Compra 100% segura</span>
           </div>
         </div>
         <div className="relative">
-          <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-secondary/60 to-brand/5 blur-2xl" aria-hidden />
+          <div className="absolute -inset-4 rounded-[2rem] bg-secondary/50 blur-2xl" aria-hidden />
           <img
             src={hero}
             alt="Coleção premium PH Sports — camisa, chuteira e bola de futebol"
