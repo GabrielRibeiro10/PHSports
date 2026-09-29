@@ -317,7 +317,7 @@ function SearchAndProducts() {
           <h2 className="text-2xl font-black md:text-3xl">Camisas dos grandes clubes</h2>
           <p className="mt-1 text-sm text-muted-foreground">Camisas dos grandes clubes a partir de R$ 179,90.</p>
         </div>
-        <form onSubmit={onSearch} className="flex w-full items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2 md:w-80">
+        <form onSubmit={onSearch} className="flex w-full items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2.5 transition-colors focus-within:border-foreground/40 focus-within:bg-background md:w-80">
           <Search className="size-4 text-muted-foreground" />
           <input
             value={q}
@@ -338,10 +338,11 @@ function SearchAndProducts() {
             <button
               key={r.id}
               onClick={() => selectRegion(r.id)}
-              className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
+              aria-pressed={region === r.id}
+              className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-colors duration-200 ${
                 region === r.id
-                  ? "border-primary bg-primary text-primary-foreground scale-[1.03]"
-                  : "border-border bg-background hover:border-primary"
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border bg-background text-foreground hover:border-foreground/40"
               }`}
             >
               {r.label}
@@ -355,10 +356,11 @@ function SearchAndProducts() {
           <div className="flex gap-2 md:flex-wrap">
             <button
               onClick={() => setClub("todos")}
-              className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
+              aria-pressed={club === "todos"}
+              className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-colors duration-200 ${
                 club === "todos"
-                  ? "border-primary bg-primary text-primary-foreground scale-[1.03]"
-                  : "border-border bg-background hover:border-primary"
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border bg-background text-foreground hover:border-foreground/40"
               }`}
             >
               Todos
@@ -367,10 +369,11 @@ function SearchAndProducts() {
               <button
                 key={c}
                 onClick={() => setClub(c)}
-                className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
+                aria-pressed={club === c}
+                className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-colors duration-200 ${
                   club === c
-                    ? "border-primary bg-primary text-primary-foreground scale-[1.03]"
-                    : "border-border bg-background hover:border-primary"
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-background text-foreground hover:border-foreground/40"
                 }`}
               >
                 {c}
@@ -387,8 +390,9 @@ function SearchAndProducts() {
             <button
               key={g.id}
               onClick={() => setGender(g.id)}
-              className={`rounded-full border px-3 py-1 text-xs font-semibold transition-all ${
-                gender === g.id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:border-primary"
+              aria-pressed={gender === g.id}
+              className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-colors duration-200 ${
+                gender === g.id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:border-foreground/40"
               }`}
             >
               {g.label}
@@ -416,7 +420,7 @@ function SearchAndProducts() {
             onClick={loadMore}
             disabled={loadingMore}
             aria-busy={loadingMore}
-            className="btn-glow inline-flex items-center justify-center gap-2 rounded-full bg-brand px-8 py-3.5 text-sm font-black uppercase tracking-wider text-brand-foreground shadow-[var(--shadow-premium)] transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] disabled:opacity-70"
+            className="btn-glow inline-flex items-center justify-center gap-2 rounded-full bg-brand px-8 py-3.5 text-sm font-black uppercase tracking-wider text-brand-foreground shadow-[var(--shadow-premium)] disabled:opacity-70"
           >
             {loadingMore ? (
               <>
@@ -447,9 +451,9 @@ function BrandTypography() {
           <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand">A marca dos torcedores</p>
           <h2
             aria-label="PHSPORTS"
-            className="mt-4 select-none bg-gradient-to-b from-foreground via-foreground to-foreground/10 bg-clip-text text-[19vw] font-black leading-none tracking-tighter text-transparent md:text-[13rem]"
+            className="mt-4 select-none text-[19vw] font-black leading-[0.9] tracking-[-0.04em] text-foreground md:text-[13rem]"
           >
-            PH<span className="text-brand [-webkit-text-fill-color:currentColor]">SPORTS</span>
+            PH<span className="text-brand">SPORTS</span>
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground">
             Paixão, qualidade e velocidade em cada camisa. Feito para quem vive o jogo.

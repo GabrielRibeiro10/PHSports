@@ -1,17 +1,8 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Zap } from "lucide-react";
 import { formatBRL, type Product } from "@/lib/products";
 
 export function ProductCard({ p, priority = false, glow = false }: { p: Product; priority?: boolean; glow?: boolean }) {
-  const nav = useNavigate();
-
-  const goToProduct = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    nav({ to: "/produto/$slug", params: { slug: p.slug } });
-  };
-
-
   return (
     <Link
       to="/produto/$slug"
@@ -44,13 +35,12 @@ export function ProductCard({ p, priority = false, glow = false }: { p: Product;
         <p className="text-[11px] font-semibold text-brand">Promoção — economize {formatBRL(p.oldPrice - p.price)}</p>
 
         <div className="mt-auto pt-3.5">
-          <button
-            type="button"
-            onClick={goToProduct}
+          <span
+            aria-hidden
             className="btn-glow inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-brand px-3 py-2.5 text-[11px] font-black uppercase tracking-[0.1em] text-brand-foreground"
           >
             <Zap className="size-3.5" /> Comprar
-          </button>
+          </span>
         </div>
       </div>
     </Link>
