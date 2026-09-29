@@ -98,6 +98,14 @@
   h2 { line-height: 1.12; }
   h3, h4 { line-height: 1.25; }
   p { text-wrap: pretty; }
+  /* Superfícies do navegador na paleta da marca */
+  ::selection {
+    background: color-mix(in oklab, var(--brand) 22%, transparent);
+    color: var(--foreground);
+  }
+  input, textarea { caret-color: var(--brand); }
+  html { scrollbar-color: oklch(0.145 0 0 / 0.28) transparent; }
+  a { text-underline-offset: 3px; }
   /* Foco visível e consistente em toda a loja */
   :focus-visible {
     outline: 2px solid var(--brand);
@@ -218,19 +226,19 @@ button, a.btn-glow, button.btn-glow {
   inset: 6px;
   z-index: 0;
   border-radius: 0.9rem;
-  background: color-mix(in oklab, var(--brand) 70%, white);
+  background: color-mix(in oklab, var(--brand) 40%, white);
   box-shadow:
-    0 0 34px 14px color-mix(in oklab, var(--brand) 70%, transparent),
-    0 0 80px 36px color-mix(in oklab, var(--brand) 32%, transparent);
-  filter: blur(8px);
-  opacity: 0.85;
+    0 14px 30px -6px color-mix(in oklab, var(--brand) 45%, transparent),
+    0 28px 60px -18px color-mix(in oklab, var(--brand) 30%, transparent);
+  filter: blur(10px);
+  opacity: 0.55;
   will-change: opacity, transform;
-  animation: premium-glow-breathe 6s ease-in-out infinite;
+  animation: premium-glow-breathe 7s ease-in-out infinite;
   pointer-events: none;
 }
 @keyframes premium-glow-breathe {
-  0%, 100% { opacity: 0.38; transform: scale(0.985); }
-  50% { opacity: 0.7; transform: scale(1.015); }
+  0%, 100% { opacity: 0.35; transform: scale(0.99); }
+  50% { opacity: 0.55; transform: scale(1.01); }
 }
 @media (prefers-reduced-motion: reduce) {
   .premium-glow::before { animation: none; }
@@ -238,4 +246,10 @@ button, a.btn-glow, button.btn-glow {
 /* Sem glow no mobile — apenas desktop */
 @media (max-width: 767px) {
   .premium-glow::before { display: none; }
+}
+
+/* Movimento contínuo respeita quem prefere menos animação */
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track, .benefits-track, .clubs-track, .wa-float, .wa-pulse { animation: none; }
+  .carousel-track { transition: none; }
 }

@@ -54,7 +54,8 @@ export function Header() {
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 md:py-4">
         <button
           type="button"
-          aria-label="Abrir menu"
+          aria-label={open ? "Fechar menu" : "Abrir menu"}
+          aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
           className="md:hidden -ml-1 rounded p-1.5 hover:bg-secondary"
         >
@@ -76,14 +77,14 @@ export function Header() {
 
         <nav className="hidden md:flex items-center gap-5 text-sm font-medium">
           <Link to="/" hash="produtos" className="hover:text-brand transition-colors">Camisas</Link>
-          <Link to="/categoria/$slug" params={{ slug: "mulheres" }} className="hover:text-brand transition-colors">Femininas</Link>
-          <Link to="/categoria/$slug" params={{ slug: "retro" }} className="hover:text-brand transition-colors">Retrô</Link>
-          <Link to="/categoria/$slug" params={{ slug: "versao-jogador" }} className="hover:text-brand transition-colors">Jogador</Link>
-          <Link to="/categoria/$slug" params={{ slug: "caneleiras" }} className="hover:text-brand transition-colors">Caneleiras</Link>
-          <Link to="/rastreio" className="hover:text-brand transition-colors">Rastrear</Link>
+          <Link to="/categoria/$slug" params={{ slug: "mulheres" }} activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Femininas</Link>
+          <Link to="/categoria/$slug" params={{ slug: "retro" }} activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Retrô</Link>
+          <Link to="/categoria/$slug" params={{ slug: "versao-jogador" }} activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Jogador</Link>
+          <Link to="/categoria/$slug" params={{ slug: "caneleiras" }} activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Caneleiras</Link>
+          <Link to="/rastreio" activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Rastrear</Link>
         </nav>
 
-        <form onSubmit={onSearch} className="ml-auto hidden md:flex flex-1 max-w-md items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2">
+        <form onSubmit={onSearch} className="ml-auto hidden md:flex flex-1 max-w-md items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2 transition-colors focus-within:border-foreground/40 focus-within:bg-background">
           <Search className="size-4 text-muted-foreground" />
           <input
             value={q}
@@ -114,7 +115,7 @@ export function Header() {
       {open && (
         <div className="md:hidden border-t border-border bg-background">
           <div className="mx-auto max-w-7xl space-y-3 px-4 py-4">
-            <form onSubmit={onSearch} className="flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2">
+            <form onSubmit={onSearch} className="flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2.5 transition-colors focus-within:border-foreground/40 focus-within:bg-background">
               <Search className="size-4 text-muted-foreground" />
               <input
                 value={q}
