@@ -67,22 +67,30 @@ function ClubsMarquee() {
   const { data: products = [] } = useQuery(productsQueryOptions);
   const loop = [...products, ...products];
   return (
-    <section id="clubes" className="border-b border-border bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-6">
-        <div className="overflow-hidden">
-          <div className="clubs-track flex w-max gap-6">
+    <section id="clubes" className="bg-[#0f2c57]">
+      <div className="mx-auto max-w-7xl px-4 py-5 md:py-6">
+        <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]">
+          <div className="clubs-track flex w-max gap-3 md:gap-4">
             {loop.map((p, i) => (
               <Link
                 key={`${p.slug}-${i}`}
                 to="/produto/$slug"
                 params={{ slug: p.slug }}
-                className="group flex shrink-0 flex-col items-center gap-2"
+                className="club-pill group relative block h-[184px] w-[104px] shrink-0 overflow-hidden rounded-full bg-gradient-to-b from-[#1d4d8f] to-[#5d86bf] md:h-[220px] md:w-[124px]"
                 aria-hidden={i >= products.length ? true : undefined}
+                tabIndex={i >= products.length ? -1 : undefined}
               >
-                <div className="grid size-16 place-items-center overflow-hidden rounded-full border border-border bg-secondary transition-all group-hover:border-brand group-hover:shadow-md md:size-20">
-                  <img src={p.image} alt={p.club} loading="lazy" className="size-full object-cover" width={200} height={200} />
-                </div>
-                <span className="whitespace-nowrap text-[11px] font-semibold text-muted-foreground group-hover:text-brand">{p.club}</span>
+                <span className="absolute inset-x-0 top-5 z-10 px-2 text-center text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-white md:top-6 md:text-[11px]">
+                  {p.club}
+                </span>
+                <img
+                  src={p.image}
+                  alt={p.club}
+                  loading="lazy"
+                  width={200}
+                  height={200}
+                  className="absolute inset-x-0 bottom-0 h-[74%] w-full scale-[1.55] object-cover object-[50%_48%] transition-transform duration-500 ease-out [mask-image:linear-gradient(to_bottom,transparent,black_22%)] group-hover:scale-[1.62]"
+                />
               </Link>
             ))}
           </div>
