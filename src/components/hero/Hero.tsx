@@ -150,7 +150,7 @@ export function Hero() {
           </span>
           <h1
             aria-label={TITLE_LABEL}
-            className="mt-4 text-[clamp(2.1rem,min(11vw,6.2svh),3.4rem)] font-black leading-[1.02] tracking-[-0.03em] md:text-[clamp(3rem,5vw,4.5rem)]"
+            className="hero-serif mt-4 text-[clamp(2.3rem,min(12vw,6.8svh),3.7rem)] leading-[0.98] md:text-[clamp(3.3rem,5.4vw,5rem)]"
           >
             <SplitTitle />
           </h1>
