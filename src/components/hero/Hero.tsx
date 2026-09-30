@@ -1,3 +1,4 @@
+import type React from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ShieldCheck, Truck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -13,6 +14,7 @@ const TITLE_LABEL = TITLE.map((t) => t.text).join(" ");
 /** Título dividido em letras (spans) para a entrada com stagger. */
 function SplitTitle() {
   const words = TITLE.flatMap((seg) => seg.text.split(" ").map((w) => ({ w, accent: seg.accent })));
+  let accentIndex = 0; // posição da letra no destaque, para o brilho percorrer da esquerda à direita
   return (
     <>
       {words.map(({ w, accent }, wi) => (
@@ -22,6 +24,7 @@ function SplitTitle() {
               <span
                 key={ci}
                 className={`hero-char hero-reveal${accent ? " hero-char--accent" : ""}`}
+                style={accent ? ({ "--i": accentIndex++ } as React.CSSProperties) : undefined}
               >
                 {ch}
               </span>
@@ -126,7 +129,7 @@ export function Hero() {
               hash="produtos"
               className="btn-glow btn-shine inline-flex items-center gap-2 rounded-full bg-white px-5 py-3.5 md:px-7 text-sm font-bold text-foreground shadow-[var(--shadow-raised)] md:bg-brand md:text-brand-foreground"
             >
-              Comprar agora <ArrowRight className="size-4" />
+              <span className="btn-silver">Comprar agora</span> <ArrowRight className="size-4" />
             </Link>
             <Link
               to="/"
