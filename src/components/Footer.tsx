@@ -19,7 +19,7 @@ export function Footer() {
               </span>
             </div>
             <p className="mt-4 max-w-xs text-sm text-muted-foreground">
-              Camisas de futebol com acabamento premium, entrega para todo o Brasil e envio internacional.
+              Camisa de time com escudo bordado e tecido dry-fit. Mandamos pra todo o Brasil e pra fora também.
             </p>
 
             <h4 className="mt-6 text-sm font-bold uppercase tracking-wider">Redes sociais</h4>
@@ -73,7 +73,7 @@ export function Footer() {
               <span className="grid size-8 place-items-center rounded-md bg-brand text-[10px] font-black text-brand-foreground">PIX</span>
               <div className="text-xs">
                 <p className="font-bold text-foreground">Pagamento via Pix</p>
-                <p className="text-muted-foreground">Rápido, seguro e aprovado na hora</p>
+                <p className="text-muted-foreground">Aprovou na hora, a gente já separa o pedido</p>
               </div>
             </div>
             <div className="mt-5 flex items-center gap-3 text-xs text-muted-foreground">

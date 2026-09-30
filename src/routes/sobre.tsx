@@ -17,11 +17,11 @@ export const Route = createFileRoute("/sobre")({
 
 const diferenciais = [
   { icon: Award, title: "Produtos de alta qualidade", desc: "Tecido premium com acabamento profissional e escudo bordado." },
-  { icon: Truck, title: "Envio rápido", desc: "Despacho ágil e entrega para todo o Brasil com rastreio." },
+  { icon: Truck, title: "Envio rápido", desc: "Sai daqui com código de rastreio, pra qualquer canto do Brasil." },
   { icon: Shield, title: "Compra 100% segura", desc: "Pagamento via Pix, protegido e aprovado na hora." },
-  { icon: MessageCircle, title: "Atendimento no WhatsApp", desc: "Suporte humano, direto e sem burocracia." },
+  { icon: MessageCircle, title: "Atendimento no WhatsApp", desc: "Pergunta o tamanho, tira dúvida. Quem responde é gente." },
   { icon: Star, title: "Satisfação dos clientes", desc: "Milhares de torcedores atendidos com nota máxima." },
-  { icon: Heart, title: "Feito por torcedor", desc: "Curadoria com carinho para quem vive o futebol." },
+  { icon: Heart, title: "Feito por torcedor", desc: "A gente escolhe os modelos pensando no que a torcida pede." },
 ];
 
 function SobrePage() {
@@ -31,7 +31,7 @@ function SobrePage() {
         <p className="text-xs font-bold uppercase tracking-widest text-brand">Sobre nós</p>
         <h1 className="mt-3 text-4xl font-black md:text-5xl">A PH Sports</h1>
         <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground">
-          Vestimos a paixão dos torcedores brasileiros com camisas premium, atendimento próximo e o cuidado de quem também ama o jogo.
+          Somos torcedores vendendo pra torcedor. A gente sabe a raiva que dá abrir o pacote e dar de cara com escudo torto.
         </p>
       </header>
 
@@ -39,25 +39,25 @@ function SobrePage() {
         <div>
           <h2 className="text-2xl font-black">Nossa história</h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            A PH Sports nasceu do amor pelo futebol e da vontade de oferecer camisas de qualidade premium por um preço justo.
-            Começamos atendendo torcedores da nossa cidade e crescemos levando as cores dos maiores clubes do Brasil para todos os cantos do país.
+            A PH Sports começou atendendo os torcedores da nossa cidade, gente que queria uma camisa bonita sem pagar o preço da oficial.
+            O boca a boca fez o resto, e hoje a gente manda camisa pra todo o Brasil.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Hoje somos referência em atendimento humanizado, envio rápido e produtos que honram a camisa que você veste.
+            Continua do mesmo jeito: você chama no WhatsApp, quem responde é alguém daqui, e a camisa chega com rastreio.
           </p>
         </div>
         <div className="grid gap-4">
           <div className="rounded-xl border border-border bg-secondary/40 p-5">
             <h3 className="text-sm font-black uppercase tracking-wider text-brand">Missão</h3>
-            <p className="mt-2 text-sm text-muted-foreground">Aproximar o torcedor do seu clube com produtos premium acessíveis.</p>
+            <p className="mt-2 text-sm text-muted-foreground">Botar a camisa do time no corpo de quem não quer pagar preço de oficial.</p>
           </div>
           <div className="rounded-xl border border-border bg-secondary/40 p-5">
             <h3 className="text-sm font-black uppercase tracking-wider text-brand">Visão</h3>
-            <p className="mt-2 text-sm text-muted-foreground">Ser a loja de camisas de futebol favorita do Brasil pela qualidade e experiência.</p>
+            <p className="mt-2 text-sm text-muted-foreground">Ser a loja que o torcedor indica no grupo da família.</p>
           </div>
           <div className="rounded-xl border border-border bg-secondary/40 p-5">
             <h3 className="text-sm font-black uppercase tracking-wider text-brand">Valores</h3>
-            <p className="mt-2 text-sm text-muted-foreground">Paixão, qualidade, transparência e respeito com o torcedor.</p>
+            <p className="mt-2 text-sm text-muted-foreground">Falar a verdade sobre o produto, trocar sem enrolação e responder rápido.</p>
           </div>
         </div>
       </section>

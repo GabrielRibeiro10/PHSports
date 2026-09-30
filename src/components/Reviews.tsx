@@ -13,7 +13,7 @@ export function Reviews() {
       <div className="flex flex-col items-start justify-between gap-2 md:flex-row md:items-end">
         <div>
           <p className="text-xs font-bold uppercase tracking-widest text-brand">Avaliações reais</p>
-          <h2 className="text-2xl font-black md:text-3xl">O que dizem os torcedores</h2>
+          <h2 className="text-2xl font-black md:text-3xl">Quem já recebeu, conta</h2>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <div className="flex">

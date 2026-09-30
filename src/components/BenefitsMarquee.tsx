@@ -1,11 +1,11 @@
 import { Truck, RefreshCw, Globe2, MessageCircle, ShieldCheck, CreditCard } from "lucide-react";
 
 const items = [
-  { icon: Truck, title: "Envio para todo o Brasil", desc: "Rastreamento em todas as encomendas" },
-  { icon: Globe2, title: "Envio Internacional", desc: "Levamos a PH Sports pelo mundo" },
-  { icon: RefreshCw, title: "Troca fácil", desc: "Devolva sem burocracia" },
-  { icon: MessageCircle, title: "Atendimento humanizado", desc: "Suporte real via WhatsApp" },
-  { icon: ShieldCheck, title: "Compra 100% segura", desc: "SSL e dados protegidos" },
+  { icon: Truck, title: "Envio para todo o Brasil", desc: "Código de rastreio em todo pedido" },
+  { icon: Globe2, title: "Envio Internacional", desc: "Mora fora? Também mandamos" },
+  { icon: RefreshCw, title: "Troca fácil", desc: "7 dias pra trocar, sem formulário" },
+  { icon: MessageCircle, title: "Atendimento humanizado", desc: "Quem responde é gente, no WhatsApp" },
+  { icon: ShieldCheck, title: "Compra 100% segura", desc: "Site com SSL, seus dados protegidos" },
   { icon: CreditCard, title: "Pix e cartão", desc: "Parcele em até 6x" },
 ];
 

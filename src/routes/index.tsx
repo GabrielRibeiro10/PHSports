@@ -43,8 +43,8 @@ function Home() {
       <section className="mx-auto max-w-7xl px-4 py-14" id="destaques">
         <div className="mb-6 flex items-end justify-between">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-brand">Em alta agora</p>
-            <h2 className="text-2xl font-black md:text-3xl">Mais vendidas da semana</h2>
+            <p className="text-xs font-bold uppercase tracking-widest text-brand">Saindo mais</p>
+            <h2 className="text-2xl font-black md:text-3xl">As que a torcida mais leva</h2>
           </div>
           <Link to="/" hash="produtos" className="hidden md:inline-flex items-center gap-1 text-sm font-semibold hover:text-brand">
             Ver todas <ArrowRight className="size-4" />
@@ -257,8 +257,8 @@ function SearchAndProducts() {
       <div className="mb-6 flex flex-col items-start gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-widest text-brand">Catálogo</p>
-          <h2 className="text-2xl font-black md:text-3xl">Camisas dos grandes clubes</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Camisas dos grandes clubes a partir de R$ 179,90.</p>
+          <h2 className="text-2xl font-black md:text-3xl">Ache o seu time</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Brasileirão, Europa e seleções. Filtra pela região ou digita o nome do clube.</p>
         </div>
         <form onSubmit={onSearch} className="flex w-full items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2.5 transition-colors focus-within:border-foreground/40 focus-within:bg-background md:w-80">
           <Search className="size-4 text-muted-foreground" />
@@ -391,7 +391,7 @@ function BrandTypography() {
     <section aria-label="PHSPORTS" className="relative overflow-hidden border-t border-border bg-background">
       <div className="mx-auto max-w-7xl px-4 py-16 md:py-24">
         <div className="text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand">A marca dos torcedores</p>
+          <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand">Da arquibancada pra você</p>
           <h2
             aria-label="PHSPORTS"
             className="mt-4 select-none whitespace-nowrap text-center text-[15vw] font-black leading-[0.9] tracking-[-0.04em] text-foreground md:text-[13rem]"
@@ -399,7 +399,7 @@ function BrandTypography() {
             PH<span className="text-brand">SPORTS</span>
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground">
-            Paixão, qualidade e velocidade em cada camisa. Feito para quem vive o jogo.
+            Pra quem assiste o jogo em pé, xinga o juiz e lava a camisa do avesso pra não estragar o escudo.
           </p>
         </div>
       </div>

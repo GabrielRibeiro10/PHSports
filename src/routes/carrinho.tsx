@@ -102,7 +102,7 @@ function CartPage() {
           <ShoppingBag className="size-8 text-muted-foreground" />
         </div>
         <h1 className="mt-6 text-2xl font-black">Seu carrinho está vazio</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Que tal escolher a camisa do seu time?</p>
+        <p className="mt-2 text-sm text-muted-foreground">Ainda não tem nada aqui. Bora escolher a camisa do seu time?</p>
         <Link to="/" hash="produtos" className="btn-glow mt-6 inline-flex rounded-full bg-brand px-6 py-3 text-sm font-bold text-brand-foreground">
           Ver camisas
         </Link>

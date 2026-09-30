@@ -1,10 +1,10 @@
 import { Truck, RefreshCw, Globe2, MessageCircle } from "lucide-react";
 
 const items = [
-  { icon: RefreshCw, text: "Troque ou devolva com facilidade" },
-  { icon: Truck, text: "Envio rápido para todo o Brasil" },
-  { icon: Globe2, text: "Envio Internacional" },
-  { icon: MessageCircle, text: "Atendimento Humanizado" },
+  { icon: RefreshCw, text: "Não serviu? Troca em até 7 dias" },
+  { icon: Truck, text: "Mandamos pra todo o Brasil, com rastreio" },
+  { icon: Globe2, text: "Mora fora? A gente envia também" },
+  { icon: MessageCircle, text: "No WhatsApp quem responde é gente" },
 ];
 
 export function Ticker() {
