@@ -47,8 +47,8 @@ export function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-40 border-b bg-background/95 backdrop-blur transition-[box-shadow,border-color] duration-300 supports-[backdrop-filter]:bg-background/80 ${
-        scrolled ? "border-border shadow-[var(--shadow-card)]" : "border-transparent"
+      className={`sticky top-0 z-40 border-b backdrop-blur-md transition-[background-color,box-shadow,border-color] duration-300 ${
+        scrolled ? "border-border bg-background/90 shadow-[var(--shadow-card)]" : "border-transparent bg-background/65"
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 md:py-4">

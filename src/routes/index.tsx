@@ -394,7 +394,7 @@ function BrandTypography() {
           <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand">A marca dos torcedores</p>
           <h2
             aria-label="PHSPORTS"
-            className="mt-4 select-none text-[19vw] font-black leading-[0.9] tracking-[-0.04em] text-foreground md:text-[13rem]"
+            className="mt-4 select-none whitespace-nowrap text-center text-[15vw] font-black leading-[0.9] tracking-[-0.04em] text-foreground md:text-[13rem]"
           >
             PH<span className="text-brand">SPORTS</span>
           </h2>
