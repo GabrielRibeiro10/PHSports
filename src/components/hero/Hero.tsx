@@ -112,6 +112,11 @@ export function Hero() {
         fetchPriority="high"
         className="absolute inset-0 -z-10 size-full scale-[1.04] object-cover object-left-top will-change-transform md:left-auto md:right-0 md:w-auto md:max-w-none md:object-contain md:object-right md:[mask-image:linear-gradient(to_right,transparent,black_35%)]"
       />
+      {/* Véu escuro à esquerda para destacar o texto */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-[7] bg-[linear-gradient(to_bottom,rgb(0_0_0/0.7)_0%,rgb(0_0_0/0.35)_45%,transparent_72%)] md:bg-[linear-gradient(to_right,rgb(0_0_0/0.88)_0%,rgb(0_0_0/0.62)_28%,rgb(0_0_0/0.22)_48%,transparent_62%)]"
+      />
       {/* Modelo PH Sports no canto direito (mobile); a camisa 3D fica por cima */}
       <img
         ref={personRef}
