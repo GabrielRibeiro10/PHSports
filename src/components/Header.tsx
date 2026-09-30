@@ -49,6 +49,8 @@ export function Header() {
     <header
       className={`sticky top-0 z-40 border-b backdrop-blur-xl backdrop-saturate-150 transition-[background-color,box-shadow,border-color] duration-300 ${
         scrolled ? "border-border/60 bg-background/60 shadow-[var(--shadow-card)]" : "border-transparent bg-background/55"
+      } md:border-transparent md:bg-transparent md:shadow-none md:backdrop-blur-none md:backdrop-saturate-100 ${
+        pathname === "/" ? "md:-mb-[76px]" : ""
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 md:py-4">
@@ -72,7 +74,7 @@ export function Header() {
           onClick={onLogoClick}
           aria-label="Voltar ao topo"
           title="Voltar ao topo"
-          className="group flex shrink-0 cursor-pointer items-center gap-2 rounded-full px-1 py-0.5 transition-all duration-300 hover:scale-[1.04] hover:[filter:drop-shadow(0_0_10px_oklch(0.55_0.22_27/0.45))] active:scale-[0.99]"
+          className="ph-glass group flex shrink-0 cursor-pointer items-center gap-2 rounded-full px-1 py-0.5 md:py-1 md:pl-1 md:pr-4 transition-all duration-300 hover:scale-[1.04] hover:[filter:drop-shadow(0_0_10px_oklch(0.55_0.22_27/0.45))] active:scale-[0.99]"
         >
           <img src={logo.url} alt="PH Sports" className="size-9 rounded-full object-cover ring-1 ring-border" />
           <span className="text-lg font-black tracking-tight">
@@ -80,7 +82,8 @@ export function Header() {
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-5 text-sm font-medium">
+        <div className="ph-bar hidden md:flex flex-1 items-center gap-5 rounded-full px-6 py-2">
+        <nav className="flex items-center gap-5 text-sm font-medium">
           <Link to="/" hash="produtos" className="hover:text-brand transition-colors">Camisas</Link>
           <Link to="/categoria/$slug" params={{ slug: "mulheres" }} activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Femininas</Link>
           <Link to="/categoria/$slug" params={{ slug: "retro" }} activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Retrô</Link>
@@ -89,7 +92,7 @@ export function Header() {
           <Link to="/rastreio" activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Rastrear</Link>
         </nav>
 
-        <form onSubmit={onSearch} className="ml-auto hidden md:flex flex-1 max-w-md items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2 transition-colors focus-within:border-foreground/40 focus-within:bg-background">
+        <form onSubmit={onSearch} className="ml-auto flex flex-1 max-w-sm items-center gap-2 rounded-full border border-black/5 bg-black/[0.04] px-4 py-1.5 transition-colors focus-within:border-foreground/30 focus-within:bg-white">
           <Search className="size-4 text-muted-foreground" />
           <input
             value={q}
@@ -101,11 +104,12 @@ export function Header() {
             aria-label="Buscar produtos"
           />
         </form>
+        </div>
 
         <Link
           to="/carrinho"
           aria-label="Abrir carrinho"
-          className="ph-bag relative ml-auto md:ml-0 grid size-10 place-items-center rounded-full"
+          className="ph-bag relative ml-auto md:ml-0 grid size-10 place-items-center rounded-full ph-glass md:size-12"
         >
           <span className="ph-bag__icon relative block size-[22px]">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden className="size-full overflow-visible">
