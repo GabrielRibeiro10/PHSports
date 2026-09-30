@@ -64,8 +64,8 @@ export function CategoryCarousel() {
     <section id="categorias" className="mx-auto max-w-7xl px-4 py-10 md:py-14 reveal-up">
       <div className="mb-6 flex items-end justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-brand">Explore por categoria</p>
-          <h2 className="text-2xl font-black md:text-3xl">Escolha o seu estilo</h2>
+          <p className="text-xs font-bold uppercase tracking-widest text-brand">Do estádio à pelada</p>
+          <h2 className="text-2xl font-black md:text-3xl">Torcedor, jogador ou retrô?</h2>
         </div>
       </div>
 
