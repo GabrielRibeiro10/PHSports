@@ -483,3 +483,32 @@ button, a.btn-glow, button.btn-glow {
 @media (prefers-reduced-motion: reduce) {
   .wave-red > span { animation: none; }
 }
+
+/* Botões de compra — pílula escura com brilho (referência "Generate Site") */
+.btn-gen {
+  position: relative;
+  color: #fff;
+  background: linear-gradient(180deg, #2b2b2b 0%, #171717 55%, #111 100%);
+  border: 1px solid rgb(255 255 255 / 0.16);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.14),
+    inset 0 -3px 8px rgb(0 0 0 / 0.55),
+    0 8px 20px -10px rgb(0 0 0 / 0.7);
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, box-shadow 220ms ease;
+}
+.btn-gen__text {
+  background: linear-gradient(90deg, #ffffff 0%, #f1f1f1 45%, #8d8d8d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.btn-gen__icon { color: #fff; transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1); flex-shrink: 0; }
+@media (hover: hover) {
+  .btn-gen:hover, .group:hover .btn-gen { border-color: rgb(255 255 255 / 0.3); transform: translateY(-1px); }
+  .btn-gen:hover .btn-gen__icon, .group:hover .btn-gen__icon { transform: rotate(18deg) scale(1.1); }
+}
+.btn-gen:active { transform: translateY(0.5px) scale(0.99); }
+@media (prefers-reduced-motion: reduce) {
+  .btn-gen, .btn-gen__icon { transition: none; }
+}

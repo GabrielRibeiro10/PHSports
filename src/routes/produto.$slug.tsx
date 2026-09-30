@@ -2,7 +2,8 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useId, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Check, ChevronRight, Ruler, RefreshCw, ShieldCheck, ShoppingBag, X, Zap } from "lucide-react";
+import { Check, ChevronRight, Ruler, RefreshCw, ShieldCheck, ShoppingBag, X } from "lucide-react";
+import { Sparkles } from "@/components/Sparkles";
 import { formatBRL, SIZES } from "@/lib/products";
 import { getProduct, productsQueryOptions } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
@@ -272,9 +273,9 @@ function ProductPage() {
             </button>
             <button
               onClick={onBuy}
-              className="inline-flex items-center justify-center gap-2 rounded-md bg-brand px-6 py-3.5 text-sm font-black text-brand-foreground shadow-md transition-transform hover:scale-[1.01]"
+              className="btn-gen inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-3.5 text-sm font-medium"
             >
-              <Zap className="size-4" /> Comprar
+              <Sparkles className="size-[18px]" /> <span className="btn-gen__text">Comprar</span>
             </button>
           </div>
 

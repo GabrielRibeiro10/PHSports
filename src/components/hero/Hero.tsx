@@ -1,6 +1,7 @@
 import type React from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, ShieldCheck, Truck } from "lucide-react";
+import { ShieldCheck, Truck } from "lucide-react";
+import { Sparkles } from "@/components/Sparkles";
 import { useEffect, useRef, useState } from "react";
 import hero from "@/assets/hero-banner.jpg";
 import bgMobile from "@/assets/hero-bg-mobile.jpg";
@@ -165,9 +166,9 @@ export function Hero() {
             <Link
               to="/"
               hash="produtos"
-              className="btn-glow btn-shine inline-flex items-center gap-2 rounded-full bg-white px-5 py-3.5 md:px-7 text-sm font-bold text-foreground shadow-[var(--shadow-raised)]"
+              className="btn-gen btn-shine inline-flex items-center gap-2.5 rounded-full px-6 py-3.5 text-sm font-medium md:px-7"
             >
-              <span className="btn-silver">Comprar agora</span> <ArrowRight className="size-4" />
+              <Sparkles className="size-[18px]" /> <span className="btn-gen__text">Comprar agora</span>
             </Link>
             <Link
               to="/"
