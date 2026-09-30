@@ -84,7 +84,7 @@ export function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="hero-pending relative isolate overflow-hidden bg-obsidian md:bg-background"
+      className="hero-pending relative isolate overflow-hidden bg-[#782b30]"
     >
       {/* Fundo 9:16 somente no mobile (arquivo original, sem recompressão) */}
       <img
@@ -94,7 +94,7 @@ export function Hero() {
         width={1116}
         height={2000}
         fetchPriority="high"
-        className="absolute inset-0 -z-10 size-full object-cover object-left-top md:hidden"
+        className="absolute inset-0 -z-10 size-full object-cover object-left-top md:left-auto md:right-0 md:w-auto md:max-w-none md:object-contain md:object-right md:[mask-image:linear-gradient(to_right,transparent,black_35%)]"
       />
       {/* Modelo PH Sports no canto direito (mobile); a camisa 3D fica por cima */}
       <img
@@ -103,7 +103,7 @@ export function Hero() {
         aria-hidden
         width={417}
         height={1026}
-        className="pointer-events-none absolute bottom-0 -right-[16%] -z-[5] h-[86%] w-auto max-w-none object-contain object-right-bottom [filter:drop-shadow(-12px_0_24px_rgb(0_0_0/0.35))] md:hidden"
+        className="pointer-events-none absolute bottom-0 -right-[16%] -z-[5] h-[86%] w-auto max-w-none object-contain object-right-bottom [filter:drop-shadow(-12px_0_24px_rgb(0_0_0/0.35))] md:right-[max(calc((100%-80rem)/2+10rem),calc(25%-9rem))] md:h-[94%] md:[mask-image:linear-gradient(to_right,transparent,black_12%,black_76%,transparent)]"
       />
       <canvas
         ref={canvasRef}
@@ -111,11 +111,11 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 z-0 size-full opacity-0"
       />
 
-      <div className="relative z-10 mx-auto h-[max(520px,calc(100svh-6.25rem))] max-w-7xl px-4 pt-[clamp(1.5rem,5svh,3rem)] md:grid md:h-auto md:min-h-[clamp(560px,76vh,760px)] md:grid-cols-2 md:items-center md:gap-8 md:py-16">
+      <div className="relative z-10 mx-auto h-[max(520px,calc(100svh-6.25rem))] max-w-7xl px-4 pt-[clamp(1.5rem,5svh,3rem)] md:grid md:h-[max(600px,calc(100svh-6.25rem))] md:grid-cols-2 md:items-center md:gap-8 md:py-16">
         <div ref={textRef}>
           <span
             data-hero-extra
-            className="hero-reveal inline-flex items-center gap-2 border-l-2 border-white/80 pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-white/90 md:border-brand md:text-brand"
+            className="hero-reveal inline-flex items-center gap-2 border-l-2 border-white/80 pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-white/90"
           >
             Coleção 2026 • Edição Premium
           </span>
@@ -127,37 +127,37 @@ export function Hero() {
           </h1>
           <p
             data-hero-extra
-            className="hero-reveal mt-4 max-w-md md:mt-5 text-base leading-relaxed text-white/80 md:text-muted-foreground"
+            className="hero-reveal mt-4 max-w-md md:mt-5 text-base leading-relaxed text-white/80"
           >
             Camisas dos maiores clubes do Brasil com acabamento premium. Tudo por{" "}
-            <span className="font-black tabular-nums text-white md:text-foreground">R$ 179,90</span>{" "}
+            <span className="font-black tabular-nums text-white">R$ 179,90</span>{" "}
             na PH Sports.
           </p>
           <div data-hero-extra className="hero-reveal mt-6 flex flex-wrap gap-3 md:mt-8">
             <Link
               to="/"
               hash="produtos"
-              className="btn-glow btn-shine inline-flex items-center gap-2 rounded-full bg-white px-5 py-3.5 md:px-7 text-sm font-bold text-foreground shadow-[var(--shadow-raised)] md:bg-brand md:text-brand-foreground"
+              className="btn-glow btn-shine inline-flex items-center gap-2 rounded-full bg-white px-5 py-3.5 md:px-7 text-sm font-bold text-foreground shadow-[var(--shadow-raised)]"
             >
               <span className="btn-silver">Comprar agora</span> <ArrowRight className="size-4" />
             </Link>
             <Link
               to="/"
               hash="clubes"
-              className="btn-glow inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/10 px-5 py-3.5 md:px-7 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20 md:border-border md:bg-background md:text-foreground md:backdrop-blur-none md:hover:border-foreground/30 md:hover:bg-secondary/60"
+              className="btn-glow inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/10 px-5 py-3.5 md:px-7 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20"
             >
               Ver clubes
             </Link>
           </div>
           <div
             data-hero-extra
-            className="hero-reveal mt-5 flex flex-wrap items-center gap-5 md:mt-8 text-xs text-white/80 md:text-muted-foreground"
+            className="hero-reveal mt-5 flex flex-wrap items-center gap-5 md:mt-8 text-xs text-white/80"
           >
             <span className="inline-flex items-center gap-1.5">
-              <Truck className="size-4 text-white md:text-brand" /> Envio para todo Brasil
+              <Truck className="size-4 text-white" /> Envio para todo Brasil
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="size-4 text-white md:text-brand" /> Compra 100% segura
+              <ShieldCheck className="size-4 text-white" /> Compra 100% segura
             </span>
           </div>
         </div>
@@ -165,7 +165,7 @@ export function Hero() {
         {/* Destino final da camisa 3D (lado direito). */}
         <div
           ref={slotRef}
-          className="absolute bottom-3 right-4 aspect-square w-[clamp(150px,calc(100svh-6.25rem-23rem),58vw)] md:relative md:bottom-auto md:right-auto md:ml-auto md:w-full md:max-w-[540px]"
+          className="absolute bottom-3 right-4 aspect-square w-[clamp(150px,calc(100svh-6.25rem-23rem),58vw)] md:relative md:bottom-auto md:right-auto md:ml-auto md:w-full md:max-w-[min(420px,46vh)] md:self-end md:mb-[4vh]"
         >
           {webglFailed && (
             <img
