@@ -10,14 +10,14 @@ const items = [
 export function Ticker() {
   const seq = [...items, ...items, ...items, ...items];
   return (
-    <div className="w-full overflow-hidden bg-primary text-primary-foreground">
+    <div className="w-full overflow-hidden bg-[#1d4d8f] text-white">
       <div className="flex">
         <div className="ticker-track flex shrink-0 items-center gap-10 whitespace-nowrap py-2.5 pr-10 text-xs font-medium tracking-wide">
           {seq.map((it, i) => {
             const Icon = it.icon;
             return (
               <span key={i} className="inline-flex items-center gap-2">
-                <Icon className="size-3.5 text-brand" />
+                <Icon className="size-3.5 text-white/90" />
                 {it.text}
                 <span className="text-primary-foreground/30">•</span>
               </span>
@@ -29,7 +29,7 @@ export function Ticker() {
             const Icon = it.icon;
             return (
               <span key={i} className="inline-flex items-center gap-2">
-                <Icon className="size-3.5 text-brand" />
+                <Icon className="size-3.5 text-white/90" />
                 {it.text}
                 <span className="text-primary-foreground/30">•</span>
               </span>
