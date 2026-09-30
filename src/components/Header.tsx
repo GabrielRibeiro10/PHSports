@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Search, ShoppingBag, Menu, X, Truck } from "lucide-react";
+import { Search, Truck } from "lucide-react";
 import { useEffect, useState, type FormEvent, type MouseEvent } from "react";
 import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
@@ -57,9 +57,14 @@ export function Header() {
           aria-label={open ? "Fechar menu" : "Abrir menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="md:hidden -ml-1 rounded p-1.5 hover:bg-secondary"
+          data-open={open}
+          className="ph-burger md:hidden -ml-1 rounded p-1.5"
         >
-          {open ? <X className="size-5" /> : <Menu className="size-5" />}
+          <span className="ph-burger__box" aria-hidden>
+            <span className="ph-burger__line ph-burger__line--top" />
+            <span className="ph-burger__line ph-burger__line--mid" />
+            <span className="ph-burger__line ph-burger__line--bot" />
+          </span>
         </button>
 
         <Link
@@ -100,14 +105,30 @@ export function Header() {
         <Link
           to="/carrinho"
           aria-label="Abrir carrinho"
-          className="relative ml-auto md:ml-0 grid size-10 place-items-center rounded-full hover:bg-secondary transition-colors"
+          className="ph-bag relative ml-auto md:ml-0 grid size-10 place-items-center rounded-full"
         >
-          <ShoppingBag className="size-5" />
-          {count > 0 && (
-            <span className="absolute -right-0.5 -top-0.5 grid min-w-[18px] h-[18px] place-items-center rounded-full bg-brand px-1 text-[10px] font-bold text-brand-foreground">
-              {count}
-            </span>
-          )}
+          <span className="ph-bag__icon relative block size-[22px]">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden className="size-full overflow-visible">
+              <path
+                className="ph-bag__handle"
+                d="M9 8.5V6.75a3 3 0 0 1 6 0V8.5"
+                stroke="currentColor"
+                strokeWidth="1.35"
+                strokeLinecap="square"
+              />
+              <path
+                d="M4.75 8.5h14.5l-1.1 12.25H5.85L4.75 8.5Z"
+                stroke="currentColor"
+                strokeWidth="1.35"
+                strokeLinejoin="miter"
+              />
+            </svg>
+            {count > 0 && (
+              <span className="ph-bag__count absolute -bottom-1 -right-1.5 grid h-[15px] min-w-[15px] place-items-center rounded-full bg-brand px-[3px] text-[9px] font-bold leading-none tabular-nums text-brand-foreground ring-2 ring-background">
+                {count}
+              </span>
+            )}
+          </span>
         </Link>
       </div>
 
