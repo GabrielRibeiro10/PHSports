@@ -133,7 +133,7 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 z-0 size-full opacity-0"
       />
 
-      <div className="relative z-10 mx-auto h-[max(520px,calc(100svh-6.25rem))] max-w-7xl px-4 pt-[clamp(1.5rem,5svh,3rem)] md:grid md:h-[max(600px,calc(100svh-6.25rem))] md:grid-cols-2 md:items-center md:gap-8 md:py-16">
+      <div className="relative z-10 mx-auto h-[max(520px,calc(100svh-6.25rem))] max-w-7xl px-4 pt-[clamp(1.5rem,5svh,3rem)] md:grid md:h-[max(640px,calc(100svh-2.35rem))] md:pt-28 md:grid-cols-2 md:items-center md:gap-8 md:py-16">
         <div ref={textRef}>
           <span
             data-hero-extra
