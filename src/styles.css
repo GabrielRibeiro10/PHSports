@@ -455,3 +455,31 @@ button, a.btn-glow, button.btn-glow {
       0 10px 24px -12px rgb(0 0 0 / 0.45);
   }
 }
+
+/* "Edição Premium": onda vermelha — cor fluindo + letras ondulando */
+.wave-red { display: inline-flex; }
+.wave-red > span {
+  display: inline-block;
+  background: linear-gradient(90deg, #ff5a4f 0%, #cf1f2b 25%, #ff9b8f 50%, #cf1f2b 75%, #ff5a4f 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation:
+    wave-red-color 3.2s linear infinite,
+    wave-red-bob 2.4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  animation-delay: calc(var(--i) * -0.09s), calc(var(--i) * 0.07s);
+  will-change: transform;
+}
+@keyframes wave-red-color {
+  from { background-position: 0% 0; }
+  to { background-position: 300% 0; }
+}
+@keyframes wave-red-bob {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-2.5px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wave-red > span { animation: none; }
+}

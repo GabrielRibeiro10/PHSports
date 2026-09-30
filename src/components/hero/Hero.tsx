@@ -139,7 +139,14 @@ export function Hero() {
             data-hero-extra
             className="hero-reveal inline-flex items-center gap-2 border-l-2 border-white/80 pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-white/90"
           >
-            Coleção 2026 • Edição Premium
+            Coleção 2026 •{" "}
+            <span className="wave-red" aria-label="Edição Premium">
+              {[..."Edição Premium"].map((ch, i) => (
+                <span key={i} aria-hidden style={{ "--i": i } as React.CSSProperties}>
+                  {ch === " " ? "\u00a0" : ch}
+                </span>
+              ))}
+            </span>
           </span>
           <h1
             aria-label={TITLE_LABEL}
