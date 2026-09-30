@@ -1034,9 +1034,18 @@ header[data-on-dark="true"] .ph-glass img { box-shadow: 0 0 0 1px rgb(255 255 25
 
 /* HERO: modelo entra deslizando da direita (usa "translate" para não conflitar com o parallax em "transform") */
 .hero-person-in {
-  animation: hero-person-in 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+  animation: hero-person-in 1.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+/* Até a entrada da HERO começar (JS remove .hero-pending), a foto espera.
+   Se o JS não carregar, entra sozinha após 2,5s (mesmo fallback do texto). */
+.hero-pending .hero-person-in {
+  animation: hero-person-in-fallback 1.6s cubic-bezier(0.16, 1, 0.3, 1) 2.5s both;
 }
 @keyframes hero-person-in {
+  from { translate: 22% 0; opacity: 0; }
+  to { translate: 0 0; opacity: 1; }
+}
+@keyframes hero-person-in-fallback {
   from { translate: 22% 0; opacity: 0; }
   to { translate: 0 0; opacity: 1; }
 }
