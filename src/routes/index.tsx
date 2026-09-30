@@ -85,7 +85,10 @@ function ClubsMarquee() {
                   <img
                     src={crestFor(p.club)}
                     alt=""
-                    loading="lazy"
+                    loading="eager"
+                    decoding="async"
+                    width={40}
+                    height={40}
                     className="absolute left-1/2 top-4 z-10 h-6 w-auto max-w-[44%] -translate-x-1/2 object-contain drop-shadow-[0_2px_4px_rgb(0_0_0/0.35)] md:top-5 md:h-8"
                   />
                 ) : (
