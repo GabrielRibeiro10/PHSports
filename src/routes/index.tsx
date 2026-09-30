@@ -86,7 +86,7 @@ function ClubsMarquee() {
                     src={crestFor(p.club)}
                     alt=""
                     loading="lazy"
-                    className="absolute left-1/2 top-3.5 z-10 h-8 w-auto max-w-[52%] -translate-x-1/2 object-contain drop-shadow-[0_2px_4px_rgb(0_0_0/0.35)] md:top-4 md:h-10"
+                    className="absolute left-1/2 top-4 z-10 h-6 w-auto max-w-[44%] -translate-x-1/2 object-contain drop-shadow-[0_2px_4px_rgb(0_0_0/0.35)] md:top-5 md:h-8"
                   />
                 ) : (
                   <span className="absolute inset-x-0 top-5 z-10 px-2 text-center text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-white md:top-6 md:text-[11px]">
