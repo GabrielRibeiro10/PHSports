@@ -1,12 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Search, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import type { CategoryId, Product } from "@/lib/products";
 
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import hero from "@/assets/hero-banner.jpg";
 import { productsQueryOptions } from "@/lib/catalog";
 import { ProductCard } from "@/components/ProductCard";
 import { Ticker } from "@/components/Ticker";
@@ -15,6 +14,7 @@ import { MAX_SEARCH_LEN, sanitizeSearch, sanitizeSearchTyping, checkSearchRate }
 import { BenefitsMarquee } from "@/components/BenefitsMarquee";
 import { Reviews } from "@/components/Reviews";
 import { CategoryCarousel } from "@/components/CategoryCarousel";
+import { Hero } from "@/components/hero/Hero";
 
 export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(productsQueryOptions),
@@ -60,63 +60,6 @@ function Home() {
       <Reviews />
       <BrandTypography />
     </>
-  );
-}
-
-function Hero() {
-  return (
-    <section className="relative overflow-hidden bg-background">
-      <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-12 md:grid-cols-2 md:py-20">
-        <div className="relative z-10">
-          <span className="inline-flex items-center gap-2 border-l-2 border-brand pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-brand">
-            Coleção 2026 • Edição Premium
-          </span>
-          <h1 className="mt-5 text-[2.5rem] font-black tracking-[-0.03em] text-foreground md:text-[3.75rem]">
-            Vista as cores do <span className="text-brand">seu clube.</span>
-          </h1>
-          <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground">
-            Camisas dos maiores clubes do Brasil com acabamento premium. Tudo por{" "}
-            <span className="font-black tabular-nums text-foreground">R$ 179,90</span> na PH Sports.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              to="/"
-              hash="produtos"
-              className="btn-glow inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm font-bold text-brand-foreground shadow-[var(--shadow-raised)]"
-            >
-              Comprar agora <ArrowRight className="size-4" />
-            </Link>
-            <Link
-              to="/"
-              hash="clubes"
-              className="btn-glow inline-flex items-center gap-2 rounded-full border border-border bg-background px-7 py-3.5 text-sm font-semibold text-foreground transition-colors hover:border-foreground/30 hover:bg-secondary/60"
-            >
-              Ver clubes
-            </Link>
-          </div>
-          <div className="mt-8 flex flex-wrap items-center gap-5 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5"><Truck className="size-4 text-brand" /> Envio para todo Brasil</span>
-            <span className="inline-flex items-center gap-1.5"><ShieldCheck className="size-4 text-brand" /> Compra 100% segura</span>
-          </div>
-        </div>
-        <div className="relative">
-          <div className="absolute -inset-4 rounded-[2rem] bg-secondary/50 blur-2xl" aria-hidden />
-          <img
-            src={hero}
-            alt="Coleção premium PH Sports — camisa, chuteira e bola de futebol"
-            width={1600}
-            height={1200}
-            fetchPriority="high"
-            className="relative aspect-[4/3] w-full rounded-2xl bg-white object-cover shadow-[var(--shadow-premium)] ring-1 ring-border"
-          />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 rounded-b-2xl bg-gradient-to-t from-black/70 via-black/30 to-transparent p-5 md:p-7">
-            <p className="max-w-md text-sm font-semibold leading-snug text-white md:text-base">
-              Os melhores produtos esportivos para quem vive a paixão pelo esporte.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
   );
 }
 
