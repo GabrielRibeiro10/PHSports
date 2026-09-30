@@ -69,7 +69,7 @@ function ClubsMarquee() {
   const loop = [...products, ...products];
   return (
     <section id="clubes" className="bg-[#0f2c57]">
-      <div className="mx-auto max-w-7xl px-4 py-5 md:py-6">
+      <div className="mx-auto max-w-7xl px-4 pb-5 md:pb-6">
         <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]">
           <div className="clubs-track flex w-max gap-3 md:gap-4">
             {loop.map((p, i) => (
@@ -77,7 +77,7 @@ function ClubsMarquee() {
                 key={`${p.slug}-${i}`}
                 to="/produto/$slug"
                 params={{ slug: p.slug }}
-                className="club-pill group relative block h-[184px] w-[104px] shrink-0 overflow-hidden rounded-full bg-gradient-to-b from-[#1d4d8f] to-[#5d86bf] md:h-[220px] md:w-[124px]"
+                className="club-pill group relative block h-[184px] w-[104px] shrink-0 overflow-hidden rounded-b-full bg-gradient-to-b from-[#0f2c57] via-[#1d4d8f] to-[#5d86bf] md:h-[220px] md:w-[124px]"
                 aria-hidden={i >= products.length ? true : undefined}
                 tabIndex={i >= products.length ? -1 : undefined}
               >
