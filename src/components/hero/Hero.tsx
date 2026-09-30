@@ -144,7 +144,7 @@ export function Hero() {
           </h1>
           <p
             data-hero-extra
-            className="hero-reveal mt-4 max-w-md md:mt-5 text-base leading-relaxed text-white/80"
+            className="hero-reveal mt-4 max-w-md md:mt-5 text-sm leading-relaxed md:text-[15px] text-white/80"
           >
             Cansou de pagar caro na oficial ou de receber escudo de adesivo? Aqui o escudo é bordado e o tecido dry-fit, por{" "}
             <span className="font-black tabular-nums text-white">R$ 179,90</span>.
