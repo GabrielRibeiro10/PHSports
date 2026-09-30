@@ -35,8 +35,8 @@ function Home() {
   const { data: products = [] } = useQuery(productsQueryOptions);
   return (
     <>
-      <Ticker />
       <Hero />
+      <Ticker />
       <CategoryCarousel />
       <ClubsMarquee />
       <SearchAndProducts />
