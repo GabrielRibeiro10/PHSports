@@ -92,7 +92,7 @@ export function Header() {
           <Link to="/rastreio" activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Rastrear</Link>
         </nav>
 
-        <form onSubmit={onSearch} className="ml-auto flex flex-1 max-w-sm items-center gap-2 rounded-full border border-black/5 bg-black/[0.04] px-4 py-1.5 transition-colors focus-within:border-foreground/30 focus-within:bg-white">
+        <form onSubmit={onSearch} className="ml-auto flex flex-1 max-w-sm items-center gap-2 rounded-full border px-4 py-1.5 transition-colors">
           <Search className="size-4 text-muted-foreground" />
           <input
             value={q}
@@ -100,7 +100,7 @@ export function Header() {
             maxLength={MAX_SEARCH_LEN}
             inputMode="search"
             placeholder="Buscar camisa, clube..."
-            className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            className="w-full bg-transparent text-sm outline-none "
             aria-label="Buscar produtos"
           />
         </form>
