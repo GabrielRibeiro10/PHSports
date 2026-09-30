@@ -124,7 +124,7 @@ export function Hero() {
             <Link
               to="/"
               hash="produtos"
-              className="btn-glow inline-flex items-center gap-2 rounded-full bg-white px-5 py-3.5 md:px-7 text-sm font-bold text-foreground shadow-[var(--shadow-raised)] md:bg-brand md:text-brand-foreground"
+              className="btn-glow btn-shine inline-flex items-center gap-2 rounded-full bg-white px-5 py-3.5 md:px-7 text-sm font-bold text-foreground shadow-[var(--shadow-raised)] md:bg-brand md:text-brand-foreground"
             >
               Comprar agora <ArrowRight className="size-4" />
             </Link>

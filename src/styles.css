@@ -289,3 +289,58 @@ button, a.btn-glow, button.btn-glow {
 @media (prefers-reduced-motion: reduce) {
   .hero-pending .hero-reveal { opacity: 1; animation: none; }
 }
+
+/* Reflexo de luz premium (botão principal da HERO).
+   Camada ::after sobre o botão: só transform + opacity, sem afetar layout. */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 22%,
+    rgb(255 255 255 / 0.12) 36%,
+    rgb(255 255 255 / 0.5) 50%,
+    rgb(255 255 255 / 0.12) 64%,
+    transparent 78%
+  );
+  filter: blur(3px);
+  opacity: 0;
+  transform: translateX(-120%);
+  will-change: transform, opacity;
+  animation: btn-shine 6s cubic-bezier(0.45, 0, 0.25, 1) 1s infinite;
+}
+/* Botão branco (mobile): reflexo branco sumiria; usa um brilho acetinado escuro bem leve */
+@media (max-width: 767px) {
+  .btn-shine::after {
+    background: linear-gradient(
+      105deg,
+      transparent 22%,
+      rgb(13 13 13 / 0.03) 36%,
+      rgb(13 13 13 / 0.1) 50%,
+      rgb(13 13 13 / 0.03) 64%,
+      transparent 78%
+    );
+  }
+}
+/* 0s nada · 1s surge · 2s centro/forte · 3s sai · 3–6s repouso */
+@keyframes btn-shine {
+  0% { transform: translateX(-120%); opacity: 0; }
+  8% { transform: translateX(-80%); opacity: 0.3; }
+  16% { transform: translateX(-40%); opacity: 0.65; }
+  25% { transform: translateX(0%); opacity: 1; }
+  34% { transform: translateX(40%); opacity: 0.65; }
+  42% { transform: translateX(80%); opacity: 0.3; }
+  50% { transform: translateX(120%); opacity: 0; }
+  100% { transform: translateX(120%); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-shine::after { animation: none; opacity: 0; }
+}
