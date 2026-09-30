@@ -49,11 +49,11 @@ export function Header() {
     <header
       className={`sticky top-0 z-40 border-b backdrop-blur-xl backdrop-saturate-150 transition-[background-color,box-shadow,border-color] duration-300 ${
         scrolled ? "border-border/60 bg-background/60 shadow-[var(--shadow-card)]" : "border-transparent bg-background/55"
-      } md:border-transparent md:bg-transparent md:shadow-none md:backdrop-blur-none md:backdrop-saturate-100 ${
-        pathname === "/" ? "md:-mb-[76px]" : ""
+      } md:border-b-0 md:bg-transparent md:shadow-none md:backdrop-blur-none md:backdrop-saturate-100 ${
+        pathname === "/" ? "md:-mb-20" : ""
       }`}
     >
-      <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 md:py-4">
+      <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 md:h-20 md:py-0">
         <button
           type="button"
           aria-label={open ? "Fechar menu" : "Abrir menu"}
