@@ -14,6 +14,7 @@ import { MAX_SEARCH_LEN, sanitizeSearch, sanitizeSearchTyping, checkSearchRate }
 import { BenefitsMarquee } from "@/components/BenefitsMarquee";
 import { Reviews } from "@/components/Reviews";
 import { CategoryCarousel } from "@/components/CategoryCarousel";
+import { crestFor } from "@/lib/crests";
 import { Hero } from "@/components/hero/Hero";
 
 export const Route = createFileRoute("/")({
@@ -80,16 +81,25 @@ function ClubsMarquee() {
                 aria-hidden={i >= products.length ? true : undefined}
                 tabIndex={i >= products.length ? -1 : undefined}
               >
-                <span className="absolute inset-x-0 top-5 z-10 px-2 text-center text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-white md:top-6 md:text-[11px]">
-                  {p.club}
-                </span>
+                {crestFor(p.club) ? (
+                  <img
+                    src={crestFor(p.club)}
+                    alt=""
+                    loading="lazy"
+                    className="absolute left-1/2 top-3.5 z-10 h-8 w-auto max-w-[52%] -translate-x-1/2 object-contain drop-shadow-[0_2px_4px_rgb(0_0_0/0.35)] md:top-4 md:h-10"
+                  />
+                ) : (
+                  <span className="absolute inset-x-0 top-5 z-10 px-2 text-center text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-white md:top-6 md:text-[11px]">
+                    {p.club}
+                  </span>
+                )}
                 <img
                   src={p.image}
                   alt={p.club}
                   loading="lazy"
                   width={200}
                   height={200}
-                  className="absolute inset-x-0 bottom-0 h-[74%] w-full scale-[1.55] object-cover object-[50%_48%] transition-transform duration-500 ease-out [mask-image:linear-gradient(to_bottom,transparent,black_22%)] group-hover:scale-[1.62]"
+                  className="absolute inset-x-0 bottom-0 h-[67%] w-full scale-[1.55] object-cover object-[50%_48%] transition-transform duration-500 ease-out [mask-image:linear-gradient(to_bottom,transparent,black_22%)] group-hover:scale-[1.62]"
                 />
               </Link>
             ))}
