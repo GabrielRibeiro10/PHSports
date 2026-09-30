@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Zap } from "lucide-react";
+import { Sparkles } from "@/components/Sparkles";
 import { formatBRL, type Product } from "@/lib/products";
 
 export function ProductCard({ p, priority = false, glow = false }: { p: Product; priority?: boolean; glow?: boolean }) {
@@ -37,9 +37,9 @@ export function ProductCard({ p, priority = false, glow = false }: { p: Product;
         <div className="mt-auto pt-3.5">
           <span
             aria-hidden
-            className="btn-glow inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-brand px-3 py-2.5 text-[11px] font-black uppercase tracking-[0.1em] text-brand-foreground"
+            className="btn-gen inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-2.5 text-[13px] font-medium"
           >
-            <Zap className="size-3.5" /> Comprar
+            <Sparkles className="size-4" /> <span className="btn-gen__text">Comprar</span>
           </span>
         </div>
       </div>
