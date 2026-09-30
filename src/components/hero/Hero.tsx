@@ -103,7 +103,7 @@ export function Hero() {
         aria-hidden
         width={417}
         height={1026}
-        className="pointer-events-none absolute bottom-0 right-0 -z-[5] h-[50%] w-auto max-w-[58%] object-contain object-right-bottom [filter:drop-shadow(-12px_0_24px_rgb(0_0_0/0.35))] md:hidden"
+        className="pointer-events-none absolute bottom-0 -right-[16%] -z-[5] h-[86%] w-auto max-w-none object-contain object-right-bottom [filter:drop-shadow(-12px_0_24px_rgb(0_0_0/0.35))] md:hidden"
       />
       <canvas
         ref={canvasRef}
