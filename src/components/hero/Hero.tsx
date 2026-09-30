@@ -146,8 +146,8 @@ export function Hero() {
             data-hero-extra
             className="hero-reveal mt-4 max-w-md md:mt-5 text-base leading-relaxed text-white/80"
           >
-            Cansou de pagar caro na oficial ou de receber camisa com escudo de adesivo? Aqui o escudo é bordado e o tecido é dry-fit, por{" "}
-            <span className="font-black tabular-nums text-white">R$ 179,90</span> na PH Sports.
+            Escudo bordado, tecido dry-fit. Por{" "}
+            <span className="font-black tabular-nums text-white">R$ 179,90</span>.
           </p>
           <div data-hero-extra className="hero-reveal mt-6 flex flex-wrap gap-3 md:mt-8">
             <Link
