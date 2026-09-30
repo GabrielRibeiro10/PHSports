@@ -1018,3 +1018,11 @@ button, a.btn-glow, button.btn-glow {
     inset 0 -8px 16px -10px rgb(0 0 0 / 0.12),
     0 10px 24px -12px rgb(0 0 0 / 0.45);
 }
+
+/* Header desktop sem barra: links e busca direto sobre a imagem da HERO */
+.ph-nav a { color: #fff; text-shadow: 0 1px 10px rgb(0 0 0 / 0.45); }
+.ph-nav a:hover { color: rgb(255 255 255 / 0.7); }
+.ph-nav form { background: rgb(255 255 255 / 0.12); border-color: rgb(255 255 255 / 0.22); color: #fff; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.ph-nav form:focus-within { background: rgb(255 255 255 / 0.2); border-color: rgb(255 255 255 / 0.45); }
+.ph-nav input { color: #fff; }
+.ph-nav input::placeholder, .ph-nav form svg { color: rgb(255 255 255 / 0.7); }

@@ -69,7 +69,7 @@ export function Header() {
           </span>
         </Link>
 
-        <div className="ph-glass hidden lg:flex flex-1 items-center gap-5 rounded-full px-6 py-2">
+        <div className="ph-nav hidden lg:flex flex-1 items-center gap-5 px-2 py-2">
         <nav className="flex items-center gap-5 text-sm font-medium">
           <Link to="/" hash="produtos" className="hover:text-brand transition-colors">Camisas</Link>
           <Link to="/categoria/$slug" params={{ slug: "mulheres" }} activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Femininas</Link>
