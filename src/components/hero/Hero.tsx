@@ -4,6 +4,7 @@ import { ArrowRight, ShieldCheck, Truck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import hero from "@/assets/hero-banner.jpg";
 import bgMobile from "@/assets/hero-bg-mobile.jpg";
+import person from "@/assets/hero-person.webp";
 
 const TITLE = [
   { text: "Vista as cores do", accent: false },
@@ -94,6 +95,15 @@ export function Hero() {
         height={2000}
         fetchPriority="high"
         className="absolute inset-0 -z-10 size-full object-cover object-left-top md:hidden"
+      />
+      {/* Modelo PH Sports no canto direito (mobile); a camisa 3D fica por cima */}
+      <img
+        src={person}
+        alt=""
+        aria-hidden
+        width={417}
+        height={1026}
+        className="pointer-events-none absolute bottom-0 right-0 -z-[5] h-[50%] w-auto max-w-[58%] object-contain object-right-bottom [filter:drop-shadow(-12px_0_24px_rgb(0_0_0/0.35))] md:hidden"
       />
       <canvas
         ref={canvasRef}
