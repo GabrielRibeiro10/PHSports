@@ -38,6 +38,7 @@ export function Header() {
 
   return (
     <header
+      data-on-dark={pathname === "/"}
       className={`sticky top-0 z-40 bg-transparent ${pathname === "/" ? "-mb-16 lg:-mb-20" : ""}`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-2.5 px-3 sm:gap-4 sm:px-4 lg:h-20">
@@ -126,7 +127,7 @@ export function Header() {
       {/* Mobile menu */}
       {open && (
         <div className="absolute inset-x-0 top-16 px-3 lg:hidden">
-          <div className="ph-glass mx-auto max-w-7xl space-y-3 rounded-3xl px-4 py-4">
+          <div className="mx-auto max-w-7xl space-y-3 rounded-3xl bg-white px-4 py-4 text-foreground shadow-[var(--shadow-premium)]">
             <form onSubmit={onSearch} className="flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2.5 transition-colors focus-within:border-foreground/40 focus-within:bg-background">
               <Search className="size-4 text-muted-foreground" />
               <input
