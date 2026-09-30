@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Search, Truck } from "lucide-react";
-import { useState, type FormEvent, type MouseEvent } from "react";
+import { useEffect, useState, type FormEvent, type MouseEvent } from "react";
 import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
 import { MAX_SEARCH_LEN, sanitizeSearch, sanitizeSearchTyping, checkSearchRate } from "@/lib/search-safety";
@@ -12,6 +12,15 @@ export function Header() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  const onDark = pathname === "/" && !scrolled;
   const onSearch = (e: FormEvent) => {
     e.preventDefault();
     const term = sanitizeSearch(q);
@@ -38,8 +47,14 @@ export function Header() {
 
   return (
     <header
-      data-on-dark={pathname === "/"}
-      className={`sticky top-0 z-40 bg-transparent ${pathname === "/" ? "-mb-16 lg:-mb-20" : ""}`}
+      data-on-dark={onDark}
+      className={`sticky top-0 z-40 transition-[background-color,box-shadow,backdrop-filter] duration-300 ${
+        pathname === "/" ? "-mb-16 lg:-mb-20" : ""
+      } ${
+        onDark
+          ? "bg-transparent"
+          : "bg-white/85 shadow-[0_1px_0_rgb(0_0_0/0.06),0_8px_24px_-16px_rgb(0_0_0/0.25)] backdrop-blur-xl"
+      }`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-2.5 px-3 sm:gap-4 sm:px-4 lg:h-20">
         <button
