@@ -53,7 +53,7 @@ export function Header() {
       } ${
         onDark
           ? "bg-transparent"
-          : "bg-white/85 shadow-[0_1px_0_rgb(0_0_0/0.06),0_8px_24px_-16px_rgb(0_0_0/0.25)] backdrop-blur-xl"
+          : "bg-transparent lg:bg-white/85 lg:shadow-[0_1px_0_rgb(0_0_0/0.06),0_8px_24px_-16px_rgb(0_0_0/0.25)] lg:backdrop-blur-xl"
       }`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-2.5 px-3 sm:gap-4 sm:px-4 lg:h-20">

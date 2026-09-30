@@ -1060,6 +1060,16 @@ header[data-on-dark="false"] .ph-glass {
   border-color: rgb(0 0 0 / 0.1);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.6);
 }
+/* Celular/tablet sem barra: as peças flutuam sozinhas, então ganham fundo próprio para ler sobre qualquer conteúdo */
+@media (max-width: 1023px) {
+  header[data-on-dark="false"] .ph-glass {
+    background: rgb(255 255 255 / 0.88);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    backdrop-filter: blur(14px) saturate(160%);
+    border-color: rgb(0 0 0 / 0.08);
+    box-shadow: 0 6px 18px -8px rgb(0 0 0 / 0.35);
+  }
+}
 
 /* Título da HERO em serifada de alto contraste (referência "fontes elegantes") */
 .hero-serif {
