@@ -1025,12 +1025,14 @@ header[data-on-dark="true"] .ph-bag { color: #fff; }
 header[data-on-dark="true"] .ph-glass img { box-shadow: 0 0 0 1px rgb(255 255 255 / 0.25); }
 
 /* Header desktop sem barra: links e busca direto sobre a imagem da HERO */
-.ph-nav a { color: #fff; text-shadow: 0 1px 10px rgb(0 0 0 / 0.45); }
-.ph-nav a:hover { color: rgb(255 255 255 / 0.7); }
-.ph-nav form { background: rgb(255 255 255 / 0.12); border-color: rgb(255 255 255 / 0.22); color: #fff; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
-.ph-nav form:focus-within { background: rgb(255 255 255 / 0.2); border-color: rgb(255 255 255 / 0.45); }
-.ph-nav input { color: #fff; }
-.ph-nav input::placeholder, .ph-nav form svg { color: rgb(255 255 255 / 0.7); }
+.ph-nav form { background: rgb(0 0 0 / 0.04); border-color: rgb(0 0 0 / 0.1); }
+.ph-nav form:focus-within { background: #fff; border-color: rgb(0 0 0 / 0.3); }
+header[data-on-dark="true"] .ph-nav a { color: #fff; text-shadow: 0 1px 10px rgb(0 0 0 / 0.45); }
+header[data-on-dark="true"] .ph-nav a:hover { color: rgb(255 255 255 / 0.7); }
+header[data-on-dark="true"] .ph-nav form { background: rgb(255 255 255 / 0.12); border-color: rgb(255 255 255 / 0.22); color: #fff; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+header[data-on-dark="true"] .ph-nav form:focus-within { background: rgb(255 255 255 / 0.2); border-color: rgb(255 255 255 / 0.45); }
+header[data-on-dark="true"] .ph-nav input { color: #fff; }
+header[data-on-dark="true"] .ph-nav input::placeholder, header[data-on-dark="true"] .ph-nav form svg { color: rgb(255 255 255 / 0.7); }
 
 /* HERO: modelo entra deslizando da direita (usa "translate" para não conflitar com o parallax em "transform") */
 .hero-person-in {
@@ -1051,4 +1053,10 @@ header[data-on-dark="true"] .ph-glass img { box-shadow: 0 0 0 1px rgb(255 255 25
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-person-in { animation: none; }
+}
+
+header[data-on-dark="false"] .ph-glass {
+  background: linear-gradient(145deg, rgb(0 0 0 / 0.05), rgb(0 0 0 / 0.02));
+  border-color: rgb(0 0 0 / 0.1);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.6);
 }
