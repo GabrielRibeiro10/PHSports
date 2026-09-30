@@ -43,6 +43,8 @@ export function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const slotRef = useRef<HTMLDivElement>(null);
+  const bgRef = useRef<HTMLImageElement>(null);
+  const personRef = useRef<HTMLImageElement>(null);
   const [webglFailed, setWebglFailed] = useState(false);
 
   useEffect(() => {
@@ -53,8 +55,9 @@ export function Hero() {
       const canvas = canvasRef.current;
       if (!section || !canvas || !textRef.current || !slotRef.current) return;
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const [{ playHeroIntro }, sceneModule] = await Promise.all([
+      const [{ playHeroIntro }, { startHeroParallax }, sceneModule] = await Promise.all([
         import("./hero-intro"),
+        import("./hero-parallax"),
         import("./shirt-scene").catch(() => null),
       ]);
       if (cancelled) return;
@@ -65,7 +68,7 @@ export function Hero() {
         scene = null;
       }
       if (!scene) setWebglFailed(true);
-      cleanup = playHeroIntro({
+      const stopIntro = playHeroIntro({
         section,
         startEl: textRef.current,
         endEl: slotRef.current,
@@ -74,6 +77,18 @@ export function Hero() {
         scene,
         reducedMotion,
       });
+      const stopParallax = startHeroParallax(
+        section,
+        [
+          { el: bgRef.current!, factor: 10, allowUp: true },
+          { el: personRef.current!, factor: 26 },
+        ],
+        scene,
+      );
+      cleanup = () => {
+        stopParallax();
+        stopIntro();
+      };
     })();
     return () => {
       cancelled = true;
@@ -88,16 +103,18 @@ export function Hero() {
     >
       {/* Fundo 9:16 somente no mobile (arquivo original, sem recompressão) */}
       <img
+        ref={bgRef}
         src={bgMobile}
         alt=""
         aria-hidden
         width={1116}
         height={2000}
         fetchPriority="high"
-        className="absolute inset-0 -z-10 size-full object-cover object-left-top md:left-auto md:right-0 md:w-auto md:max-w-none md:object-contain md:object-right md:[mask-image:linear-gradient(to_right,transparent,black_35%)]"
+        className="absolute inset-0 -z-10 size-full scale-[1.04] object-cover object-left-top will-change-transform md:left-auto md:right-0 md:w-auto md:max-w-none md:object-contain md:object-right md:[mask-image:linear-gradient(to_right,transparent,black_35%)]"
       />
       {/* Modelo PH Sports no canto direito (mobile); a camisa 3D fica por cima */}
       <img
+        ref={personRef}
         src={person}
         alt=""
         aria-hidden
@@ -130,8 +147,7 @@ export function Hero() {
             className="hero-reveal mt-4 max-w-md md:mt-5 text-base leading-relaxed text-white/80"
           >
             Camisas dos maiores clubes do Brasil com acabamento premium. Tudo por{" "}
-            <span className="font-black tabular-nums text-white">R$ 179,90</span>{" "}
-            na PH Sports.
+            <span className="font-black tabular-nums text-white">R$ 179,90</span> na PH Sports.
           </p>
           <div data-hero-extra className="hero-reveal mt-6 flex flex-wrap gap-3 md:mt-8">
             <Link
