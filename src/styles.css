@@ -1031,3 +1031,15 @@ header[data-on-dark="true"] .ph-glass img { box-shadow: 0 0 0 1px rgb(255 255 25
 .ph-nav form:focus-within { background: rgb(255 255 255 / 0.2); border-color: rgb(255 255 255 / 0.45); }
 .ph-nav input { color: #fff; }
 .ph-nav input::placeholder, .ph-nav form svg { color: rgb(255 255 255 / 0.7); }
+
+/* HERO: modelo entra deslizando da direita (usa "translate" para não conflitar com o parallax em "transform") */
+.hero-person-in {
+  animation: hero-person-in 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+@keyframes hero-person-in {
+  from { translate: 22% 0; opacity: 0; }
+  to { translate: 0 0; opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-person-in { animation: none; }
+}
