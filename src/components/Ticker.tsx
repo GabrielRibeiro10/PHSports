@@ -10,7 +10,7 @@ const items = [
 export function Ticker() {
   const seq = [...items, ...items, ...items, ...items];
   return (
-    <div className="w-full overflow-hidden bg-[#1d4d8f] text-white">
+    <div className="w-full overflow-hidden bg-[#163868] text-white">
       <div className="flex">
         <div className="ticker-track flex shrink-0 items-center gap-10 whitespace-nowrap py-2.5 pr-10 text-xs font-medium tracking-wide">
           {seq.map((it, i) => {
