@@ -23,6 +23,8 @@ export type ShirtScene = {
   /** Ajusta renderer e câmera ao tamanho atual do canvas. */
   resize: () => void;
   renderOnce: () => void;
+  /** Inclina a câmera (parallax pelo mouse); valores em −1…1. */
+  setTilt: (x: number, y: number) => void;
   dispose: () => void;
 };
 
@@ -573,5 +575,10 @@ export function createShirtScene(canvas: HTMLCanvasElement): ShirtScene {
     renderer.dispose();
   };
 
-  return { canvas, shirtGroup, shirtAspect, viewSize, resize, renderOnce, dispose };
+  const setTilt = (x: number, y: number) => {
+    camera.rotation.y = x * 0.035;
+    camera.rotation.x = y * 0.025;
+  };
+
+  return { canvas, shirtGroup, shirtAspect, viewSize, resize, renderOnce, setTilt, dispose };
 }
