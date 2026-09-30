@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Search, Truck } from "lucide-react";
-import { useEffect, useState, type FormEvent, type MouseEvent } from "react";
+import { useState, type FormEvent, type MouseEvent } from "react";
 import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
 import { MAX_SEARCH_LEN, sanitizeSearch, sanitizeSearchTyping, checkSearchRate } from "@/lib/search-safety";
@@ -12,15 +12,6 @@ export function Header() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   const onSearch = (e: FormEvent) => {
     e.preventDefault();
     const term = sanitizeSearch(q);
@@ -47,20 +38,16 @@ export function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-40 border-b backdrop-blur-xl backdrop-saturate-150 transition-[background-color,box-shadow,border-color] duration-300 ${
-        scrolled ? "border-border/60 bg-background/60 shadow-[var(--shadow-card)]" : "border-transparent bg-background/55"
-      } md:border-b-0 md:bg-transparent md:shadow-none md:backdrop-blur-none md:backdrop-saturate-100 ${
-        pathname === "/" ? "md:-mb-20" : ""
-      }`}
+      className={`sticky top-0 z-40 bg-transparent ${pathname === "/" ? "-mb-16 lg:-mb-20" : ""}`}
     >
-      <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 md:h-20 md:py-0">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-2.5 px-3 sm:gap-4 sm:px-4 lg:h-20">
         <button
           type="button"
           aria-label={open ? "Fechar menu" : "Abrir menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
           data-open={open}
-          className="ph-burger md:hidden -ml-1 rounded p-1.5"
+          className="ph-burger ph-glass grid size-10 shrink-0 place-items-center rounded-full lg:hidden"
         >
           <span className="ph-burger__box" aria-hidden>
             <span className="ph-burger__line ph-burger__line--top" />
@@ -74,7 +61,7 @@ export function Header() {
           onClick={onLogoClick}
           aria-label="Voltar ao topo"
           title="Voltar ao topo"
-          className="ph-glass group flex shrink-0 cursor-pointer items-center gap-2 rounded-full px-1 py-0.5 md:py-1 md:pl-1 md:pr-4 transition-all duration-300 hover:scale-[1.04] hover:[filter:drop-shadow(0_0_10px_oklch(0.55_0.22_27/0.45))] active:scale-[0.99]"
+          className="ph-glass group flex shrink-0 cursor-pointer items-center gap-2 rounded-full py-1 pl-1 pr-3 md:pr-4 transition-all duration-300 hover:scale-[1.04] hover:[filter:drop-shadow(0_0_10px_oklch(0.55_0.22_27/0.45))] active:scale-[0.99]"
         >
           <img src={logo.url} alt="PH Sports" className="size-9 rounded-full object-cover ring-1 ring-border" />
           <span className="text-lg font-black tracking-tight">
@@ -82,7 +69,7 @@ export function Header() {
           </span>
         </Link>
 
-        <div className="ph-glass hidden md:flex flex-1 items-center gap-5 rounded-full px-6 py-2">
+        <div className="ph-glass hidden lg:flex flex-1 items-center gap-5 rounded-full px-6 py-2">
         <nav className="flex items-center gap-5 text-sm font-medium">
           <Link to="/" hash="produtos" className="hover:text-brand transition-colors">Camisas</Link>
           <Link to="/categoria/$slug" params={{ slug: "mulheres" }} activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Femininas</Link>
@@ -109,7 +96,7 @@ export function Header() {
         <Link
           to="/carrinho"
           aria-label="Abrir carrinho"
-          className="ph-bag relative ml-auto md:ml-0 grid size-10 place-items-center rounded-full ph-glass md:size-12"
+          className="ph-bag relative ml-auto lg:ml-0 grid size-10 place-items-center rounded-full ph-glass lg:size-12"
         >
           <span className="ph-bag__icon relative block size-[22px]">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden className="size-full overflow-visible">
@@ -138,8 +125,8 @@ export function Header() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden border-t border-border bg-background">
-          <div className="mx-auto max-w-7xl space-y-3 px-4 py-4">
+        <div className="absolute inset-x-0 top-16 px-3 lg:hidden">
+          <div className="ph-glass mx-auto max-w-7xl space-y-3 rounded-3xl px-4 py-4">
             <form onSubmit={onSearch} className="flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2.5 transition-colors focus-within:border-foreground/40 focus-within:bg-background">
               <Search className="size-4 text-muted-foreground" />
               <input
