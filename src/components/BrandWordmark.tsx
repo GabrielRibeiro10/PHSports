@@ -134,7 +134,7 @@ export function BrandSignature() {
           src={fansVasco}
           alt=""
           width={892}
-          height={1000}
+          height={953}
           loading="lazy"
           className="wm-fans wm-reveal absolute bottom-0 left-0 h-full w-auto max-w-none"
           style={{ "--d": "0.9s" } as CSSProperties}
