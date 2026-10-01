@@ -1063,7 +1063,7 @@ header[data-on-dark="false"] .ph-glass {
 /* Celular/tablet sem barra: as peças flutuam sozinhas, então ganham fundo próprio para ler sobre qualquer conteúdo */
 @media (max-width: 1023px) {
   header[data-on-dark="false"] .ph-glass {
-    background: rgb(255 255 255 / 0.88);
+    background: rgb(255 255 255 / 0.5);
     -webkit-backdrop-filter: blur(14px) saturate(160%);
     backdrop-filter: blur(14px) saturate(160%);
     border-color: rgb(0 0 0 / 0.08);
