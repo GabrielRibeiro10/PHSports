@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { scrollToTop } from "@/lib/smooth-scroll";
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import { STORE_EMAIL, STORE_PHONE_DISPLAY } from "@/lib/products";
@@ -111,7 +112,7 @@ export function Footer() {
     return () => io.disconnect();
   }, []);
 
-  const toTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const toTop = () => scrollToTop();
 
   return (
     <footer

@@ -11,6 +11,8 @@ export const getRouter = () => {
     scrollRestoration: true,
     // troca de página vai direto ao topo (sem animação longa de rolagem)
     scrollRestorationBehavior: "instant",
+    // links com âncora (#produtos, #clubes…) rolam suave até a seção
+    defaultHashScrollIntoView: { behavior: "smooth", block: "start" },
     defaultPreloadStaleTime: 0,
   });
 

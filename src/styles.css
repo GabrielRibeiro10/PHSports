@@ -1316,3 +1316,10 @@ header[data-on-dark="false"] .ph-glass {
 @media (prefers-reduced-motion: reduce) {
   .ft-cta, .ft-cta::before, .ft-link, .ft-link__arrow, .ft-cta__arrow { transition: none; }
 }
+
+/* Lenis (rolagem suave) */
+html.lenis,
+html.lenis body { height: auto; }
+.lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+.lenis [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-smooth iframe { pointer-events: none; }

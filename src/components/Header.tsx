@@ -3,6 +3,7 @@ import { Search, Truck } from "lucide-react";
 import { useEffect, useState, type FormEvent, type MouseEvent } from "react";
 import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
+import { scrollToTop } from "@/lib/smooth-scroll";
 import { MAX_SEARCH_LEN, sanitizeSearch, sanitizeSearchTyping, checkSearchRate } from "@/lib/search-safety";
 import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
 
@@ -38,7 +39,7 @@ export function Header() {
     setOpen(false);
     if (pathname === "/") {
       e.preventDefault();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      scrollToTop();
     } else {
       // let navigation happen, then scroll to top smoothly
       requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
