@@ -120,7 +120,7 @@ export function Hero() {
         aria-hidden
         width={834}
         height={1492}
-        className="hero-person-in pointer-events-none absolute bottom-0 -right-[24%] -z-[5] h-[min(86%,186vw,calc(100%-7.5rem))] w-auto max-w-none object-contain object-right-bottom [filter:drop-shadow(-12px_0_24px_rgb(0_0_0/0.35))] md:right-[max(calc((100%-80rem)/2+10rem),calc(25%-9rem))] md:h-[94%] md:[mask-image:linear-gradient(to_right,transparent,black_12%,black_76%,transparent)]"
+        className="hero-person-in pointer-events-none absolute bottom-0 -right-[25.5%] top-[26vw] -z-[5] h-[135.7vw] [mask-image:linear-gradient(to_bottom,black_92%,transparent)] w-auto max-w-none object-contain object-right-bottom [filter:drop-shadow(-12px_0_24px_rgb(0_0_0/0.35))] md:right-[max(calc((100%-80rem)/2+10rem),calc(25%-9rem))] md:top-auto md:h-[94%] md:[mask-image:linear-gradient(to_right,transparent,black_12%,black_76%,transparent)]"
       />
       <canvas
         ref={canvasRef}
@@ -128,8 +128,8 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 z-0 size-full opacity-0"
       />
 
-      <div className="relative z-10 mx-auto h-[max(580px,100svh)] max-w-7xl px-4 pt-[calc(4rem+clamp(1.25rem,4svh,2.5rem))] md:grid md:h-[max(640px,calc(100svh-2.35rem))] md:pt-28 md:grid-cols-2 md:items-center md:gap-8 md:py-16">
-        <div ref={textRef}>
+      <div className="relative z-10 mx-auto h-[max(151vw,100svh)] max-w-7xl px-4 pt-[22.4vw] md:grid md:h-[max(640px,calc(100svh-2.35rem))] md:pt-28 md:grid-cols-2 md:items-center md:gap-8 md:py-16">
+        <div ref={textRef} className="max-md:[zoom:var(--m-scale,1)]">
           <span
             data-hero-extra
             className="hero-reveal inline-flex items-center gap-2 border-l-2 border-white/80 pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-white/90"
@@ -145,7 +145,7 @@ export function Hero() {
           </span>
           <h1
             aria-label={TITLE_LABEL}
-            className="hero-serif mt-4 text-[clamp(2.3rem,min(12vw,6.8svh),3.7rem)] leading-[0.98] md:text-[clamp(3.3rem,5.4vw,5rem)]"
+            className="hero-serif mt-4 text-[40px] leading-[0.98] md:text-[clamp(3.3rem,5.4vw,5rem)]"
           >
             <SplitTitle />
           </h1>
