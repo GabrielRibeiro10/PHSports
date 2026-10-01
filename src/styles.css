@@ -1097,10 +1097,3 @@ header[data-on-dark="false"] .ph-glass {
 /* A HERO mantém a fonte original (Inter); o restante do site usa Google Sans */
 [data-hero], [data-hero] * { font-family: "Inter", ui-sans-serif, system-ui, sans-serif; }
 [data-hero] .hero-serif, [data-hero] .hero-serif * { font-family: "Playfair Display", "Bodoni MT", "Didot", Georgia, serif; }
-
-/* Torcedores (mobile) entram da esquerda junto com a HERO */
-.hero-group-in { animation: hero-group-in 1.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.hero-pending .hero-group-in { animation: hero-group-in-fallback 1.5s cubic-bezier(0.16, 1, 0.3, 1) 2.5s both; }
-@keyframes hero-group-in { from { translate: -18% 0; opacity: 0; } to { translate: 0 0; opacity: 1; } }
-@keyframes hero-group-in-fallback { from { translate: -18% 0; opacity: 0; } to { translate: 0 0; opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .hero-group-in { animation: none; } }
