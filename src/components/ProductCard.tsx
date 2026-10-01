@@ -25,12 +25,12 @@ export function ProductCard({ p, priority = false, glow = false }: { p: Product;
           -{p.discount}%
         </span>
       </div>
-      <div className="flex flex-1 flex-col gap-1.5 p-4">
+      <div className="flex flex-1 flex-col gap-1.5 p-3 sm:p-4">
         <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">{p.club}</p>
         <h3 className="text-[0.9375rem] font-bold leading-snug text-foreground">{p.name}</h3>
-        <div className="mt-1.5 flex items-baseline gap-2">
-          <span className="text-xl font-black tabular-nums tracking-tight text-foreground">{formatBRL(p.price)}</span>
-          <span className="text-xs tabular-nums text-muted-foreground line-through">{formatBRL(p.oldPrice)}</span>
+        <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+          <span className="whitespace-nowrap text-lg font-black tabular-nums tracking-tight text-foreground sm:text-xl">{formatBRL(p.price)}</span>
+          <span className="whitespace-nowrap text-xs tabular-nums text-muted-foreground line-through">{formatBRL(p.oldPrice)}</span>
         </div>
         <p className="text-[11px] font-semibold text-brand">Promoção — economize {formatBRL(p.oldPrice - p.price)}</p>
 
