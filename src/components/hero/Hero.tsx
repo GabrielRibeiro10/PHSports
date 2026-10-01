@@ -5,8 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import hero from "@/assets/hero-banner.jpg";
 import bgMobile from "@/assets/hero-bg-mobile.jpg";
 import person from "@/assets/hero-person.webp";
-import heroDuo from "@/assets/hero-duo.webp";
-import heroFla from "@/assets/hero-fla.webp";
 
 const TITLE = [
   { text: "Vista as cores do", accent: false },
@@ -119,23 +117,6 @@ export function Hero() {
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-[7] bg-[linear-gradient(to_bottom,rgb(0_0_0/0.7)_0%,rgb(0_0_0/0.35)_45%,transparent_72%)] md:bg-[linear-gradient(to_right,rgb(0_0_0/0.88)_0%,rgb(0_0_0/0.62)_28%,rgb(0_0_0/0.22)_48%,transparent_62%)]"
-      />
-      {/* Torcedores no canto inferior esquerdo (somente mobile), atrás do modelo principal */}
-      <img
-        src={heroDuo}
-        alt=""
-        aria-hidden
-        width={600}
-        height={673}
-        className="hero-group-in pointer-events-none absolute bottom-0 -left-[3%] -z-[6] h-[23%] w-auto max-w-none object-contain object-left-bottom [filter:drop-shadow(8px_0_18px_rgb(0_0_0/0.35))] md:hidden"
-      />
-      <img
-        src={heroFla}
-        alt=""
-        aria-hidden
-        width={505}
-        height={800}
-        className="hero-group-in pointer-events-none absolute bottom-0 left-[21%] -z-[6] h-[26%] w-auto max-w-none object-contain object-bottom [animation-delay:0.12s] [filter:drop-shadow(8px_0_18px_rgb(0_0_0/0.35))] md:hidden"
       />
       {/* Modelo PH Sports no canto direito (mobile); a camisa 3D fica por cima */}
       <img
