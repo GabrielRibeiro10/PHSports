@@ -99,6 +99,7 @@ export function Hero() {
   return (
     <section
       ref={sectionRef}
+      data-hero
       className="hero-pending relative isolate overflow-hidden bg-[#782b30]"
     >
       {/* Fundo 9:16 somente no mobile (arquivo original, sem recompressão) */}
