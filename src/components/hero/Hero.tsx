@@ -120,7 +120,7 @@ export function Hero() {
         aria-hidden
         width={834}
         height={1492}
-        className="hero-person-in pointer-events-none absolute bottom-0 -right-[25.5%] top-[26vw] -z-[5] h-[135.7vw] [mask-image:linear-gradient(to_bottom,black_92%,transparent)] w-auto max-w-none object-contain object-right-bottom [filter:drop-shadow(-12px_0_24px_rgb(0_0_0/0.35))] md:right-[max(calc((100%-80rem)/2+10rem),calc(25%-9rem))] md:top-auto md:h-[94%] md:[mask-image:linear-gradient(to_right,transparent,black_12%,black_76%,transparent)]"
+        className="hero-person-in pointer-events-none absolute bottom-0 -right-[25.5%] top-[26vw] -z-[5] h-[135.7vw] [mask-image:linear-gradient(to_bottom,black_92%,transparent)] w-auto max-w-none object-contain object-right-bottom md:right-[max(calc((100%-80rem)/2+10rem),calc(25%-9rem))] md:top-auto md:h-[94%] md:[mask-image:linear-gradient(to_right,transparent,black_12%,black_76%,transparent)]"
       />
       <canvas
         ref={canvasRef}
