@@ -105,6 +105,29 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+// Recarregar a página sempre volta ao topo. O router devolve a rolagem ao navegador ao sair
+// da página (pagehide → scrollRestoration "auto") e o Safari/iPhone restaura a posição antiga
+// depois do carregamento, mesmo trocando para "manual" aqui. Então, num reload, a página fica
+// presa no topo até carregar (+1,2s) e solta assim que a pessoa toca, rola ou usa o teclado.
+const RELOAD_TO_TOP = `(function(){try{
+var n=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
+var reload=n?n.type==='reload':!!(performance.navigation&&performance.navigation.type===1);
+if(!reload)return;
+if('scrollRestoration' in history)history.scrollRestoration='manual';
+for(var i=sessionStorage.length-1;i>=0;i--){var k=sessionStorage.key(i);if(k&&k.indexOf('tsr-scroll')===0)sessionStorage.removeItem(k)}
+if(location.hash)history.replaceState(history.state,'',location.pathname+location.search);
+var r=document.documentElement,sb=r.style.scrollBehavior,done=false,ev=['wheel','touchstart','keydown','pointerdown'];
+r.style.scrollBehavior='auto';
+function top(){if(done||(window.scrollY===0&&window.scrollX===0))return;try{window.scrollTo({top:0,left:0,behavior:'instant'})}catch(e){window.scrollTo(0,0)}}
+function stop(){if(done)return;done=true;r.style.scrollBehavior=sb;removeEventListener('scroll',top);for(var j=0;j<ev.length;j++)removeEventListener(ev[j],stop,true)}
+for(var j=0;j<ev.length;j++)addEventListener(ev[j],stop,{capture:true,passive:true});
+addEventListener('scroll',top,{passive:true});
+addEventListener('DOMContentLoaded',top);
+addEventListener('load',function(){top();setTimeout(function(){top();stop()},1200)});
+setTimeout(stop,8000);
+top();
+}catch(e){}})()`;
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
@@ -114,7 +137,8 @@ function RootShell({ children }: { children: ReactNode }) {
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){var r=document.documentElement;function f(){var w=window.innerWidth;r.style.setProperty('--m-scale',w<768?String(Math.min(1.2,Math.max(0.75,w/393))):'1')}f();window.addEventListener('resize',f)})();(function(){try{var n=performance.getEntriesByType('navigation')[0];if(!n||n.type!=='reload')return;if('scrollRestoration' in history)history.scrollRestoration='manual';for(var i=sessionStorage.length-1;i>=0;i--){var k=sessionStorage.key(i);if(k&&k.indexOf('tsr-scroll')===0)sessionStorage.removeItem(k)}if(location.hash)history.replaceState(history.state,'',location.pathname+location.search);var t=function(){if(window.scrollY!==0)window.scrollTo({top:0,left:0,behavior:'instant'})};t();window.addEventListener('DOMContentLoaded',t,{once:true})}catch(e){}})()",
+              "(function(){var r=document.documentElement;function f(){var w=window.innerWidth;r.style.setProperty('--m-scale',w<768?String(Math.min(1.2,Math.max(0.75,w/393))):'1')}f();window.addEventListener('resize',f)})();" +
+              RELOAD_TO_TOP,
           }}
         />
       </head>
