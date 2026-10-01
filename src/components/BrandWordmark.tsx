@@ -123,12 +123,11 @@ export function BrandSignature() {
         loading="lazy"
         className="block h-[78vw] w-full object-cover object-[80%_50%] md:absolute md:inset-0 md:h-full md:object-right"
       />
-      {/* Torcedores PH Sports recortados, embaixo da palavra (desktop e mobile).
-          No desktop ficam alinhados com o início da palavra, então a borda cortada da dupla some num degradê. */}
+      {/* Torcedores PH Sports recortados, embaixo da palavra (desktop e mobile) */}
       <div
         aria-hidden
         ref={fansRef}
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] [container-type:size] md:left-[5%] md:h-[47%]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] [container-type:size] md:h-[52%]"
       >
         <img
           data-depth="0.6"
@@ -137,7 +136,7 @@ export function BrandSignature() {
           width={892}
           height={1000}
           loading="lazy"
-          className="wm-fans wm-reveal absolute bottom-0 left-0 h-full w-auto max-w-none md:[mask-image:linear-gradient(to_right,transparent,#000_14%)]"
+          className="wm-fans wm-reveal absolute bottom-0 left-0 h-full w-auto max-w-none"
           style={{ "--d": "0.9s" } as CSSProperties}
         />
         <img
