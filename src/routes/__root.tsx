@@ -106,8 +106,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR">
-      <head><HeadContent /></head>
+    <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <HeadContent />
+        {/* Escala do layout mobile (base iPhone 14 Pro, 393px): mesma composição em todos os celulares */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){var r=document.documentElement;function f(){var w=window.innerWidth;r.style.setProperty('--m-scale',w<768?String(Math.min(1.2,Math.max(0.75,w/393))):'1')}f();window.addEventListener('resize',f)})()",
+          }}
+        />
+      </head>
       <body>
         {children}
         <Scripts />
