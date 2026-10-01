@@ -113,7 +113,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){var r=document.documentElement;function f(){var w=window.innerWidth;r.style.setProperty('--m-scale',w<768?String(Math.min(1.2,Math.max(0.75,w/393))):'1')}f();window.addEventListener('resize',f)})();(function(){try{var n=performance.getEntriesByType('navigation')[0];if(!n||n.type!=='reload')return;if('scrollRestoration' in history)history.scrollRestoration='manual';for(var i=sessionStorage.length-1;i>=0;i--){var k=sessionStorage.key(i);if(k&&k.indexOf('tsr-scroll')===0)sessionStorage.removeItem(k)}var t=function(){window.scrollTo(0,0)};t();window.addEventListener('load',function(){t();setTimeout(t,50)})}catch(e){}})()",
+              "(function(){var r=document.documentElement;function f(){var w=window.innerWidth;r.style.setProperty('--m-scale',w<768?String(Math.min(1.2,Math.max(0.75,w/393))):'1')}f();window.addEventListener('resize',f)})();(function(){try{var n=performance.getEntriesByType('navigation')[0];if(!n||n.type!=='reload')return;if('scrollRestoration' in history)history.scrollRestoration='manual';for(var i=sessionStorage.length-1;i>=0;i--){var k=sessionStorage.key(i);if(k&&k.indexOf('tsr-scroll')===0)sessionStorage.removeItem(k)}if(location.hash)history.replaceState(history.state,'',location.pathname+location.search);var t=function(){if(window.scrollY!==0)window.scrollTo({top:0,left:0,behavior:'instant'})};t();window.addEventListener('DOMContentLoaded',t,{once:true})}catch(e){}})()",
           }}
         />
       </head>
