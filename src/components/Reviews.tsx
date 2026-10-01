@@ -1,4 +1,5 @@
 import { Star } from "lucide-react";
+import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
 
 const reviews = [
   { name: "Rafael M.", rating: 5, comment: "Qualidade absurda! Camisa parece a original, tecido muito confortável.", club: "Flamengo" },
@@ -18,7 +19,7 @@ export function Reviews() {
         <div className="flex items-center gap-2 text-sm">
           <div className="flex">
             {Array.from({ length: 5 }).map((_, i) => (
-              <Star key={i} className="size-4 fill-brand text-brand" />
+              <Star key={i} className="star-gold size-4" style={{ "--i": i } as React.CSSProperties} />
             ))}
           </div>
           <span className="font-bold">4.9/5</span>
@@ -45,12 +46,12 @@ export function Reviews() {
                   <p className="text-[10px] uppercase tracking-wider opacity-70">Torcedor {r.club}</p>
                 </div>
               </div>
-              <span className="rounded bg-brand px-1.5 py-0.5 text-[10px] font-black text-brand-foreground">PH</span>
+              <img src={logo.url} alt="PH Sports" width={24} height={24} loading="lazy" className="size-6 rounded-full bg-white object-cover ring-1 ring-white/30" />
             </div>
             <div className="flex-1 p-4">
               <div className="mb-2 flex">
                 {Array.from({ length: r.rating }).map((_, i) => (
-                  <Star key={i} className="size-3.5 fill-brand text-brand" />
+                  <Star key={i} className="star-gold size-3.5" style={{ "--i": i } as React.CSSProperties} />
                 ))}
               </div>
               <p className="text-sm text-foreground/80">"{r.comment}"</p>
