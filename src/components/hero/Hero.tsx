@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import hero from "@/assets/hero-banner.jpg";
 import bgMobile from "@/assets/hero-bg-mobile.jpg";
 import bgStadium from "@/assets/hero-stadium.jpg";
+import stripes from "@/assets/hero-stripes.webp";
 import person from "@/assets/hero-person.webp";
 import { Ticker } from "@/components/Ticker";
 
@@ -46,6 +47,7 @@ export function Hero() {
   const textRef = useRef<HTMLDivElement>(null);
   const slotRef = useRef<HTMLDivElement>(null);
   const bgRef = useRef<HTMLImageElement>(null);
+  const stripesRef = useRef<HTMLImageElement>(null);
   const personRef = useRef<HTMLImageElement>(null);
   const [webglFailed, setWebglFailed] = useState(false);
 
@@ -77,6 +79,7 @@ export function Hero() {
         section,
         [
           { el: bgRef.current!, factor: 10, allowUp: true },
+          { el: stripesRef.current!, factor: 10, allowUp: true },
           { el: personRef.current!, factor: 26 },
         ],
         scene,
@@ -112,6 +115,16 @@ export function Hero() {
           className="absolute inset-0 -z-10 size-full scale-[1.04] object-cover object-left-top will-change-transform md:object-center"
         />
       </picture>
+      {/* Desktop: as 3 faixas (vermelha, branca e azul) da arte original, no mesmo lugar, por cima do estádio */}
+      <img
+        ref={stripesRef}
+        src={stripes}
+        alt=""
+        aria-hidden
+        width={1116}
+        height={2000}
+        className="absolute right-0 top-0 -z-[9] hidden h-full w-auto max-w-none scale-[1.04] will-change-transform [mask-image:linear-gradient(to_right,transparent,black_35%)] md:block"
+      />
       {/* Véu escuro à esquerda para destacar o texto */}
       <div
         aria-hidden
