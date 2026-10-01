@@ -9,6 +9,8 @@ export const getRouter = () => {
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
+    // troca de página vai direto ao topo (sem animação longa de rolagem)
+    scrollRestorationBehavior: "instant",
     defaultPreloadStaleTime: 0,
   });
 

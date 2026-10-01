@@ -119,7 +119,7 @@ export function Footer() {
       data-ft={state}
       className="ft relative mt-20 overflow-hidden bg-[#0d0d0d] text-white"
     >
-      <div className="mx-auto max-w-7xl px-4 pb-28 pt-16 md:px-6 md:pb-10 md:pt-24">
+      <div className="mx-auto max-w-7xl px-4 pb-28 pt-16 md:px-6 md:pb-24 md:pt-24">
         {/* Chamada principal */}
         <div className="grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
           <div>
@@ -146,7 +146,7 @@ export function Footer() {
               robô.
             </p>
           </div>
-          <div className="ft-up" style={d(0.45)}>
+          <div className="ft-up md:mr-20 min-[1440px]:mr-0" style={d(0.45)}>
             <MagneticCta href={whatsappHref(CONTACT_MESSAGE)} />
           </div>
         </div>
