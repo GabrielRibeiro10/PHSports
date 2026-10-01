@@ -55,19 +55,13 @@ export function Hero() {
       const canvas = canvasRef.current;
       if (!section || !canvas || !textRef.current || !slotRef.current) return;
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const [{ playHeroIntro }, { startHeroParallax }, sceneModule] = await Promise.all([
+      const [{ playHeroIntro }, { startHeroParallax }] = await Promise.all([
         import("./hero-intro"),
         import("./hero-parallax"),
-        import("./shirt-scene").catch(() => null),
       ]);
       if (cancelled) return;
-      let scene = null;
-      try {
-        scene = sceneModule ? sceneModule.createShirtScene(canvas) : null;
-      } catch {
-        scene = null;
-      }
-      if (!scene) setWebglFailed(true);
+      // Camisa 3D removida da HERO (desktop e mobile): sem cena, a entrada anima só o texto.
+      const scene = null;
       const stopIntro = playHeroIntro({
         section,
         startEl: textRef.current,
