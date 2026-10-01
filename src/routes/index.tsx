@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BrandWordmark } from "@/components/BrandWordmark";
+import { BrandSignature } from "@/components/BrandWordmark";
 import { ArrowRight, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import type { CategoryId, Product } from "@/lib/products";
@@ -410,19 +410,5 @@ function SearchAndProducts() {
 }
 
 function BrandTypography() {
-  return (
-    <section aria-label="PHSPORTS" className="relative overflow-hidden border-t border-border bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-16 md:py-24">
-        <div className="text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand">Da arquibancada pra você</p>
-          <h2 aria-label="PHSPORTS" className="mx-auto mt-4 max-w-6xl select-none">
-            <BrandWordmark />
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground">
-            Pra quem assiste o jogo em pé, xinga o juiz e lava a camisa do avesso pra não estragar o escudo.
-          </p>
-        </div>
-      </div>
-    </section>
-  );
+  return <BrandSignature />;
 }

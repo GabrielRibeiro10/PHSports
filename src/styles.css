@@ -1124,43 +1124,104 @@ header[data-on-dark="false"] .ph-glass {
   .ph-head-in > *, .ph-head-in .ph-nav nav > a, .ph-head-in .ph-nav form { animation: none; }
 }
 
-/* PHSPORTS desenhado: contorno → preenchimento → feixe de luz */
-.ph-wm__text {
-  font-family: var(--font-display);
-  font-size: 200px;
+/* ───────── PHSPORTS: revelação editorial ─────────
+   1) letras sobem de uma máscara com leve rotação (stagger)
+   2) contorno vira preenchimento numa varredura da esquerda p/ direita
+   3) feixe de luz atravessa a palavra e se repete com calma */
+.wm { position: relative; width: 100%; font-size: 15vw; }
+.wm__line {
+  display: flex;
+  width: max-content;
+  margin-inline: auto;
+  white-space: nowrap;
+  font-family: "Archivo", var(--font-display);
   font-weight: 900;
-  fill: var(--color-foreground);
+  font-stretch: 125%;
+  font-size: 1em;
+  line-height: 0.84;
+  text-transform: uppercase;
+  user-select: none;
 }
-.ph-wm__text .ph-wm__accent,
-.ph-wm__stroke .ph-wm__accent { fill: var(--color-brand); stroke: var(--color-brand); }
-.ph-wm__fill { opacity: 0; }
-.ph-wm__stroke {
-  fill: transparent !important;
-  stroke: var(--color-foreground);
-  stroke-width: 2.5;
-  stroke-linejoin: round;
-  stroke-dasharray: 900;
-  stroke-dashoffset: 900;
+.wm__char {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.1em 0.04em 0.03em;
+  margin: 0 -0.04em;
 }
-.ph-wm__stroke .ph-wm__accent { fill: transparent; }
-.ph-wm__sheen { transform: translateX(0) skewX(-18deg); opacity: 0; }
+.wm__char + .wm__char { margin-left: -0.065em; }
+.wm__glyph {
+  position: relative;
+  display: block;
+  translate: 0 118%;
+  rotate: 9deg;
+  transform-origin: 0% 100%;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.wm__outline {
+  display: block;
+  color: transparent;
+  -webkit-text-stroke: max(1px, 0.012em) var(--color-foreground);
+}
+.wm__fill { position: absolute; inset: 0; }
+.wm__fill { color: var(--color-foreground); clip-path: inset(0 100% 0 0); }
+.wm__glyph--accent .wm__outline { -webkit-text-stroke-color: var(--color-brand); }
+.wm__glyph--accent .wm__fill { color: var(--color-brand); }
+.wm__line--shine {
+  position: absolute;
+  inset: 0 0 auto 0;
+  color: transparent;
+  background: linear-gradient(100deg, transparent 42%, rgb(255 255 255 / 0.9) 50%, transparent 58%) 120% 0 / 250% 100% no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  pointer-events: none;
+}
+.wm__rule {
+  display: block;
+  height: 1px;
+  width: 1.5rem;
+  flex: none;
+  background: currentColor;
+  transform: scaleX(0);
+}
+@media (min-width: 640px) { .wm__rule { width: 2.5rem; } }
+.wm__rule--l { transform-origin: 100% 50%; }
+.wm__rule--r { transform-origin: 0% 50%; }
+.wm-reveal { opacity: 0; translate: 0 14px; }
 
-.ph-wm[data-in="true"] .ph-wm__stroke {
-  animation: ph-wm-draw 1.2s cubic-bezier(0.6, 0, 0.3, 1) forwards, ph-wm-stroke-out 0.5s ease 1.25s forwards;
+.wm[data-in="true"] .wm__glyph {
+  animation: wm-rise 1.3s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i) * 65ms) both;
 }
-.ph-wm[data-in="true"] .ph-wm__fill { animation: ph-wm-fill 0.55s ease-out 0.85s forwards; }
-.ph-wm[data-in="true"] .ph-wm__sheen { animation: ph-wm-sheen 4.5s cubic-bezier(0.45, 0, 0.25, 1) 1.3s infinite; }
+.wm[data-in="true"] .wm__fill {
+  animation: wm-fill 0.95s cubic-bezier(0.65, 0, 0.35, 1) calc(650ms + var(--i) * 85ms) both;
+}
+.wm[data-in="true"] .wm__line--shine {
+  animation: wm-shine 6.5s cubic-bezier(0.45, 0, 0.2, 1) 1.9s infinite;
+}
+[data-wm-in="true"] .wm__rule { animation: wm-rule 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.15s both; }
+[data-wm-in="true"] .wm-reveal { animation: wm-reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both; }
 
-@keyframes ph-wm-draw { to { stroke-dashoffset: 0; } }
-@keyframes ph-wm-stroke-out { to { opacity: 0; } }
-@keyframes ph-wm-fill { to { opacity: 1; } }
-@keyframes ph-wm-sheen {
-  0% { transform: translateX(0) skewX(-18deg); opacity: 1; }
-  30% { transform: translateX(1520px) skewX(-18deg); opacity: 1; }
-  30.01%, 100% { transform: translateX(1520px) skewX(-18deg); opacity: 0; }
+@keyframes wm-rise {
+  from { translate: 0 118%; rotate: 9deg; }
+  to { translate: 0 0; rotate: 0deg; }
+}
+@keyframes wm-fill {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes wm-shine {
+  0% { background-position: 120% 0; }
+  20%, 100% { background-position: -20% 0; }
+}
+@keyframes wm-rule { to { transform: scaleX(1); } }
+@keyframes wm-reveal { to { opacity: 1; translate: 0 0; } }
+
+@media (hover: hover) and (pointer: fine) {
+  .wm__char:hover .wm__glyph { transform: translateY(-7%); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ph-wm__fill { opacity: 1; }
-  .ph-wm__stroke, .ph-wm__sheen { display: none; }
-  .ph-wm[data-in="true"] .ph-wm__fill { animation: none; }
+  .wm__glyph { translate: 0 0; rotate: 0deg; animation: none !important; }
+  .wm__fill { clip-path: none; animation: none !important; }
+  .wm__line--shine { display: none; }
+  .wm__rule { transform: none; animation: none !important; }
+  .wm-reveal { opacity: 1; translate: 0 0; animation: none !important; }
 }
