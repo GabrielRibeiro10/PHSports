@@ -4,6 +4,7 @@ import { ArrowRight, ShieldCheck, Truck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import hero from "@/assets/hero-banner.jpg";
 import bgMobile from "@/assets/hero-bg-mobile.jpg";
+import bgStadium from "@/assets/hero-stadium.jpg";
 import person from "@/assets/hero-person.webp";
 import { Ticker } from "@/components/Ticker";
 
@@ -97,17 +98,20 @@ export function Hero() {
       data-hero
       className="hero-pending relative isolate overflow-hidden bg-[#782b30]"
     >
-      {/* Fundo 9:16 somente no mobile (arquivo original, sem recompressão) */}
-      <img
-        ref={bgRef}
-        src={bgMobile}
-        alt=""
-        aria-hidden
-        width={1116}
-        height={2000}
-        fetchPriority="high"
-        className="absolute inset-0 -z-10 size-full scale-[1.04] object-cover object-left-top will-change-transform md:left-auto md:right-0 md:w-auto md:max-w-none md:object-contain md:object-right md:[mask-image:linear-gradient(to_right,transparent,black_35%)]"
-      />
+      {/* Fundo: estádio no desktop; arte 9:16 no mobile (arquivo original, sem recompressão) */}
+      <picture>
+        <source media="(min-width: 768px)" srcSet={bgStadium} />
+        <img
+          ref={bgRef}
+          src={bgMobile}
+          alt=""
+          aria-hidden
+          width={1116}
+          height={2000}
+          fetchPriority="high"
+          className="absolute inset-0 -z-10 size-full scale-[1.04] object-cover object-left-top will-change-transform md:object-center"
+        />
+      </picture>
       {/* Véu escuro à esquerda para destacar o texto */}
       <div
         aria-hidden
@@ -121,7 +125,7 @@ export function Hero() {
         aria-hidden
         width={834}
         height={1492}
-        className="hero-person-in pointer-events-none absolute bottom-0 -right-[25.5%] top-[26vw] -z-[5] h-[135.7vw] [mask-image:linear-gradient(to_bottom,black_92%,transparent)] w-auto max-w-none object-contain object-right-bottom md:right-[max(calc((100%-80rem)/2+10rem),calc(25%-9rem))] md:top-auto md:h-[94%] md:[mask-image:linear-gradient(to_right,transparent,black_12%,black_76%,transparent)]"
+        className="hero-person-in pointer-events-none absolute bottom-0 -right-[25.5%] top-[26vw] -z-[5] h-[135.7vw] [mask-image:linear-gradient(to_bottom,black_92%,transparent)] w-auto max-w-none object-contain object-right-bottom md:right-[max(calc((100%-80rem)/2+10rem),calc(25%-9rem))] md:top-auto md:h-[94%] md:[mask-image:linear-gradient(to_right,black_76%,transparent)]"
       />
       <canvas
         ref={canvasRef}
