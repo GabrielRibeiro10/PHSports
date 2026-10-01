@@ -77,10 +77,10 @@ export function BrandSignature() {
         loading="lazy"
         className="block h-[78vw] w-full object-cover object-[80%_50%] md:absolute md:inset-0 md:h-full md:object-right"
       />
-      {/* Torcedores PH Sports recortados, embaixo da palavra (desktop) */}
+      {/* Torcedores PH Sports recortados, embaixo da palavra (desktop e mobile) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-[41%] [container-type:size] md:block"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] [container-type:size] md:h-[41%]"
       >
         <img
           src={fansVasco}
