@@ -127,14 +127,14 @@ export function BrandSignature() {
       <div
         aria-hidden
         ref={fansRef}
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] [container-type:size] md:h-[41%]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] [container-type:size] md:h-[52%]"
       >
         <img
           data-depth="0.6"
           src={fansVasco}
           alt=""
           width={892}
-          height={1000}
+          height={953}
           loading="lazy"
           className="wm-fans wm-reveal absolute bottom-0 left-0 h-full w-auto max-w-none"
           style={{ "--d": "0.9s" } as CSSProperties}
@@ -150,7 +150,7 @@ export function BrandSignature() {
           style={{ "--d": "1.05s" } as CSSProperties}
         />
       </div>
-      <div className="relative order-first px-4 pb-2 pt-12 md:absolute md:inset-y-0 md:order-none md:pb-0 md:left-[5%] md:right-auto md:flex md:w-[41%] md:flex-col md:justify-center md:px-0 md:pt-0">
+      <div className="relative order-first px-4 pb-2 pt-12 md:absolute md:top-[6%] md:bottom-[52%] md:order-none md:pb-0 md:left-[5%] md:right-auto md:flex md:w-[41%] md:flex-col md:justify-center md:px-0 md:pt-0">
         <p className="flex items-center justify-center gap-3 whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.28em] text-brand sm:text-[11px] sm:tracking-[0.4em]">
           <span className="wm__rule wm__rule--l" aria-hidden />
           <span className="wm-reveal" style={{ "--d": "0.1s" } as CSSProperties}>
