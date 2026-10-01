@@ -49,7 +49,7 @@ export function Header() {
     <header
       data-on-dark={onDark}
       className={`sticky top-0 z-40 transition-[background-color,box-shadow,backdrop-filter] duration-300 ${
-        pathname === "/" ? "-mb-16 max-lg:relative lg:-mb-20" : ""
+        pathname === "/" ? "-mb-16 lg:-mb-20" : ""
       } ${
         onDark
           ? "bg-transparent"
