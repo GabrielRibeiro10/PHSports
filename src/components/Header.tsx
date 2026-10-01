@@ -65,7 +65,7 @@ export function Header() {
       >
         <div className="mx-auto h-[50px] max-w-7xl rounded-full border border-white/50 bg-white/45 shadow-[0_8px_24px_-14px_rgb(0_0_0/0.35)] backdrop-blur-xl" />
       </div>
-      <div className="relative mx-auto flex h-16 max-w-7xl items-center gap-2.5 px-3 sm:gap-4 sm:px-4 lg:h-20">
+      <div className="ph-head-in relative mx-auto flex h-16 max-w-7xl items-center gap-2.5 px-3 sm:gap-4 sm:px-4 lg:h-20">
         <button
           type="button"
           aria-label={open ? "Fechar menu" : "Abrir menu"}

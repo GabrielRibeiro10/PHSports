@@ -1097,3 +1097,29 @@ header[data-on-dark="false"] .ph-glass {
 /* A HERO mantém a fonte original (Inter); o restante do site usa Google Sans */
 [data-hero], [data-hero] * { font-family: "Inter", ui-sans-serif, system-ui, sans-serif; }
 [data-hero] .hero-serif, [data-hero] .hero-serif * { font-family: "Playfair Display", "Bodoni MT", "Didot", Georgia, serif; }
+
+/* Entrada da header ao abrir o site: peças descem e aparecem em sequência (desktop e mobile).
+   Usa "translate" para não conflitar com os hovers que usam "transform". */
+.ph-head-in > *,
+.ph-head-in .ph-nav nav > a,
+.ph-head-in .ph-nav form {
+  animation: ph-head-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.ph-head-in > *:nth-child(1) { animation-delay: 0.05s; }
+.ph-head-in > *:nth-child(2) { animation-delay: 0.12s; }
+.ph-head-in > *:nth-child(3) { animation: none; }
+.ph-head-in > *:nth-child(4) { animation-delay: 0.5s; }
+.ph-head-in .ph-nav nav > a:nth-child(1) { animation-delay: 0.18s; }
+.ph-head-in .ph-nav nav > a:nth-child(2) { animation-delay: 0.23s; }
+.ph-head-in .ph-nav nav > a:nth-child(3) { animation-delay: 0.28s; }
+.ph-head-in .ph-nav nav > a:nth-child(4) { animation-delay: 0.33s; }
+.ph-head-in .ph-nav nav > a:nth-child(5) { animation-delay: 0.38s; }
+.ph-head-in .ph-nav nav > a:nth-child(6) { animation-delay: 0.43s; }
+.ph-head-in .ph-nav form { animation-delay: 0.46s; }
+@keyframes ph-head-in {
+  from { opacity: 0; translate: 0 -14px; filter: blur(4px); }
+  to { opacity: 1; translate: 0 0; filter: blur(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ph-head-in > *, .ph-head-in .ph-nav nav > a, .ph-head-in .ph-nav form { animation: none; }
+}
