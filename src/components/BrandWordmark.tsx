@@ -19,6 +19,52 @@ export function BrandSignature() {
   const lineRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
 
+  // Parallax dos torcedores: sobem até o lugar conforme a seção entra na tela
+  // (nunca acima da base, para não mostrar o corte) e acompanham o mouse no desktop.
+  const fansRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const box = fansRef.current;
+    const section = sectionRef.current;
+    if (!box || !section || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const layers = Array.from(box.querySelectorAll<HTMLElement>("[data-depth]"));
+    let raf = 0;
+    let mx = 0;
+    const render = () => {
+      raf = 0;
+      const r = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      if (r.bottom < 0 || r.top > vh) return;
+      // 0 quando a seção está entrando por baixo, 1 quando ela está toda na tela
+      const p = Math.min(1, Math.max(0, (vh - r.top) / Math.min(vh, r.height)));
+      for (const el of layers) {
+        const d = Number(el.dataset.depth);
+        const y = (1 - p) * d * box.clientHeight * 0.35;
+        // a dupla encosta na borda esquerda: só pode ir para a esquerda (não mostra o corte)
+        const x = d < 1 ? Math.min(0, mx * d * 14) : mx * d * 14;
+        el.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
+      }
+    };
+    const queue = () => {
+      if (!raf) raf = requestAnimationFrame(render);
+    };
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return;
+      const r = section.getBoundingClientRect();
+      mx = (e.clientX - r.left) / r.width - 0.5;
+      queue();
+    };
+    queue();
+    window.addEventListener("scroll", queue, { passive: true });
+    window.addEventListener("resize", queue);
+    section.addEventListener("pointermove", onMove);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", queue);
+      window.removeEventListener("resize", queue);
+      section.removeEventListener("pointermove", onMove);
+    };
+  }, []);
+
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
@@ -80,9 +126,11 @@ export function BrandSignature() {
       {/* Torcedores PH Sports recortados, embaixo da palavra (desktop e mobile) */}
       <div
         aria-hidden
+        ref={fansRef}
         className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] [container-type:size] md:h-[41%]"
       >
         <img
+          data-depth="0.6"
           src={fansVasco}
           alt=""
           width={892}
@@ -92,6 +140,7 @@ export function BrandSignature() {
           style={{ "--d": "0.9s" } as CSSProperties}
         />
         <img
+          data-depth="1"
           src={fansFlamengo}
           alt=""
           width={607}
