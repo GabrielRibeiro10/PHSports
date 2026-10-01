@@ -1225,3 +1225,93 @@ header[data-on-dark="false"] .ph-glass {
   .wm__rule { transform: none; animation: none !important; }
   .wm-reveal { opacity: 1; translate: 0 0; animation: none !important; }
 }
+
+/* ───────── Rodapé editorial (obsidian) ───────── */
+.ft ::selection { background: color-mix(in oklab, var(--brand) 55%, transparent); color: #fff; }
+.ft-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.45);
+}
+.ft-title {
+  font-family: "Archivo", var(--font-display);
+  font-weight: 800;
+  font-stretch: 118%;
+  font-size: min(11vw, 3.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+}
+@media (min-width: 768px) { .ft-title { font-size: clamp(3.4rem, 6.2vw, 5.6rem); } }
+.ft-title__serif {
+  font-family: "Playfair Display", "Bodoni MT", Didot, Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-stretch: normal;
+  letter-spacing: -0.015em;
+  color: var(--brand);
+}
+.ft-line { display: block; overflow: hidden; padding: 0.1em 0 0.14em; margin: -0.1em 0 -0.14em; }
+.ft-line__in { display: block; }
+.ft-wordmark {
+  font-family: "Archivo", var(--font-display);
+  font-weight: 900;
+  font-stretch: 125%;
+  font-size: 1.15rem;
+  letter-spacing: -0.03em;
+}
+.ft-link {
+  color: rgb(255 255 255 / 0.72);
+  padding-bottom: 2px;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: color 0.3s ease, background-size 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.ft-link:hover,
+.ft-link:focus-visible { color: #fff; background-size: 100% 1px; }
+.ft-link__arrow { display: inline-block; font-size: 0.9em; transition: translate 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+.ft-link:hover .ft-link__arrow { translate: 2px -2px; }
+
+.ft-cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 600;
+  translate: var(--mx, 0px) var(--my, 0px);
+  transition: translate 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.ft-cta::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  background: #fff;
+  border-radius: 50% 50% 0 0 / 38% 38% 0 0;
+  transform: translateY(101%);
+  transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1), border-radius 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.ft-cta:hover,
+.ft-cta:focus-visible { color: #0d0d0d; }
+.ft-cta:hover::before,
+.ft-cta:focus-visible::before { transform: translateY(0); border-radius: 0; }
+.ft-cta__arrow { transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
+.ft-cta:hover .ft-cta__arrow { transform: translate(3px, -3px); }
+
+/* Entrada: linhas do título sobem da máscara, o resto sobe com fade */
+.ft[data-ft="armed"] .ft-line__in { translate: 0 108%; }
+.ft[data-ft="armed"] .ft-up { opacity: 0; translate: 0 18px; }
+.ft[data-ft="in"] .ft-line__in { animation: ft-rise 1.15s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both; }
+.ft[data-ft="in"] .ft-up { animation: ft-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both; }
+@keyframes ft-rise { from { translate: 0 108%; } to { translate: 0 0; } }
+@keyframes ft-up { from { opacity: 0; translate: 0 18px; } to { opacity: 1; translate: 0 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .ft-cta, .ft-cta::before, .ft-link, .ft-link__arrow, .ft-cta__arrow { transition: none; }
+}
