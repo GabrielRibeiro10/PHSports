@@ -267,7 +267,7 @@ function ProductPage() {
           <div className="mt-6 grid gap-2">
             <button
               onClick={onAdd}
-              className="inline-flex items-center justify-center gap-2 rounded-md border-2 border-primary bg-background px-6 py-3.5 text-sm font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+              className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary bg-background px-6 py-3.5 text-sm font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
             >
               <ShoppingBag className="size-4" /> Adicionar ao Carrinho
             </button>
