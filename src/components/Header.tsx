@@ -53,7 +53,7 @@ export function Header() {
       } ${
         onDark
           ? "bg-transparent"
-          : "bg-transparent lg:bg-white/40 lg:shadow-[0_1px_0_rgb(255_255_255/0.3)] lg:backdrop-blur-xl"
+          : "bg-transparent"
       }`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-2.5 px-3 sm:gap-4 sm:px-4 lg:h-20">
