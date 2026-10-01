@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { BrandWordmark } from "@/components/BrandWordmark";
 import { ArrowRight, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import type { CategoryId, Product } from "@/lib/products";
@@ -413,11 +414,8 @@ function BrandTypography() {
       <div className="mx-auto max-w-7xl px-4 py-16 md:py-24">
         <div className="text-center">
           <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand">Da arquibancada pra você</p>
-          <h2
-            aria-label="PHSPORTS"
-            className="mt-4 select-none whitespace-nowrap text-center text-[15vw] font-black leading-[0.9] tracking-[-0.04em] text-foreground md:text-[13rem]"
-          >
-            PH<span className="text-brand">SPORTS</span>
+          <h2 aria-label="PHSPORTS" className="mx-auto mt-4 max-w-6xl select-none">
+            <BrandWordmark />
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground">
             Pra quem assiste o jogo em pé, xinga o juiz e lava a camisa do avesso pra não estragar o escudo.
