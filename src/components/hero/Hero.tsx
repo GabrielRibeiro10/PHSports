@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import hero from "@/assets/hero-banner.jpg";
 import bgMobile from "@/assets/hero-bg-mobile.jpg";
 import person from "@/assets/hero-person.webp";
+import { Ticker } from "@/components/Ticker";
 
 const TITLE = [
   { text: "Vista as cores do", accent: false },
@@ -128,7 +129,7 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 z-0 size-full opacity-0"
       />
 
-      <div className="relative z-10 mx-auto h-[max(151vw,100svh)] max-w-7xl px-4 pt-[22.4vw] md:grid md:h-[max(640px,calc(100svh-2.35rem))] md:pt-28 md:grid-cols-2 md:items-center md:gap-8 md:py-16">
+      <div className="relative z-10 mx-auto h-[max(100svh,560px)] max-w-7xl px-4 pt-[22.4vw] md:grid md:h-[max(640px,calc(100svh-2.35rem))] md:pt-28 md:grid-cols-2 md:items-center md:gap-8 md:py-16">
         <div ref={textRef} className="max-md:[zoom:var(--m-scale,1)]">
           <span
             data-hero-extra
@@ -201,6 +202,8 @@ export function Hero() {
           )}
         </div>
       </div>
+      {/* Carrossel azul no rodapé da HERO, sempre visível na primeira tela do celular */}
+      <Ticker className="absolute inset-x-0 bottom-0 z-20 md:hidden" />
     </section>
   );
 }

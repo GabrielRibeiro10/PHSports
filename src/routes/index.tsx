@@ -38,7 +38,8 @@ function Home() {
   return (
     <>
       <Hero />
-      <Ticker />
+      {/* No celular o carrossel azul fica dentro da HERO (ver Hero.tsx) */}
+      <Ticker className="hidden md:block" />
       <CategoryCarousel />
       <ClubsMarquee />
       <SearchAndProducts />

@@ -7,10 +7,10 @@ const items = [
   { icon: MessageCircle, text: "No WhatsApp quem responde é gente" },
 ];
 
-export function Ticker() {
+export function Ticker({ className = "" }: { className?: string }) {
   const seq = [...items, ...items, ...items, ...items];
   return (
-    <div className="w-full overflow-hidden bg-[#163868] text-white">
+    <div className={`w-full overflow-hidden bg-[#163868] text-white ${className}`}>
       <div className="flex">
         <div className="ticker-track flex shrink-0 items-center gap-10 whitespace-nowrap py-2.5 pr-10 text-xs font-medium tracking-wide">
           {seq.map((it, i) => {
@@ -24,7 +24,10 @@ export function Ticker() {
             );
           })}
         </div>
-        <div className="ticker-track flex shrink-0 items-center gap-10 whitespace-nowrap py-2.5 pr-10 text-xs font-medium tracking-wide" aria-hidden="true">
+        <div
+          className="ticker-track flex shrink-0 items-center gap-10 whitespace-nowrap py-2.5 pr-10 text-xs font-medium tracking-wide"
+          aria-hidden="true"
+        >
           {seq.map((it, i) => {
             const Icon = it.icon;
             return (
