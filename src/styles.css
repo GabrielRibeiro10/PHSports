@@ -1187,6 +1187,7 @@ header[data-on-dark="false"] .ph-glass {
 .wm__rule--l { transform-origin: 100% 50%; }
 .wm__rule--r { transform-origin: 0% 50%; }
 .wm-reveal { opacity: 0; translate: 0 14px; }
+.wm-fans { filter: drop-shadow(0 12px 22px rgb(0 0 0 / 0.22)); }
 
 .wm[data-in="true"] .wm__glyph {
   animation: wm-rise 1.3s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i) * 65ms) both;

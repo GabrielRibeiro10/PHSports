@@ -1,4 +1,6 @@
 import shirts from "@/assets/brand-shirts.webp";
+import fansFlamengo from "@/assets/fans-flamengo.webp";
+import fansVasco from "@/assets/fans-vasco.webp";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 const LETTERS = [
@@ -75,6 +77,30 @@ export function BrandSignature() {
         loading="lazy"
         className="block h-[78vw] w-full object-cover object-[80%_50%] md:absolute md:inset-0 md:h-full md:object-right"
       />
+      {/* Torcedores PH Sports recortados, embaixo da palavra (desktop) */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-[41%] [container-type:size] md:block"
+      >
+        <img
+          src={fansVasco}
+          alt=""
+          width={892}
+          height={1000}
+          loading="lazy"
+          className="wm-fans wm-reveal absolute bottom-0 left-0 h-full w-auto max-w-none"
+          style={{ "--d": "0.9s" } as CSSProperties}
+        />
+        <img
+          src={fansFlamengo}
+          alt=""
+          width={607}
+          height={960}
+          loading="lazy"
+          className="wm-fans wm-reveal absolute bottom-0 left-[79cqh] h-[97.6%] w-auto max-w-none"
+          style={{ "--d": "1.05s" } as CSSProperties}
+        />
+      </div>
       <div className="relative order-first px-4 pb-2 pt-12 md:absolute md:inset-y-0 md:order-none md:pb-0 md:left-[5%] md:right-auto md:flex md:w-[41%] md:flex-col md:justify-center md:px-0 md:pt-0">
         <p className="flex items-center justify-center gap-3 whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.28em] text-brand sm:text-[11px] sm:tracking-[0.4em]">
           <span className="wm__rule wm__rule--l" aria-hidden />
