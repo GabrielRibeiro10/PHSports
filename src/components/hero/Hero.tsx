@@ -127,7 +127,7 @@ export function Hero() {
         aria-hidden
         width={600}
         height={673}
-        className="hero-group-in pointer-events-none absolute bottom-0 -left-[3%] -z-[6] h-[30%] w-auto max-w-none object-contain object-left-bottom [filter:drop-shadow(8px_0_18px_rgb(0_0_0/0.35))] md:hidden"
+        className="hero-group-in pointer-events-none absolute bottom-0 -left-[3%] -z-[6] h-[23%] w-auto max-w-none object-contain object-left-bottom [filter:drop-shadow(8px_0_18px_rgb(0_0_0/0.35))] md:hidden"
       />
       <img
         src={heroFla}
@@ -135,7 +135,7 @@ export function Hero() {
         aria-hidden
         width={505}
         height={800}
-        className="hero-group-in pointer-events-none absolute bottom-0 left-[25%] -z-[6] h-[33%] w-auto max-w-none object-contain object-bottom [animation-delay:0.12s] [filter:drop-shadow(8px_0_18px_rgb(0_0_0/0.35))] md:hidden"
+        className="hero-group-in pointer-events-none absolute bottom-0 left-[21%] -z-[6] h-[26%] w-auto max-w-none object-contain object-bottom [animation-delay:0.12s] [filter:drop-shadow(8px_0_18px_rgb(0_0_0/0.35))] md:hidden"
       />
       {/* Modelo PH Sports no canto direito (mobile); a camisa 3D fica por cima */}
       <img
