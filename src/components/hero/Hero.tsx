@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, ShieldCheck, Truck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import hero from "@/assets/hero-banner.jpg";
-import bgMobile from "@/assets/hero-bg-mobile.jpg";
 import bgStadium from "@/assets/hero-stadium.jpg";
 import stripes from "@/assets/hero-stripes.webp";
 import person from "@/assets/hero-person.webp";
@@ -101,21 +100,18 @@ export function Hero() {
       data-hero
       className="hero-pending relative isolate overflow-hidden bg-[#782b30]"
     >
-      {/* Fundo: estádio no desktop; arte 9:16 no mobile (arquivo original, sem recompressão) */}
-      <picture>
-        <source media="(min-width: 768px)" srcSet={bgStadium} />
-        <img
-          ref={bgRef}
-          src={bgMobile}
-          alt=""
-          aria-hidden
-          width={1116}
-          height={2000}
-          fetchPriority="high"
-          className="absolute inset-0 -z-10 size-full scale-[1.04] object-cover object-left-top will-change-transform md:object-center"
-        />
-      </picture>
-      {/* Desktop: as 3 faixas (vermelha, branca e azul) da arte original, no mesmo lugar, por cima do estádio */}
+      {/* Fundo: foto do estádio (desktop e mobile) */}
+      <img
+        ref={bgRef}
+        src={bgStadium}
+        alt=""
+        aria-hidden
+        width={1672}
+        height={941}
+        fetchPriority="high"
+        className="absolute inset-0 -z-10 size-full scale-[1.04] object-cover object-[72%_50%] will-change-transform md:object-center"
+      />
+      {/* As 3 faixas (vermelha, branca e azul) da arte original, no mesmo lugar, por cima do estádio */}
       <img
         ref={stripesRef}
         src={stripes}
@@ -123,7 +119,7 @@ export function Hero() {
         aria-hidden
         width={1116}
         height={2000}
-        className="absolute right-0 top-0 -z-[9] hidden h-full w-auto max-w-none scale-[1.04] will-change-transform [mask-image:linear-gradient(to_right,transparent,black_35%)] md:block"
+        className="absolute inset-0 -z-[9] size-full scale-[1.04] object-cover object-left-top will-change-transform md:left-auto md:right-0 md:w-auto md:max-w-none md:object-contain md:object-right md:[mask-image:linear-gradient(to_right,transparent,black_35%)]"
       />
       {/* Véu escuro à esquerda para destacar o texto */}
       <div
