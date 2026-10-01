@@ -15,7 +15,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => setScrolled(window.scrollY > window.innerHeight - 110);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -56,7 +56,14 @@ export function Header() {
           : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-2.5 px-3 sm:gap-4 sm:px-4 lg:h-20">
+      {/* Faixa fina de vidro (desktop) que aparece depois da HERO, para os textos ficarem legíveis */}
+      <div
+        aria-hidden
+        className={`pointer-events-none absolute inset-x-0 top-[15px] hidden h-[50px] border-y border-white/40 bg-white/45 shadow-[0_8px_24px_-16px_rgb(0_0_0/0.3)] backdrop-blur-xl transition-opacity duration-300 lg:block ${
+          onDark ? "opacity-0" : "opacity-100"
+        }`}
+      />
+      <div className="relative mx-auto flex h-16 max-w-7xl items-center gap-2.5 px-3 sm:gap-4 sm:px-4 lg:h-20">
         <button
           type="button"
           aria-label={open ? "Fechar menu" : "Abrir menu"}
