@@ -66,7 +66,7 @@ export function BrandSignature() {
       ref={sectionRef}
       aria-label="PHSPORTS"
       data-wm-in={inView}
-      className="relative flex flex-col overflow-hidden bg-[#ececec] md:block md:aspect-[1591/989] md:max-h-[100svh] md:w-full"
+      className="relative -mb-20 flex flex-col overflow-hidden bg-[#ececec] md:block md:aspect-[1591/989] md:max-h-[100svh] md:w-full"
     >
       {/* Arte com as camisas (texto original removido; a palavra é animada por cima) */}
       <img
