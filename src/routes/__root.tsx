@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { SmoothScroll } from "@/components/SmoothScroll";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { BackToTop } from "@/components/BackToTop";
 import { CartProvider } from "@/lib/cart";
@@ -152,6 +153,7 @@ function RootComponent() {
           )}
           {!isAdminRoute && (
             <>
+              <SmoothScroll />
               <WhatsAppButton />
               <BackToTop />
             </>

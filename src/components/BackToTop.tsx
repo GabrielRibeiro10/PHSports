@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { scrollToTop } from "@/lib/smooth-scroll";
 import { ArrowUp } from "lucide-react";
 
 export function BackToTop() {
@@ -11,7 +12,7 @@ export function BackToTop() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const toTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const toTop = () => scrollToTop();
 
   return (
     <button
