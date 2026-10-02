@@ -1020,9 +1020,10 @@ button, a.btn-glow, button.btn-glow {
 }
 /* Sobre a imagem da HERO (home): ícones e "PH" em branco para aparecer no vidro quase invisível */
 header[data-on-dark="true"] .ph-glass,
+header[data-on-dark="true"] .ph-logo,
 header[data-on-dark="true"] .ph-burger,
 header[data-on-dark="true"] .ph-bag { color: #fff; }
-header[data-on-dark="true"] .ph-glass img { box-shadow: 0 0 0 1px rgb(255 255 255 / 0.25); }
+header[data-on-dark="true"] .ph-logo img { box-shadow: 0 0 0 1px rgb(255 255 255 / 0.25); }
 
 /* Header desktop sem barra: links e busca direto sobre a imagem da HERO */
 .ph-nav form { background: rgb(0 0 0 / 0.04); border-color: rgb(0 0 0 / 0.1); }
