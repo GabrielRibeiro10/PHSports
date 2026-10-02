@@ -34,9 +34,18 @@ export function ScrollReveal() {
       { rootMargin: "0px 0px -6% 0px", threshold: 0.01 },
     );
 
-    const scan = () => {
+    const scan = (late = false) => {
       document.querySelectorAll<HTMLElement>(SELECTOR).forEach((el) => {
         if (seen.has(el) || el.closest(EXCLUDE)) return;
+        // Conteúdo que chega depois (catálogo carregado) e já está na tela: não some e volta
+        // (isso piscava ao rolar). Só anima o que ainda vai entrar na tela.
+        if (late && !el.hasAttribute("data-reveal")) {
+          const r = el.getBoundingClientRect();
+          if (r.top < window.innerHeight && r.bottom > 0) {
+            seen.add(el);
+            return;
+          }
+        }
         // textos dentro de um card já animado (ou de um link) não animam separado
         if (!el.hasAttribute("data-reveal") && el.parentElement?.closest("[data-reveal], a"))
           return;
@@ -48,7 +57,7 @@ export function ScrollReveal() {
     scan();
     let queued = 0;
     const mo = new MutationObserver(() => {
-      if (!queued) queued = requestAnimationFrame(() => ((queued = 0), scan()));
+      if (!queued) queued = requestAnimationFrame(() => ((queued = 0), scan(true)));
     });
     mo.observe(document.body, { childList: true, subtree: true });
 

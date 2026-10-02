@@ -142,7 +142,7 @@ export function CategoryCarousel() {
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
-          <div className="overflow-hidden" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+          <div data-reveal className="overflow-hidden" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
             <div
               className="carousel-track flex"
               style={{
@@ -160,7 +160,6 @@ export function CategoryCarousel() {
                     aria-hidden={copy || undefined}
                   >
                     <Link
-                      data-reveal
                       to="/categoria/$slug"
                       params={{ slug: c.slug }}
                       tabIndex={copy ? -1 : undefined}
