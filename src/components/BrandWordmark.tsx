@@ -1,4 +1,5 @@
 import shirts from "@/assets/brand-shirts.webp";
+import shirtsMobile from "@/assets/brand-shirts-mobile.webp";
 import fansFlamengo from "@/assets/fans-flamengo.webp";
 import fansVasco from "@/assets/fans-vasco.webp";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
@@ -112,17 +113,21 @@ export function BrandSignature() {
       ref={sectionRef}
       aria-label="PHSPORTS"
       data-wm-in={inView}
-      className="relative -mb-20 flex flex-col overflow-hidden bg-[#ececec] md:block md:aspect-[1591/989] md:max-h-[100svh] md:w-full"
+      className="relative -mb-20 overflow-hidden bg-[#ececec] md:aspect-[1591/989] md:max-h-[100svh] md:w-full"
     >
       {/* Arte com as camisas (texto original removido; a palavra é animada por cima) */}
-      <img
-        src={shirts}
-        alt="Camisas do Flamengo, Real Madrid e Corinthians"
-        width={1591}
-        height={989}
-        loading="lazy"
-        className="block h-[78vw] w-full object-cover object-[80%_50%] md:absolute md:inset-0 md:h-full md:object-right"
-      />
+      {/* No celular usa a arte estendida para cima (mesma textura), para a palavra ficar em cima da foto */}
+      <picture>
+        <source media="(min-width: 768px)" srcSet={shirts} />
+        <img
+          src={shirtsMobile}
+          alt="Camisas do Flamengo, Real Madrid e Corinthians"
+          width={1269}
+          height={1459}
+          loading="lazy"
+          className="block h-auto w-full md:absolute md:inset-0 md:h-full md:object-cover md:object-right"
+        />
+      </picture>
       {/* Torcedores PH Sports recortados, embaixo da palavra (desktop e mobile) */}
       <div
         aria-hidden
@@ -150,7 +155,7 @@ export function BrandSignature() {
           style={{ "--d": "1.05s" } as CSSProperties}
         />
       </div>
-      <div className="relative order-first px-4 pb-2 pt-12 md:absolute md:top-[6%] md:bottom-[52%] md:order-none md:pb-0 md:left-[5%] md:right-auto md:flex md:w-[41%] md:flex-col md:justify-center md:px-0 md:pt-0">
+      <div className="absolute inset-x-0 top-0 px-4 pt-[8vw] md:top-[6%] md:bottom-[52%] md:left-[5%] md:right-auto md:flex md:w-[41%] md:flex-col md:justify-center md:px-0 md:pt-0">
         <p className="flex items-center justify-center gap-3 whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.28em] text-brand sm:text-[11px] sm:tracking-[0.4em]">
           <span className="wm__rule wm__rule--l" aria-hidden />
           <span className="wm-reveal" style={{ "--d": "0.1s" } as CSSProperties}>
