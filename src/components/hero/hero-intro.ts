@@ -93,7 +93,8 @@ export function playHeroIntro(o: IntroOptions): () => void {
     o.section.classList.remove("hero-pending");
 
     const l = layout();
-    if (o.reducedMotion || !l) {
+    // Sem a camisa 3D (scene = null) a entrada do texto continua acontecendo normalmente.
+    if (o.reducedMotion || (scene && !l)) {
       gsap.set([...o.chars, ...o.extras], { opacity: 1, y: 0 });
       if (scene) gsap.set(scene.canvas, { opacity: 1 });
       placeAtEnd();
@@ -101,7 +102,7 @@ export function playHeroIntro(o: IntroOptions): () => void {
       return;
     }
 
-    if (scene) {
+    if (scene && l) {
       gsap.set(scene.shirtGroup.position, { x: l.start.x, y: l.start.y });
       gsap.set(scene.shirtGroup.scale, { x: l.ss, y: l.ss, z: l.ss });
     }
@@ -109,7 +110,7 @@ export function playHeroIntro(o: IntroOptions): () => void {
     const stagger = Math.min(0.045, 1.05 / Math.max(1, o.chars.length - 1));
     tl = gsap.timeline({ onComplete: startSpin });
 
-    if (scene) {
+    if (scene && l) {
       tl.fromTo(
         scene.canvas,
         { opacity: 0 },
@@ -136,7 +137,8 @@ export function playHeroIntro(o: IntroOptions): () => void {
       );
     }
     // Garante a ordem: texto completo → camisa chega → só então o giro.
-    if (tl.duration() < MOVE_DURATION) tl.to({}, { duration: MOVE_DURATION - tl.duration() });
+    if (scene && tl.duration() < MOVE_DURATION)
+      tl.to({}, { duration: MOVE_DURATION - tl.duration() });
   }, o.section);
 
   // Reenquadra quando a largura muda (rotação do aparelho, janela).
