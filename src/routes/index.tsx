@@ -76,7 +76,7 @@ function ClubsMarquee() {
     <section id="clubes" className="relative pb-10 md:pb-14">
       <div className="mx-auto max-w-7xl px-4">
         {/* Painel azul translúcido: marca o carrossel sobre o vídeo sem ficar "solto" */}
-        <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#0f2c57]/55 py-3 shadow-[0_24px_60px_-30px_rgb(0_0_0/0.8)] backdrop-blur-md md:py-4">
+        <div className="overflow-hidden rounded-[24px] border border-white/10 bg-[#0f2c57]/55 py-2.5 shadow-[0_24px_60px_-30px_rgb(0_0_0/0.8)] backdrop-blur-md md:py-3">
         <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]">
           <div className="clubs-track flex w-max gap-3 md:gap-4">
             {loop.map((p, i) => (
@@ -84,7 +84,7 @@ function ClubsMarquee() {
                 key={`${p.slug}-${i}`}
                 to="/produto/$slug"
                 params={{ slug: p.slug }}
-                className="club-pill group relative block h-[184px] w-[104px] shrink-0 overflow-hidden rounded-b-full bg-gradient-to-b from-transparent via-[#1d4d8f]/75 to-[#5d86bf] md:h-[220px] md:w-[124px]"
+                className="club-pill group relative block h-[148px] w-[84px] shrink-0 overflow-hidden rounded-b-full bg-gradient-to-b from-transparent via-[#1d4d8f]/75 to-[#5d86bf] md:h-[176px] md:w-[100px]"
                 aria-hidden={i >= products.length ? true : undefined}
                 tabIndex={i >= products.length ? -1 : undefined}
               >
@@ -96,7 +96,7 @@ function ClubsMarquee() {
                     decoding="async"
                     width={40}
                     height={40}
-                    className="absolute left-1/2 top-4 z-10 h-6 w-auto max-w-[44%] -translate-x-1/2 object-contain drop-shadow-[0_2px_4px_rgb(0_0_0/0.35)] md:top-5 md:h-8"
+                    className="absolute left-1/2 top-3 z-10 h-5 w-auto max-w-[44%] -translate-x-1/2 object-contain drop-shadow-[0_2px_4px_rgb(0_0_0/0.35)] md:top-4 md:h-6"
                   />
                 ) : (
                   <span className="absolute inset-x-0 top-5 z-10 px-2 text-center text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-white md:top-6 md:text-[11px]">
