@@ -1,10 +1,11 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Search, Truck } from "lucide-react";
+import { Truck } from "lucide-react";
 import { useEffect, useState, type FormEvent, type MouseEvent } from "react";
 import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
 import { scrollToTop } from "@/lib/smooth-scroll";
-import { MAX_SEARCH_LEN, sanitizeSearch, sanitizeSearchTyping, checkSearchRate } from "@/lib/search-safety";
+import { sanitizeSearch, checkSearchRate } from "@/lib/search-safety";
+import { SearchSuggest } from "@/components/SearchSuggest";
 import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
 
 export function Header() {
@@ -105,18 +106,7 @@ export function Header() {
           <Link to="/rastreio" activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Rastrear</Link>
         </nav>
 
-        <form onSubmit={onSearch} className="ml-auto flex flex-1 max-w-sm items-center gap-2 rounded-full border border-black/5 bg-black/[0.04] px-4 py-1.5 transition-colors focus-within:border-foreground/30 focus-within:bg-white">
-          <Search className="size-4 text-muted-foreground" />
-          <input
-            value={q}
-            onChange={(e) => setQ(sanitizeSearchTyping(e.target.value))}
-            maxLength={MAX_SEARCH_LEN}
-            inputMode="search"
-            placeholder="Buscar camisa, clube..."
-            className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-            aria-label="Buscar produtos"
-          />
-        </form>
+        <SearchSuggest value={q} onChange={setQ} onSubmit={onSearch} variant="bar" />
         </div>
 
         <Link
@@ -153,18 +143,13 @@ export function Header() {
       {open && (
         <div className="absolute inset-x-0 top-[calc(4rem*var(--m-scale,1))] px-3 lg:hidden">
           <div className="mx-auto max-w-7xl space-y-3 rounded-3xl bg-white px-4 py-4 text-foreground shadow-[var(--shadow-premium)]">
-            <form onSubmit={onSearch} className="flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2.5 transition-colors focus-within:border-foreground/40 focus-within:bg-background">
-              <Search className="size-4 text-muted-foreground" />
-              <input
-                value={q}
-                onChange={(e) => setQ(sanitizeSearchTyping(e.target.value))}
-                maxLength={MAX_SEARCH_LEN}
-                inputMode="search"
-                placeholder="Buscar camisa, clube..."
-                className="w-full bg-transparent text-sm outline-none"
-                aria-label="Buscar produtos"
-              />
-            </form>
+            <SearchSuggest
+              value={q}
+              onChange={setQ}
+              onSubmit={onSearch}
+              onPick={() => setOpen(false)}
+              variant="menu"
+            />
             <nav className="grid gap-1 text-sm font-medium">
               <Link to="/" hash="produtos" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary">Camisas</Link>
               <Link to="/categoria/$slug" params={{ slug: "mulheres" }} onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary">Camisas Femininas</Link>
