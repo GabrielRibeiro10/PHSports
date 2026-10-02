@@ -180,7 +180,7 @@
   animation: clubs-scroll 60s linear infinite;
   will-change: transform;
 }
-.clubs-track:hover { animation-play-state: paused; }
+@media (hover: hover) { .clubs-track:hover { animation-play-state: paused; } }
 
 /* Global premium button interaction */
 button, a.btn-glow, button.btn-glow {
@@ -684,7 +684,7 @@ button, a.btn-glow, button.btn-glow {
   animation: clubs-scroll 60s linear infinite;
   will-change: transform;
 }
-.clubs-track:hover { animation-play-state: paused; }
+@media (hover: hover) { .clubs-track:hover { animation-play-state: paused; } }
 
 /* Global premium button interaction */
 button, a.btn-glow, button.btn-glow {
