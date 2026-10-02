@@ -177,7 +177,7 @@
   100% { transform: translate3d(-50%, 0, 0); }
 }
 .clubs-track {
-  animation: clubs-scroll 38s linear infinite;
+  animation: clubs-scroll 60s linear infinite;
   will-change: transform;
 }
 .clubs-track:hover { animation-play-state: paused; }
@@ -681,7 +681,7 @@ button, a.btn-glow, button.btn-glow {
   100% { transform: translate3d(-50%, 0, 0); }
 }
 .clubs-track {
-  animation: clubs-scroll 38s linear infinite;
+  animation: clubs-scroll 60s linear infinite;
   will-change: transform;
 }
 .clubs-track:hover { animation-play-state: paused; }
