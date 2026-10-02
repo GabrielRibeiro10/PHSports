@@ -9,6 +9,7 @@ import { getProduct, productsQueryOptions } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ProductCard } from "@/components/ProductCard";
+import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/produto/$slug")({
   loader: async ({ params, context }) => {
@@ -20,16 +21,57 @@ export const Route = createFileRoute("/produto/$slug")({
   head: ({ loaderData }) => {
     if (!loaderData) return { meta: [{ title: "Produto — PH Sports" }] };
     const p = loaderData.product;
+    const url = `https://www.phsports.com.br/produto/${p.slug}`;
+    const title = `${p.name} | Compre com envio para todo o Brasil — PH Sports`;
+    const description = `${p.name} por ${formatBRL(p.price)} (de ${formatBRL(p.oldPrice)}). Camisa ${p.club} com escudo bordado e tecido dry-fit. Envio com rastreio para todo o Brasil e troca em até 7 dias.`;
+    const images = [p.image, ...p.gallery].filter(Boolean);
+    // Dados estruturados: o Google pode mostrar preço, estoque e foto direto na pesquisa.
+    const jsonLd = [
+      {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: p.name,
+        image: images,
+        description,
+        sku: p.slug,
+        brand: { "@type": "Brand", name: p.club },
+        offers: {
+          "@type": "Offer",
+          url,
+          priceCurrency: "BRL",
+          price: p.price.toFixed(2),
+          availability: "https://schema.org/InStock",
+          itemCondition: "https://schema.org/NewCondition",
+          seller: { "@type": "Organization", name: "PH Sports" },
+        },
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Início", item: "https://www.phsports.com.br/" },
+          { "@type": "ListItem", position: 2, name: p.name, item: url },
+        ],
+      },
+    ];
     return {
       meta: [
-        { title: `${p.name} — PH Sports` },
-        { name: "description", content: `${p.name} com acabamento premium por ${formatBRL(p.price)}. Envio rápido e troca fácil na PH Sports.` },
+        { title },
+        { name: "description", content: description },
         { property: "og:title", content: `${p.name} — PH Sports` },
-        { property: "og:description", content: `Camisa ${p.club} por ${formatBRL(p.price)}.` },
+        { property: "og:description", content: description },
         { property: "og:type", content: "product" },
-        { property: "og:url", content: `https://www.phsports.com.br/produto/${p.slug}` },
+        { property: "og:url", content: url },
+        ...(p.image ? [{ property: "og:image", content: p.image }, { name: "twitter:image", content: p.image }] : []),
+        { name: "twitter:card", content: "summary_large_image" },
+        { property: "product:price:amount", content: p.price.toFixed(2) },
+        { property: "product:price:currency", content: "BRL" },
       ],
-      links: [{ rel: "canonical", href: `https://www.phsports.com.br/produto/${p.slug}` }],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        // "<" escapado: nenhum texto do catálogo consegue fechar a tag <script>
+        { type: "application/ld+json", children: JSON.stringify(jsonLd).replace(/</g, "\\u003c") },
+      ],
     };
   },
   component: ProductPage,
@@ -127,13 +169,20 @@ function ProductPage() {
   const onAdd = () => {
     if (!ensureSize()) return;
     add(product.slug, size!, qty);
+    track.addToCart({ slug: product.slug, name: product.name, club: product.club, price: product.price, qty });
     toast.success("Adicionado ao carrinho");
   };
   const onBuy = () => {
     if (!ensureSize()) return;
     add(product.slug, size!, qty);
+    track.addToCart({ slug: product.slug, name: product.name, club: product.club, price: product.price, qty });
     nav({ to: "/carrinho" });
   };
+
+  useEffect(() => {
+    track.viewItem({ slug: product.slug, name: product.name, club: product.club, price: product.price });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.slug]);
 
   const sizeOptions = product.sizes?.length ? product.sizes : [...SIZES];
   const isFemale = product.category === "feminino";
