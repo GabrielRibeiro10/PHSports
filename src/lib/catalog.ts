@@ -37,7 +37,8 @@ export function mapCategoryRow(row: Tables<"categories">): Category {
   return {
     id: row.id,
     slug: text(row.slug, 120),
-    name: text(row.name, 120),
+    // A categoria das caneleiras aparece no site como "Acessórios"
+    name: /^caneleiras?$/i.test(text(row.name, 120).trim()) ? "Acessórios" : text(row.name, 120),
     emoji: text(row.emoji, 16),
     image: img(row.image_url),
     tagline: text(row.tagline, 200),
