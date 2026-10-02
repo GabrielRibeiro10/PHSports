@@ -3,7 +3,12 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, ShieldCheck, Truck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import hero from "@/assets/hero-banner.jpg";
-import bgStadium from "@/assets/hero-stadium.jpg";
+import posterDesktop from "@/assets/hero-video-d.webp";
+import posterMobile from "@/assets/hero-video-m.webp";
+import videoDesktopAv1 from "@/assets/hero-video-d-av1.mp4";
+import videoDesktopH264 from "@/assets/hero-video-d.mp4";
+import videoMobileAv1 from "@/assets/hero-video-m-av1.mp4";
+import videoMobileH264 from "@/assets/hero-video-m.mp4";
 import stripes from "@/assets/hero-stripes.webp";
 import person from "@/assets/hero-person.webp";
 import { Ticker } from "@/components/Ticker";
@@ -45,10 +50,52 @@ export function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const slotRef = useRef<HTMLDivElement>(null);
-  const bgRef = useRef<HTMLImageElement>(null);
+  const bgRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoReady, setVideoReady] = useState(false);
   const stripesRef = useRef<HTMLImageElement>(null);
   const personRef = useRef<HTMLImageElement>(null);
   const [webglFailed, setWebglFailed] = useState(false);
+
+  // Vídeo de fundo: cada aparelho baixa só a sua versão (celular recortado / desktop; AV1 quando suportado,
+  // senão H.264). Não carrega com "economia de dados" ou "reduzir movimento" (fica o 1º quadro).
+  useEffect(() => {
+    const video = videoRef.current;
+    const section = sectionRef.current;
+    if (!video || !section) return;
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    if (conn?.saveData || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const mq = window.matchMedia("(min-width: 768px)");
+    const av1 = video.canPlayType('video/mp4; codecs="av01.0.08M.08"') !== "";
+    let visible = true;
+    const pick = () => {
+      const src = mq.matches
+        ? av1
+          ? videoDesktopAv1
+          : videoDesktopH264
+        : av1
+          ? videoMobileAv1
+          : videoMobileH264;
+      if (video.getAttribute("src") === src) return;
+      setVideoReady(false);
+      video.src = src;
+      if (visible) void video.play().catch(() => {});
+    };
+    pick();
+    mq.addEventListener("change", pick);
+    // pausa quando a HERO sai da tela (economiza bateria) e volta ao reaparecer
+    const io = new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible) void video.play().catch(() => {});
+      else video.pause();
+    });
+    io.observe(section);
+    return () => {
+      mq.removeEventListener("change", pick);
+      io.disconnect();
+      video.pause();
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -100,17 +147,33 @@ export function Hero() {
       data-hero
       className="hero-pending relative isolate overflow-hidden bg-[#782b30]"
     >
-      {/* Fundo: foto do estádio (desktop e mobile) */}
-      <img
+      {/* Fundo: vídeo do estádio (vai e volta, sem "recomeço"). O 1º quadro aparece na hora, antes do vídeo. */}
+      <div
         ref={bgRef}
-        src={bgStadium}
-        alt=""
         aria-hidden
-        width={1672}
-        height={941}
-        fetchPriority="high"
-        className="absolute inset-0 -z-10 size-full scale-[1.04] object-cover object-[72%_50%] will-change-transform md:object-center"
-      />
+        className="absolute inset-0 -z-10 scale-[1.04] will-change-transform"
+      >
+        <picture>
+          <source media="(min-width: 768px)" srcSet={posterDesktop} />
+          <img
+            src={posterMobile}
+            alt=""
+            fetchPriority="high"
+            className="absolute inset-0 size-full object-cover"
+          />
+        </picture>
+        <video
+          ref={videoRef}
+          muted
+          playsInline
+          loop
+          preload="auto"
+          onPlaying={() => setVideoReady(true)}
+          className={`absolute inset-0 size-full object-cover transition-opacity duration-700 ${
+            videoReady ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      </div>
       {/* As 3 faixas (vermelha, branca e azul) da arte original, no mesmo lugar, por cima do estádio */}
       <img
         ref={stripesRef}
