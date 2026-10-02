@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles } from "@/components/Sparkles";
 import { formatBRL, type Product } from "@/lib/products";
 
 export function ProductCard({
@@ -42,10 +41,7 @@ export function ProductCard({
             className="pc-img pc-img--alt absolute inset-0 size-full object-cover"
           />
         )}
-        <span className="absolute left-3 top-3 z-[2] rounded-full bg-brand px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-brand-foreground">
-          Oferta
-        </span>
-        <span className="absolute right-3 top-3 z-[2] rounded-full bg-primary px-2.5 py-1 text-[10px] font-black tabular-nums text-primary-foreground">
+        <span className="absolute left-3 top-3 z-[2] rounded-full bg-primary px-2.5 py-1 text-[10px] font-black tabular-nums text-primary-foreground">
           -{p.discount}%
         </span>
         <span aria-hidden className="pc-quick">
@@ -56,7 +52,9 @@ export function ProductCard({
         <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
           {p.club}
         </p>
-        <h3 className="text-[0.9375rem] font-bold leading-snug text-foreground">{p.name}</h3>
+        <h3 className="text-[0.9375rem] font-bold leading-snug text-foreground">
+          {p.name.replace(/^Camisa\s+/i, "")}
+        </h3>
         <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <span className="whitespace-nowrap text-lg font-black tabular-nums tracking-tight text-foreground sm:text-xl">
             {formatBRL(p.price)}
@@ -65,16 +63,13 @@ export function ProductCard({
             {formatBRL(p.oldPrice)}
           </span>
         </div>
-        <p className="text-[11px] font-semibold text-brand">
-          Promoção — economize {formatBRL(p.oldPrice - p.price)}
-        </p>
 
         <div className="mt-auto pt-3.5">
           <span
             aria-hidden
-            className="btn-gen inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-2.5 text-[13px] font-medium"
+            className="inline-flex w-full items-center justify-center rounded-full border border-foreground/15 px-4 py-2.5 text-[13px] font-semibold text-foreground transition-colors duration-200 group-hover:border-brand group-hover:bg-brand group-hover:text-brand-foreground"
           >
-            <Sparkles className="size-4" /> <span className="btn-gen__text">Comprar</span>
+            Comprar
           </span>
         </div>
       </div>
