@@ -99,9 +99,22 @@ export function Header() {
           onClick={onLogoClick}
           aria-label="Voltar ao topo"
           title="Voltar ao topo"
-          className="ph-glass group flex shrink-0 cursor-pointer items-center gap-2 rounded-full py-1 pl-1 pr-3 md:pr-4 transition-all duration-300 hover:scale-[1.04] hover:[filter:drop-shadow(0_0_10px_oklch(0.55_0.22_27/0.45))] active:scale-[0.99]"
+          className="ph-logo group relative isolate flex shrink-0 cursor-pointer items-center gap-2 rounded-full py-1 pl-1 pr-3 md:pr-4 transition-transform duration-300 hover:scale-[1.04] active:scale-[0.99]"
         >
-          <img src={logo.url} alt="PH Sports" className="size-9 rounded-full object-cover ring-1 ring-border" />
+          {/* Vidro fosco numa camada separada: com o blur no mesmo elemento da logo, o navegador
+              desenhava a foto em baixa qualidade até passar o mouse. */}
+          <span
+            aria-hidden
+            className="ph-glass absolute inset-0 -z-10 rounded-full transition-[filter] duration-300 group-hover:[filter:drop-shadow(0_0_10px_oklch(0.55_0.22_27/0.45))]"
+          />
+          <img
+            src={logo.url}
+            alt="PH Sports"
+            width={72}
+            height={72}
+            decoding="async"
+            className="size-9 rounded-full object-cover ring-1 ring-border [image-rendering:auto]"
+          />
           <span className="text-lg font-black tracking-tight">
             PH<span className="text-brand">SPORTS</span>
           </span>
