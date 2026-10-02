@@ -236,7 +236,7 @@ export function Hero() {
             <Link
               to="/"
               hash="clubes"
-              className="btn-glow inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/10 px-5 py-3.5 md:px-7 text-sm font-semibold text-white lg:px-9 lg:py-[1.125rem] lg:text-base backdrop-blur-sm transition-colors hover:bg-white/20"
+              className="btn-glow inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/10 px-5 py-3.5 md:px-7 text-sm font-semibold text-white lg:px-9 lg:py-[1.125rem] lg:text-base transition-colors hover:bg-white/20"
             >
               Ver clubes
             </Link>
