@@ -24,6 +24,29 @@ export function SmoothScroll() {
         stopInertiaOnNavigate: true,
       });
       setLenis(lenis);
+      // Recarregou a página: garante o início, mesmo depois do router e das imagens carregarem.
+      const nav = performance.getEntriesByType("navigation")[0] as
+        | PerformanceNavigationTiming
+        | undefined;
+      if (nav?.type === "reload") {
+        const toTop = () => lenis.scrollTo(0, { immediate: true, force: true });
+        toTop();
+        const until = performance.now() + 1200;
+        let userScrolled = false;
+        const keep = () => {
+          if (!userScrolled && window.scrollY !== 0) toTop();
+          if (!userScrolled && performance.now() < until) requestAnimationFrame(keep);
+        };
+        requestAnimationFrame(keep);
+        window.addEventListener("load", toTop, { once: true });
+        // se a pessoa rolar nesse meio-tempo, não força mais
+        const stop = () => {
+          userScrolled = true;
+          window.removeEventListener("load", toTop);
+        };
+        window.addEventListener("wheel", stop, { once: true, passive: true });
+        window.addEventListener("touchstart", stop, { once: true, passive: true });
+      }
       // Ao trocar de página, corta o embalo da rolagem antes do router posicionar a nova página.
       const unsub = router.subscribe("onBeforeNavigate", () => {
         lenis.scrollTo(window.scrollY, { immediate: true, force: true });
