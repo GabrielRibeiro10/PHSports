@@ -145,7 +145,7 @@ export function Hero() {
     <section
       ref={sectionRef}
       data-hero
-      className="hero-pending relative isolate overflow-hidden bg-[#782b30] supports-[overflow:clip]:overflow-clip"
+      className="hero-pending relative isolate overflow-hidden bg-[#0b1220] supports-[overflow:clip]:overflow-clip"
     >
       {/* Fundo: vídeo do estádio (vai e volta, sem "recomeço"). O 1º quadro aparece na hora, antes do vídeo. */}
       <div
