@@ -9,7 +9,6 @@ import videoDesktopAv1 from "@/assets/hero-video-d-av1.mp4";
 import videoDesktopH264 from "@/assets/hero-video-d.mp4";
 import videoMobileAv1 from "@/assets/hero-video-m-av1.mp4";
 import videoMobileH264 from "@/assets/hero-video-m.mp4";
-import stripes from "@/assets/hero-stripes.webp";
 import person from "@/assets/hero-person.webp";
 import { Ticker } from "@/components/Ticker";
 
@@ -53,7 +52,6 @@ export function Hero() {
   const bgRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoReady, setVideoReady] = useState(false);
-  const stripesRef = useRef<HTMLImageElement>(null);
   const personRef = useRef<HTMLImageElement>(null);
   const [webglFailed, setWebglFailed] = useState(false);
 
@@ -125,7 +123,6 @@ export function Hero() {
         section,
         [
           { el: bgRef.current!, factor: 10, allowUp: true },
-          { el: stripesRef.current!, factor: 10, allowUp: true },
           { el: personRef.current!, factor: 26 },
         ],
         scene,
@@ -174,16 +171,6 @@ export function Hero() {
           }`}
         />
       </div>
-      {/* As 3 faixas (vermelha, branca e azul) da arte original, no mesmo lugar, por cima do estádio */}
-      <img
-        ref={stripesRef}
-        src={stripes}
-        alt=""
-        aria-hidden
-        width={1116}
-        height={2000}
-        className="absolute inset-0 -z-[9] size-full scale-[1.04] object-cover object-left-top will-change-transform md:left-auto md:right-0 md:w-auto md:max-w-none md:object-contain md:object-right md:[mask-image:linear-gradient(to_right,transparent,black_35%)]"
-      />
       {/* Véu escuro à esquerda para destacar o texto */}
       <div
         aria-hidden
