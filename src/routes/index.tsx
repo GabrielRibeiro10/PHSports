@@ -69,52 +69,112 @@ function Home() {
   );
 }
 
+/** Largura de cada pílula + espaço entre elas (celular), usada para calcular repetição e velocidade. */
+const CLUB_PILL_PX = 96;
+/** Pixels por segundo da esteira de clubes (igual em qualquer tamanho de catálogo). */
+const CLUBS_SPEED = 42;
+const MAX_CLUBS = 24;
+
 function ClubsMarquee() {
   const { data: products = [] } = useQuery(productsQueryOptions);
-  const loop = [...products, ...products];
+  const ref = useRef<HTMLElement>(null);
+  const [near, setNear] = useState(false);
+
+  // Uma camisa por clube (a primeira do catálogo), no máximo 24: antes entravam TODAS as camisas
+  // em dobro e, com o catálogo grande, a faixa ficava enorme, rápida e pesada (sumia no iPhone).
+  const clubs = useMemo(() => {
+    const seen = new Set<string>();
+    const out: Product[] = [];
+    for (const p of products) {
+      const key = p.club.trim().toLowerCase();
+      if (!p.image || seen.has(key)) continue;
+      seen.add(key);
+      out.push(p);
+      if (out.length === MAX_CLUBS) break;
+    }
+    return out;
+  }, [products]);
+
+  // A sequência se repete até passar da largura da tela grande e vem duplicada: andando -50% emenda sem pulo.
+  const reps = clubs.length ? Math.max(1, Math.ceil(1400 / (clubs.length * CLUB_PILL_PX))) : 0;
+  const base = Array.from({ length: reps }, () => clubs).flat();
+  const loop = [...base, ...base];
+  const duration = Math.max(20, (base.length * CLUB_PILL_PX) / CLUBS_SPEED);
+
+  // As fotos começam a baixar quando a seção está chegando na tela (antes, cada foto só baixava
+  // ao entrar na faixa e passava vazia).
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setNear(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setNear(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "900px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  if (!clubs.length) return null;
+
   return (
-    <section id="clubes" className="relative pb-10 md:pb-14">
+    <section ref={ref} id="clubes" className="relative pb-10 md:pb-14">
       <div className="mx-auto max-w-7xl px-4">
-        {/* Painel azul translúcido: marca o carrossel sobre o vídeo sem ficar "solto" */}
-        <div className="overflow-hidden rounded-[24px] border border-white/10 bg-black/40 py-2.5 shadow-[0_24px_60px_-30px_rgb(0_0_0/0.8)] backdrop-blur-md md:py-3">
-        <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]">
-          <div className="clubs-track flex w-max gap-3 md:gap-4">
-            {loop.map((p, i) => (
-              <Link
-                key={`${p.slug}-${i}`}
-                to="/produto/$slug"
-                params={{ slug: p.slug }}
-                className="club-pill group relative block h-[148px] w-[84px] shrink-0 overflow-hidden rounded-b-full bg-gradient-to-b from-transparent via-white/10 to-white/25 md:h-[176px] md:w-[100px]"
-                aria-hidden={i >= products.length ? true : undefined}
-                tabIndex={i >= products.length ? -1 : undefined}
-              >
-                {crestFor(p.club) ? (
-                  <img
-                    src={crestFor(p.club)}
-                    alt=""
-                    loading="eager"
-                    decoding="async"
-                    width={40}
-                    height={40}
-                    className="absolute left-1/2 top-3 z-10 h-5 w-auto max-w-[44%] -translate-x-1/2 object-contain drop-shadow-[0_2px_4px_rgb(0_0_0/0.35)] md:top-4 md:h-6"
-                  />
-                ) : (
-                  <span className="absolute inset-x-0 top-5 z-10 px-2 text-center text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-white md:top-6 md:text-[11px]">
-                    {p.club}
-                  </span>
-                )}
-                <img
-                  src={p.image}
-                  alt={p.club}
-                  loading="lazy"
-                  width={200}
-                  height={200}
-                  className="absolute inset-x-0 bottom-0 h-[67%] w-full scale-[1.55] object-cover object-[50%_48%] transition-transform duration-500 ease-out [mask-image:linear-gradient(to_bottom,transparent,black_22%)] group-hover:scale-[1.62]"
-                />
-              </Link>
-            ))}
+        {/* Painel escuro translúcido: marca o carrossel sobre o vídeo sem ficar "solto" */}
+        <div className="overflow-hidden rounded-[24px] border border-white/10 bg-black/50 py-2.5 shadow-[0_24px_60px_-30px_rgb(0_0_0/0.8)] md:py-3">
+          <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]">
+            <div
+              className="clubs-track flex w-max gap-3 md:gap-4"
+              style={{ animationDuration: `${duration}s` }}
+            >
+              {loop.map((p, i) => {
+                const copy = i >= clubs.length;
+                const crest = crestFor(p.club);
+                return (
+                  <Link
+                    key={`${p.slug}-${i}`}
+                    to="/produto/$slug"
+                    params={{ slug: p.slug }}
+                    className="club-pill group relative block h-[148px] w-[84px] shrink-0 overflow-hidden rounded-b-full bg-gradient-to-b from-transparent via-white/10 to-white/25 md:h-[176px] md:w-[100px]"
+                    aria-hidden={copy || undefined}
+                    tabIndex={copy ? -1 : undefined}
+                  >
+                    {crest ? (
+                      <img
+                        src={crest}
+                        alt=""
+                        decoding="async"
+                        width={40}
+                        height={40}
+                        className="absolute left-1/2 top-3 z-10 h-5 w-auto max-w-[44%] -translate-x-1/2 object-contain drop-shadow-[0_2px_4px_rgb(0_0_0/0.35)] md:top-4 md:h-6"
+                      />
+                    ) : (
+                      <span className="absolute inset-x-0 top-5 z-10 px-2 text-center text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-white md:top-6 md:text-[11px]">
+                        {p.club}
+                      </span>
+                    )}
+                    {near && (
+                      <img
+                        src={p.image}
+                        alt={copy ? "" : p.club}
+                        decoding="async"
+                        width={200}
+                        height={200}
+                        className="absolute inset-x-0 bottom-0 h-[67%] w-full scale-[1.55] object-cover object-[50%_48%] transition-transform duration-500 ease-out [mask-image:linear-gradient(to_bottom,transparent,black_22%)] group-hover:scale-[1.62]"
+                      />
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
-        </div>
         </div>
       </div>
     </section>
