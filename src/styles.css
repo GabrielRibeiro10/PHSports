@@ -1027,7 +1027,7 @@ header[data-on-dark="true"] .ph-glass img { box-shadow: 0 0 0 1px rgb(255 255 25
 /* Header desktop sem barra: links e busca direto sobre a imagem da HERO */
 .ph-nav form { background: rgb(0 0 0 / 0.04); border-color: rgb(0 0 0 / 0.1); }
 .ph-nav form:focus-within { background: #fff; border-color: rgb(0 0 0 / 0.3); }
-header[data-on-dark="true"] .ph-nav a { color: #fff; text-shadow: 0 1px 10px rgb(0 0 0 / 0.45); }
+header[data-on-dark="true"] .ph-nav a:not(.search-panel a) { color: #fff; text-shadow: 0 1px 10px rgb(0 0 0 / 0.45); }
 header[data-on-dark="true"] .ph-nav a:hover { color: rgb(255 255 255 / 0.7); }
 header[data-on-dark="true"] .ph-nav form { background: rgb(255 255 255 / 0.12); border-color: rgb(255 255 255 / 0.22); color: #fff; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 header[data-on-dark="true"] .ph-nav form:focus-within { background: rgb(255 255 255 / 0.2); border-color: rgb(255 255 255 / 0.45); }
