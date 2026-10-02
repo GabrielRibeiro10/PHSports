@@ -10,7 +10,6 @@ import videoDesktopH264 from "@/assets/hero-video-d.mp4";
 import videoMobileAv1 from "@/assets/hero-video-m-av1.mp4";
 import videoMobileH264 from "@/assets/hero-video-m.mp4";
 import person from "@/assets/hero-person.webp";
-import personMobile from "@/assets/hero-person-mobile.webp";
 import { Ticker } from "@/components/Ticker";
 
 const TITLE = [
@@ -177,20 +176,17 @@ export function Hero() {
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-[7] bg-[linear-gradient(to_bottom,rgb(0_0_0/0.7)_0%,rgb(0_0_0/0.35)_45%,transparent_72%)] md:bg-[linear-gradient(to_right,rgb(0_0_0/0.88)_0%,rgb(0_0_0/0.62)_28%,rgb(0_0_0/0.22)_48%,transparent_62%)]"
       />
-      {/* Modelo PH Sports no canto direito (mobile); a camisa 3D fica por cima */}
-      <picture>
-        {/* celular: foto com a camisa estendida para baixo, a base fica sempre atrás do carrossel */}
-        <source media="(min-width: 768px)" srcSet={person} />
-        <img
-          ref={personRef}
-          src={personMobile}
-          alt=""
-          aria-hidden
-          width={834}
-          height={2692}
-          className="hero-person-in pointer-events-none absolute bottom-0 -right-[25.5%] top-[26vw] -z-[5] h-[244.8vw] w-auto max-w-none object-contain object-right-bottom md:right-[max(calc((100%-80rem)/2-2rem),calc(25%-9rem))] md:top-auto md:h-[min(94%,62rem)]"
-        />
-      </picture>
+      {/* Modelo PH Sports no canto direito. No celular a foto termina antes do fim da HERO,
+          então a base dela some aos poucos (sem corte seco). */}
+      <img
+        ref={personRef}
+        src={person}
+        alt=""
+        aria-hidden
+        width={834}
+        height={1492}
+        className="hero-person-in pointer-events-none absolute bottom-0 -right-[25.5%] top-[26vw] -z-[5] h-[135.7vw] w-auto max-w-none object-contain object-right-bottom [mask-image:linear-gradient(to_bottom,black_76%,transparent)] md:right-[max(calc((100%-80rem)/2-2rem),calc(25%-9rem))] md:top-auto md:h-[min(94%,62rem)] md:[mask-image:none]"
+      />
       <canvas
         ref={canvasRef}
         aria-hidden
