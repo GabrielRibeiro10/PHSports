@@ -188,7 +188,7 @@ export function Hero() {
           aria-hidden
           width={834}
           height={2692}
-          className="hero-person-in pointer-events-none absolute bottom-0 -right-[25.5%] top-[26vw] -z-[5] h-[244.8vw] w-auto max-w-none object-contain object-right-bottom md:right-[max(calc((100%-80rem)/2+10rem),calc(25%-9rem))] md:top-auto md:h-[94%]"
+          className="hero-person-in pointer-events-none absolute bottom-0 -right-[25.5%] top-[26vw] -z-[5] h-[244.8vw] w-auto max-w-none object-contain object-right-bottom md:right-[max(calc((100%-80rem)/2-2rem),calc(25%-9rem))] md:top-auto md:h-[min(94%,62rem)]"
         />
       </picture>
       <canvas
@@ -197,11 +197,11 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 z-0 size-full opacity-0"
       />
 
-      <div className="relative z-10 mx-auto h-[max(calc(100vh-28.5px),531.5px)] max-w-7xl px-4 pt-[35vw] md:grid md:h-[max(640px,calc(100svh-28.5px))] md:pt-28 md:grid-cols-2 md:items-center md:gap-8 md:py-16">
+      <div className="relative z-10 mx-auto h-[max(calc(100vh-28.5px),531.5px)] max-w-7xl px-4 pt-[35vw] md:grid md:h-[max(640px,calc(100svh-28.5px))] md:pt-28 md:grid-cols-2 md:items-center lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] md:gap-8 md:py-16">
         <div ref={textRef} className="max-md:[zoom:var(--m-scale,1)]">
           <span
             data-hero-extra
-            className="hero-reveal inline-flex items-center gap-2 border-l-2 border-white/80 pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-white/90"
+            className="hero-reveal inline-flex items-center gap-2 border-l-2 border-white/80 pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-white/90 lg:gap-2.5 lg:pl-4 lg:text-[13px] lg:tracking-[0.2em]"
           >
             Coleção 2026 •{" "}
             <span className="wave-red" aria-label="Edição Premium">
@@ -214,42 +214,42 @@ export function Hero() {
           </span>
           <h1
             aria-label={TITLE_LABEL}
-            className="hero-serif mt-4 text-[40px] leading-[0.98] md:text-[clamp(3.3rem,5.4vw,5rem)]"
+            className="hero-serif mt-4 text-[40px] leading-[0.98] md:text-[clamp(3.3rem,5.4vw,5rem)] lg:mt-6 lg:text-[clamp(4.25rem,6.9vw,6.75rem)] lg:leading-[0.94]"
           >
             <SplitTitle />
           </h1>
           <p
             data-hero-extra
-            className="hero-reveal mt-4 max-w-md md:mt-5 text-sm leading-relaxed md:text-[15px] text-white/80"
+            className="hero-reveal mt-4 max-w-md md:mt-5 text-sm leading-relaxed md:text-[15px] text-white/80 lg:mt-7 lg:max-w-[30rem] lg:text-lg xl:max-w-[34rem]"
           >
             Camisas dos maiores clubes do Brasil com acabamento premium. Tudo por{" "}
             <span className="font-black tabular-nums text-white">R$ 179,90</span> na PH Sports.
           </p>
-          <div data-hero-extra className="hero-reveal mt-6 flex flex-wrap gap-3 md:mt-8">
+          <div data-hero-extra className="hero-reveal mt-6 flex flex-wrap gap-3 md:mt-8 lg:mt-10 lg:gap-4">
             <Link
               to="/"
               hash="produtos"
-              className="btn-glow btn-shine inline-flex items-center gap-2 rounded-full bg-white px-5 py-3.5 md:px-7 text-sm font-bold text-foreground shadow-[var(--shadow-raised)]"
+              className="btn-glow btn-shine inline-flex items-center gap-2 rounded-full bg-white px-5 py-3.5 md:px-7 text-sm font-bold text-foreground lg:gap-2.5 lg:px-9 lg:py-[1.125rem] lg:text-base shadow-[var(--shadow-raised)]"
             >
-              <span className="btn-silver">Comprar agora</span> <ArrowRight className="size-4" />
+              <span className="btn-silver">Comprar agora</span> <ArrowRight className="size-4 lg:size-5" />
             </Link>
             <Link
               to="/"
               hash="clubes"
-              className="btn-glow inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/10 px-5 py-3.5 md:px-7 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+              className="btn-glow inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/10 px-5 py-3.5 md:px-7 text-sm font-semibold text-white lg:px-9 lg:py-[1.125rem] lg:text-base backdrop-blur-sm transition-colors hover:bg-white/20"
             >
               Ver clubes
             </Link>
           </div>
           <div
             data-hero-extra
-            className="hero-reveal mt-5 flex flex-wrap items-center gap-5 md:mt-8 text-xs text-white/80"
+            className="hero-reveal mt-5 flex flex-wrap items-center gap-5 md:mt-8 text-xs text-white/80 lg:mt-10 lg:gap-7 lg:text-sm"
           >
             <span className="inline-flex items-center gap-1.5">
-              <Truck className="size-4 text-white" /> Envio para todo Brasil
+              <Truck className="size-4 text-white lg:size-[18px]" /> Envio para todo Brasil
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="size-4 text-white" /> Compra 100% segura
+              <ShieldCheck className="size-4 text-white lg:size-[18px]" /> Compra 100% segura
             </span>
           </div>
         </div>
