@@ -3,16 +3,6 @@ import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { categoriesQueryOptions } from "@/lib/catalog";
-import { LoopVideo } from "@/components/LoopVideo";
-import posterD from "@/assets/cat-video-d.webp";
-import posterM from "@/assets/cat-video-m.webp";
-import videoDAv1 from "@/assets/cat-video-d-av1.mp4";
-import videoD from "@/assets/cat-video-d.mp4";
-import videoMAv1 from "@/assets/cat-video-m-av1.mp4";
-import videoM from "@/assets/cat-video-m.mp4";
-
-const DESKTOP = { av1: videoDAv1, h264: videoD, poster: posterD };
-const MOBILE = { av1: videoMAv1, h264: videoM, poster: posterM };
 
 export function CategoryCarousel() {
   const { data: items = [] } = useQuery(categoriesQueryOptions);
@@ -71,13 +61,7 @@ export function CategoryCarousel() {
   };
 
   return (
-    <section id="categorias" className="relative isolate overflow-hidden bg-[#0b0f14]">
-      {/* Vídeo de fundo (loop com fusão suave no fim, sem "recomeço") + véu para leitura */}
-      <LoopVideo desktop={DESKTOP} mobile={MOBILE} className="absolute inset-0 -z-10" />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,rgb(0_0_0/0.55),rgb(0_0_0/0.35)_45%,rgb(0_0_0/0.6))]"
-      />
+    <section id="categorias" className="relative">
       <div className="mx-auto max-w-7xl px-4 py-10 md:py-14 reveal-up">
         <div className="mb-6 flex items-end justify-between">
           <div>
