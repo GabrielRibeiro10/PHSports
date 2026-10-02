@@ -107,7 +107,7 @@ export function playHeroIntro(o: IntroOptions): () => void {
       gsap.set(scene.shirtGroup.scale, { x: l.ss, y: l.ss, z: l.ss });
     }
 
-    const stagger = Math.min(0.045, 1.05 / Math.max(1, o.chars.length - 1));
+    const stagger = Math.min(0.038, 0.9 / Math.max(1, o.chars.length - 1));
     tl = gsap.timeline({ onComplete: startSpin });
 
     if (scene && l) {
@@ -129,11 +129,11 @@ export function playHeroIntro(o: IntroOptions): () => void {
       );
     }
     if (animateText) {
-      tl.to(o.chars, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger }, 0.3);
+      tl.to(o.chars, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", stagger }, 0.25);
       tl.to(
         o.extras,
-        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", stagger: 0.1 },
-        ">-0.45",
+        { opacity: 1, y: 0, duration: 0.55, ease: "power2.out", stagger: 0.085 },
+        ">-0.4",
       );
     }
     // Garante a ordem: texto completo → camisa chega → só então o giro.
