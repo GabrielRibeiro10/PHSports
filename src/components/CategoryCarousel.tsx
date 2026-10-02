@@ -3,6 +3,16 @@ import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { categoriesQueryOptions } from "@/lib/catalog";
+import { LoopVideo } from "@/components/LoopVideo";
+import posterD from "@/assets/cat-video-d.webp";
+import posterM from "@/assets/cat-video-m.webp";
+import videoDAv1 from "@/assets/cat-video-d-av1.mp4";
+import videoD from "@/assets/cat-video-d.mp4";
+import videoMAv1 from "@/assets/cat-video-m-av1.mp4";
+import videoM from "@/assets/cat-video-m.mp4";
+
+const DESKTOP = { av1: videoDAv1, h264: videoD, poster: posterD };
+const MOBILE = { av1: videoMAv1, h264: videoM, poster: posterM };
 
 export function CategoryCarousel() {
   const { data: items = [] } = useQuery(categoriesQueryOptions);
@@ -61,84 +71,96 @@ export function CategoryCarousel() {
   };
 
   return (
-    <section id="categorias" className="mx-auto max-w-7xl px-4 py-10 md:py-14 reveal-up">
-      <div className="mb-6 flex items-end justify-between">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-brand">Escolha seu estilo</p>
-          <h2 className="text-2xl font-black md:text-3xl">Torcedor, jogador ou retrô?</h2>
-        </div>
-      </div>
-
+    <section id="categorias" className="relative isolate overflow-hidden bg-[#0b0f14]">
+      {/* Vídeo de fundo (loop com fusão suave no fim, sem "recomeço") + véu para leitura */}
+      <LoopVideo desktop={DESKTOP} mobile={MOBILE} className="absolute inset-0 -z-10" />
       <div
-        className="relative"
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-      >
-        <div className="overflow-hidden" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-          <div
-            className="carousel-track flex"
-            style={{ transform: `translate3d(-${(index * 100) / perView}%, 0, 0)` }}
-          >
-            {items.map((c) => (
-              <div key={c.id} className="shrink-0 px-2" style={{ width: `${100 / perView}%` }}>
-                <Link
-                  to="/categoria/$slug"
-                  params={{ slug: c.slug }}
-                  className="group relative flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)] transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-premium)]"
-                >
-                  <img
-                    src={c.image}
-                    alt={c.name}
-                    loading="lazy"
-                    className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-                  <div className="relative z-10 p-5 text-white">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-brand/90 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider">
-                      Categoria
-                    </span>
-                    <h3 className="mt-3 text-2xl font-black leading-none">{c.name}</h3>
-                    <p className="mt-1 text-xs opacity-90">{c.tagline}</p>
-                  </div>
-                </Link>
-              </div>
-            ))}
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,rgb(0_0_0/0.55),rgb(0_0_0/0.35)_45%,rgb(0_0_0/0.6))]"
+      />
+      <div className="mx-auto max-w-7xl px-4 py-10 md:py-14 reveal-up">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-brand">
+              Escolha seu estilo
+            </p>
+            <h2 className="text-2xl font-black text-white md:text-3xl">
+              Torcedor, jogador ou retrô?
+            </h2>
           </div>
         </div>
 
-        <button
-          type="button"
-          aria-label="Anterior"
-          onClick={() => nudge(-1)}
-          className="hidden md:grid absolute -left-3 top-1/2 -translate-y-1/2 size-11 place-items-center rounded-full border border-border bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
+        <div
+          className="relative"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
         >
-          <ChevronLeft className="size-5" />
-        </button>
-        <button
-          type="button"
-          aria-label="Próximo"
-          onClick={() => nudge(1)}
-          className="hidden md:grid absolute -right-3 top-1/2 -translate-y-1/2 size-11 place-items-center rounded-full border border-border bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
-        >
-          <ChevronRight className="size-5" />
-        </button>
+          <div className="overflow-hidden" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+            <div
+              className="carousel-track flex"
+              style={{ transform: `translate3d(-${(index * 100) / perView}%, 0, 0)` }}
+            >
+              {items.map((c) => (
+                <div key={c.id} className="shrink-0 px-2" style={{ width: `${100 / perView}%` }}>
+                  <Link
+                    to="/categoria/$slug"
+                    params={{ slug: c.slug }}
+                    className="group relative flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)] transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-premium)]"
+                  >
+                    <img
+                      src={c.image}
+                      alt={c.name}
+                      loading="lazy"
+                      className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+                    <div className="relative z-10 p-5 text-white">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-brand/90 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider">
+                        Categoria
+                      </span>
+                      <h3 className="mt-3 text-2xl font-black leading-none">{c.name}</h3>
+                      <p className="mt-1 text-xs opacity-90">{c.tagline}</p>
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
 
-        <div className="mt-4 flex justify-center gap-1.5">
-          {Array.from({ length: maxIndex + 1 }).map((_, i) => (
-            <button
-              key={i}
-              aria-label={`Ir para ${i + 1}`}
-              onClick={() => {
-                setIndex(i);
-                setPaused(true);
-                if (resumeTimer.current) window.clearTimeout(resumeTimer.current);
-                resumeTimer.current = window.setTimeout(() => setPaused(false), 5000);
-              }}
-              className={`h-1.5 rounded-full transition-all ${
-                i === index ? "w-6 bg-brand" : "w-1.5 bg-border"
-              }`}
-            />
-          ))}
+          <button
+            type="button"
+            aria-label="Anterior"
+            onClick={() => nudge(-1)}
+            className="hidden md:grid absolute -left-3 top-1/2 -translate-y-1/2 size-11 place-items-center rounded-full border border-border bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
+          >
+            <ChevronLeft className="size-5" />
+          </button>
+          <button
+            type="button"
+            aria-label="Próximo"
+            onClick={() => nudge(1)}
+            className="hidden md:grid absolute -right-3 top-1/2 -translate-y-1/2 size-11 place-items-center rounded-full border border-border bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
+          >
+            <ChevronRight className="size-5" />
+          </button>
+
+          <div className="mt-4 flex justify-center gap-1.5">
+            {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+              <button
+                key={i}
+                aria-label={`Ir para ${i + 1}`}
+                onClick={() => {
+                  setIndex(i);
+                  setPaused(true);
+                  if (resumeTimer.current) window.clearTimeout(resumeTimer.current);
+                  resumeTimer.current = window.setTimeout(() => setPaused(false), 5000);
+                }}
+                className={`h-1.5 rounded-full transition-all ${
+                  i === index ? "w-6 bg-brand" : "w-1.5 bg-white/40"
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
