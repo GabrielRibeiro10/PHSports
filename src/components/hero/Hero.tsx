@@ -185,7 +185,7 @@ export function Hero() {
         aria-hidden
         width={834}
         height={1492}
-        className="hero-person-in pointer-events-none absolute bottom-0 -right-[25.5%] top-[26vw] -z-[5] h-[135.7vw] w-auto max-w-none object-contain object-right-bottom [mask-image:linear-gradient(to_bottom,black_76%,transparent)] md:right-[max(calc((100%-80rem)/2-2rem),calc(25%-9rem))] md:top-auto md:h-[min(94%,62rem)] md:[mask-image:none]"
+        className="hero-person-in pointer-events-none absolute bottom-0 -right-[25.5%] top-[26vw] -z-[5] h-[135.7vw] w-auto max-w-none object-contain object-right-bottom [mask-image:linear-gradient(to_bottom,black_76%,transparent)] md:right-[-6%] md:top-auto md:h-[min(76%,62rem)] lg:right-[max(calc((100%-80rem)/2-2rem),calc(25%-9rem))] lg:h-[min(94%,62rem)] md:[mask-image:none]"
       />
       <canvas
         ref={canvasRef}

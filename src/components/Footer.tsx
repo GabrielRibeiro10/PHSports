@@ -10,10 +10,10 @@ const INSTAGRAM_URL = "https://www.instagram.com/phsportsilha?igsh=bXA4NDM2YmR6d
 const CONTACT_MESSAGE = "Olá! Vim pelo site da PH Sports e queria tirar uma dúvida.";
 
 const SHOP_LINKS = [
-  { label: "Femininas", slug: "mulheres" },
+  { label: "Feminino", slug: "mulheres" },
   { label: "Retrô", slug: "retro" },
-  { label: "Versão jogador", slug: "versao-jogador" },
-  { label: "Caneleiras", slug: "caneleiras" },
+  { label: "Versão Jogador", slug: "versao-jogador" },
+  { label: "Acessórios", slug: "caneleiras" },
 ] as const;
 
 const d = (s: number) => ({ "--d": `${s}s` }) as CSSProperties;
@@ -153,8 +153,8 @@ export function Footer() {
         </div>
 
         {/* Colunas */}
-        <div className="mt-16 grid grid-cols-2 gap-x-6 gap-y-12 border-t border-white/10 pt-12 md:mt-24 md:grid-cols-12 md:pt-14">
-          <div className="ft-up col-span-2 md:col-span-3" style={d(0.15)}>
+        <div className="mt-16 grid grid-cols-2 gap-x-6 gap-y-12 border-t border-white/10 pt-12 md:mt-24 md:pt-14 lg:grid-cols-12">
+          <div className="ft-up col-span-2 lg:col-span-3" style={d(0.15)}>
             <Link
               to="/"
               aria-label="PH Sports, página inicial"
@@ -178,7 +178,7 @@ export function Footer() {
             </p>
           </div>
 
-          <nav aria-label="Loja" className="ft-up md:col-span-2" style={d(0.23)}>
+          <nav aria-label="Loja" className="ft-up lg:col-span-2" style={d(0.23)}>
             <ColumnTitle index="01">Loja</ColumnTitle>
             <ul className="mt-5 space-y-3 text-sm">
               <li>
@@ -196,7 +196,7 @@ export function Footer() {
             </ul>
           </nav>
 
-          <nav aria-label="Ajuda" className="ft-up md:col-span-2" style={d(0.31)}>
+          <nav aria-label="Ajuda" className="ft-up lg:col-span-2" style={d(0.31)}>
             <ColumnTitle index="02">Ajuda</ColumnTitle>
             <ul className="mt-5 space-y-3 text-sm">
               <li>
@@ -235,7 +235,7 @@ export function Footer() {
             </ul>
           </nav>
 
-          <div className="ft-up col-span-2 md:col-span-3" style={d(0.39)}>
+          <div className="ft-up col-span-2 lg:col-span-3" style={d(0.39)}>
             <ColumnTitle index="03">Contato</ColumnTitle>
             <ul className="mt-5 space-y-3 text-sm">
               <li>
@@ -267,7 +267,7 @@ export function Footer() {
             </ul>
           </div>
 
-          <div className="ft-up col-span-2 md:col-span-2" style={d(0.47)}>
+          <div className="ft-up col-span-2 lg:col-span-2" style={d(0.47)}>
             <ColumnTitle index="04">Pagamento</ColumnTitle>
             <p className="mt-5 text-sm text-white">Pix, aprovação na hora.</p>
             <p className="mt-2 text-sm leading-relaxed text-white/55">
