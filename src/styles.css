@@ -1375,16 +1375,3 @@ html.js-reveal [data-reveal][data-revealed] {
 @media (prefers-reduced-motion: reduce) {
   .pc-img, .pc-quick { transition: none; }
 }
-
-/* Categorias: esteira contínua para a esquerda, como o carrossel de clubes */
-.cat-track {
-  animation: clubs-scroll var(--cat-dur, 40s) linear infinite;
-  will-change: transform;
-}
-@media (hover: hover) {
-  .cat-marquee:hover .cat-track { animation-play-state: paused; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .cat-track { animation: none; }
-  .cat-marquee { overflow-x: auto; }
-}
