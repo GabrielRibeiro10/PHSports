@@ -5,7 +5,7 @@
  *  - Google Analytics 4: Administrador → Fluxos de dados → ID da métrica ("G-XXXXXXX").
  */
 export const META_PIXEL_ID = "";
-export const GA4_ID = "";
+export const GA4_ID = "G-BKRWF75GW9";
 
 type Item = { slug: string; name: string; club?: string; price: number; qty?: number };
 
