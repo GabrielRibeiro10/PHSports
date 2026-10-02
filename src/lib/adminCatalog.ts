@@ -107,7 +107,8 @@ async function compressImage(file: File): Promise<{ blob: Blob; ext: string; mim
   if (typeof document === "undefined" || file.type === "image/gif") return fallback();
   try {
     const bitmap = await createImageBitmap(file);
-    const MAX = 1600;
+    // 1200px já é nítido em telas retina para os cards e a página do produto, e pesa bem menos.
+    const MAX = 1200;
     const scale = Math.min(1, MAX / Math.max(bitmap.width, bitmap.height));
     const canvas = document.createElement("canvas");
     canvas.width = Math.round(bitmap.width * scale);
@@ -116,7 +117,7 @@ async function compressImage(file: File): Promise<{ blob: Blob; ext: string; mim
     if (!ctx) return fallback();
     ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
     const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, "image/webp", 0.86),
+      canvas.toBlob(resolve, "image/webp", 0.82),
     );
     if (!blob || blob.size === 0) return fallback();
     return { blob, ext: "webp", mime: "image/webp" };
@@ -129,9 +130,10 @@ async function uploadTo(prefix: string, file: File, hint: string): Promise<strin
   await validateImageFile(file);
   const { blob, ext, mime } = await compressImage(file);
   const path = `${prefix}/${safeSlug(hint)}-${Date.now()}.${ext}`;
+  // Nome do arquivo é único (data no nome): o navegador pode guardar a imagem por 1 ano.
   const { error } = await supabase.storage
     .from("product-images")
-    .upload(path, blob, { upsert: true, cacheControl: "3600", contentType: mime });
+    .upload(path, blob, { upsert: true, cacheControl: "31536000", contentType: mime });
   if (error) throw error;
   void writeAudit(`${prefix}.upload_image`, {
     entity: "storage",

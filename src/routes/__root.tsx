@@ -22,6 +22,7 @@ import { CartProvider } from "@/lib/cart";
 import { AuthProvider } from "@/lib/auth";
 import { useCatalogRealtimeSync } from "@/lib/catalog";
 import { Toaster } from "@/components/ui/sonner";
+import { analyticsHeadScripts, track } from "@/lib/analytics";
 
 function NotFoundComponent() {
   return (
@@ -99,6 +100,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400..900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Archivo:wdth,wght@100..125,400..900&display=swap" },
       { rel: "stylesheet", href: appCss },
     ],
+    scripts: analyticsHeadScripts(),
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -127,6 +129,15 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+/** Conta uma visualização de página a cada navegação (Pixel + Analytics). */
+function AnalyticsPageViews() {
+  const href = useRouterState({ select: (s) => s.location.href });
+  useEffect(() => {
+    track.pageView(href);
+  }, [href]);
+  return null;
+}
+
 function CatalogRealtimeSync() {
   useCatalogRealtimeSync();
   return null;
@@ -139,6 +150,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <CatalogRealtimeSync />
+      <AnalyticsPageViews />
       <AuthProvider>
         <CartProvider>
           {isAdminRoute ? (

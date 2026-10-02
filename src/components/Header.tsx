@@ -6,6 +6,7 @@ import { useCart } from "@/lib/cart";
 import { scrollToTop } from "@/lib/smooth-scroll";
 import { sanitizeSearch, checkSearchRate } from "@/lib/search-safety";
 import { SearchSuggest } from "@/components/SearchSuggest";
+import { track } from "@/lib/analytics";
 import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
 
 export function Header() {
@@ -32,6 +33,7 @@ export function Header() {
       toast("Estamos processando suas solicitações. Aguarde alguns instantes antes de tentar novamente.");
       return;
     }
+    track.search(term);
     navigate({ to: "/busca", search: { q: term } });
     setOpen(false);
   };

@@ -9,6 +9,7 @@ import { useCart } from "@/lib/cart";
 import { buildOrderMessage, whatsappHref } from "@/lib/whatsapp";
 import { redeemCoupon, validateCoupon } from "@/lib/coupons.functions";
 import { useServerFn } from "@tanstack/react-start";
+import { track } from "@/lib/analytics";
 
 
 export const Route = createFileRoute("/carrinho")({
@@ -261,6 +262,13 @@ function CartPage() {
               onClick={() => {
                 // Usage is only recorded when the order is actually finalized.
                 if (applied) void redeem({ data: { code: applied.code } }).catch(() => {});
+                track.checkout(
+                  items.map((it) => {
+                    const p = getProduct(it.slug);
+                    return { slug: it.slug, name: p?.name ?? it.slug, club: p?.club, price: p?.price ?? 0, qty: it.qty };
+                  }),
+                  total,
+                );
               }}
               target="_blank"
               rel="noopener noreferrer"
