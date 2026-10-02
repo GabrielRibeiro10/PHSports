@@ -192,10 +192,10 @@ function SearchAndProducts() {
   const [club, setClub] = useState<string>("todos");
   const [gender, setGender] = useState<Gender>("todos");
 
-  // Page size: 20 on desktop, 12 on tablet/mobile. Resolved after mount to avoid SSR mismatch.
-  const [pageSize, setPageSize] = useState(12);
+  // Page size: 28 on desktop, 20 on tablet/mobile. Resolved after mount to avoid SSR mismatch.
+  const [pageSize, setPageSize] = useState(20);
   useEffect(() => {
-    const apply = () => setPageSize(window.innerWidth >= 1024 ? 20 : 12);
+    const apply = () => setPageSize(window.innerWidth >= 1024 ? 28 : 20);
     apply();
     window.addEventListener("resize", apply);
     return () => window.removeEventListener("resize", apply);
