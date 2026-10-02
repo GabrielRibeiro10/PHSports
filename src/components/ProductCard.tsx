@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useRef, type TouchEvent } from "react";
 import { formatBRL, type Product } from "@/lib/products";
 
 export function ProductCard({
@@ -11,8 +12,23 @@ export function ProductCard({
   glow?: boolean;
 }) {
   const back = p.gallery.find((u) => u && u !== p.image);
+  // Toque: mostra a foto de trás enquanto o dedo está no card e um pouco depois de soltar.
+  const offTimer = useRef<number | undefined>(undefined);
+  const touchOn = (e: TouchEvent<HTMLAnchorElement>) => {
+    if (!back) return;
+    window.clearTimeout(offTimer.current);
+    e.currentTarget.classList.add("pc-touch");
+  };
+  const touchOff = (e: TouchEvent<HTMLAnchorElement>) => {
+    const el = e.currentTarget;
+    window.clearTimeout(offTimer.current);
+    offTimer.current = window.setTimeout(() => el.classList.remove("pc-touch"), 900);
+  };
   return (
     <Link
+      onTouchStart={touchOn}
+      onTouchEnd={touchOff}
+      onTouchCancel={touchOff}
       data-reveal
       to="/produto/$slug"
       params={{ slug: p.slug }}

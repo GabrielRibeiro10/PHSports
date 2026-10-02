@@ -2,8 +2,7 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useId, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Check, ChevronRight, Ruler, RefreshCw, ShieldCheck, ShoppingBag, X } from "lucide-react";
-import { Sparkles } from "@/components/Sparkles";
+import { ArrowRight, Check, ChevronRight, Ruler, RefreshCw, ShieldCheck, ShoppingBag, X } from "lucide-react";
 import { formatBRL, SIZES } from "@/lib/products";
 import { getProduct, productsQueryOptions } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
@@ -213,10 +212,7 @@ function ProductPage() {
               className="aspect-square w-full animate-[fade-in_0.35s_ease-out] object-cover transition-opacity duration-300"
               fetchPriority="high"
             />
-            <span className="absolute left-4 top-4 rounded-full bg-brand px-3 py-1 text-xs font-black uppercase tracking-wider text-brand-foreground">
-              Oferta
-            </span>
-            <span className="absolute right-4 top-4 rounded-full bg-primary px-3 py-1 text-xs font-black text-primary-foreground">
+            <span className="absolute left-4 top-4 rounded-full bg-primary px-3 py-1 text-xs font-black tabular-nums text-primary-foreground">
               -{product.discount}%
             </span>
           </div>
@@ -247,7 +243,6 @@ function ProductPage() {
           <div className="mt-4 flex items-baseline gap-3">
             <span className="text-3xl font-black">{formatBRL(product.price)}</span>
             <span className="text-base text-muted-foreground line-through">{formatBRL(product.oldPrice)}</span>
-            <span className="rounded-md bg-brand/10 px-2 py-0.5 text-xs font-bold text-brand">-{product.discount}% Promoção</span>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
             ou 6x de <span className="font-semibold text-foreground">{formatBRL(product.price / 6)}</span> sem juros
@@ -270,7 +265,7 @@ function ProductPage() {
                   setSizeTableOpen(true);
                   document.getElementById("tabela-medidas")?.scrollIntoView({ behavior: "smooth", block: "center" });
                 }}
-                className="inline-flex items-center gap-1.5 rounded-full border border-brand/40 bg-brand/10 px-3 py-1.5 text-xs font-bold text-brand transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand hover:text-brand-foreground hover:shadow-[0_8px_24px_-8px_oklch(0.55_0.22_27_/_0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 active:translate-y-0"
+                className="inline-flex items-center gap-1.5 rounded-full border border-foreground/15 px-3 py-1.5 text-xs font-semibold text-foreground transition-colors duration-200 hover:border-foreground/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30"
               >
                 <Ruler className="size-3.5" aria-hidden="true" /> Tabela de medidas
               </button>
@@ -280,10 +275,11 @@ function ProductPage() {
                 <button
                   key={s}
                   onClick={() => setSize(s)}
-                  className={`min-w-14 rounded-md border px-4 py-2.5 text-sm font-bold transition-colors ${
+                  aria-pressed={size === s}
+                  className={`min-w-14 rounded-full border px-4 py-2.5 text-sm font-semibold transition-colors duration-200 ${
                     size === s
                       ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border bg-background hover:border-primary"
+                      : "border-border bg-background text-foreground hover:border-foreground/40"
                   }`}
                 >
                   {s}
@@ -297,7 +293,7 @@ function ProductPage() {
           {/* Qty */}
           <div className="mt-5">
             <span className="text-sm font-bold">Quantidade</span>
-            <div className="mt-2 inline-flex items-center overflow-hidden rounded-md border border-border">
+            <div className="mt-2 inline-flex items-center overflow-hidden rounded-full border border-border">
               <button
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
                 className="px-4 py-2 text-lg font-bold hover:bg-secondary"
@@ -315,16 +311,16 @@ function ProductPage() {
           {/* CTAs */}
           <div className="mt-6 grid gap-2">
             <button
-              onClick={onAdd}
-              className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary bg-background px-6 py-3.5 text-sm font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+              onClick={onBuy}
+              className="btn-glow inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground transition-colors duration-200 hover:bg-brand hover:text-brand-foreground"
             >
-              <ShoppingBag className="size-4" /> Adicionar ao Carrinho
+              Comprar agora <ArrowRight className="size-4" />
             </button>
             <button
-              onClick={onBuy}
-              className="btn-gen inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-3.5 text-sm font-medium"
+              onClick={onAdd}
+              className="btn-glow inline-flex items-center justify-center gap-2 rounded-full border border-foreground/15 bg-background px-6 py-3.5 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-foreground/40"
             >
-              <Sparkles className="size-[18px]" /> <span className="btn-gen__text">Comprar</span>
+              <ShoppingBag className="size-4" /> Adicionar ao carrinho
             </button>
           </div>
 
