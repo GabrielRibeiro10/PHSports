@@ -201,6 +201,28 @@ function SearchAndProducts() {
     return () => window.removeEventListener("resize", apply);
   }, []);
 
+  // Menu "Times"/"Seleções" da header: abre o catálogo já na região escolhida.
+  useEffect(() => {
+    const apply = (r: unknown) => {
+      if (r === "todos" || r === "selecoes") {
+        setRegion(r);
+        setClub("todos");
+      }
+    };
+    try {
+      apply(sessionStorage.getItem("ph-region"));
+      sessionStorage.removeItem("ph-region");
+    } catch {}
+    const onEv = (e: Event) => {
+      apply((e as CustomEvent).detail);
+      try {
+        sessionStorage.removeItem("ph-region");
+      } catch {}
+    };
+    window.addEventListener("ph:region", onEv);
+    return () => window.removeEventListener("ph:region", onEv);
+  }, []);
+
   const [pages, setPages] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
 
