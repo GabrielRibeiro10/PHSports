@@ -38,6 +38,15 @@ export function Header() {
     setOpen(false);
   };
 
+  // "Times" e "Seleções" abrem o catálogo já filtrado (região), na home ou vindo de outra página.
+  const goRegion = (region: "todos" | "selecoes") => {
+    setOpen(false);
+    try {
+      sessionStorage.setItem("ph-region", region);
+    } catch {}
+    window.dispatchEvent(new CustomEvent("ph:region", { detail: region }));
+  };
+
   const onLogoClick = (e: MouseEvent<HTMLAnchorElement>) => {
     setOpen(false);
     if (pathname === "/") {
@@ -100,21 +109,29 @@ export function Header() {
 
         <div className="ph-nav hidden lg:flex flex-1 items-center gap-5 px-2 py-2">
         <nav className="flex items-center gap-5 text-sm font-medium">
-          <Link to="/" hash="produtos" className="hover:text-brand transition-colors">Camisas</Link>
-          <Link to="/categoria/$slug" params={{ slug: "mulheres" }} activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Femininas</Link>
+          <Link to="/" hash="produtos" onClick={() => goRegion("todos")} className="hover:text-brand transition-colors">Times</Link>
+          <Link to="/" hash="produtos" onClick={() => goRegion("selecoes")} className="hover:text-brand transition-colors">Seleções</Link>
+          <Link to="/categoria/$slug" params={{ slug: "mulheres" }} activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Feminino</Link>
           <Link to="/categoria/$slug" params={{ slug: "retro" }} activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Retrô</Link>
-          <Link to="/categoria/$slug" params={{ slug: "versao-jogador" }} activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Jogador</Link>
-          <Link to="/categoria/$slug" params={{ slug: "caneleiras" }} activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Caneleiras</Link>
-          <Link to="/rastreio" activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Rastrear</Link>
+          <Link to="/categoria/$slug" params={{ slug: "versao-jogador" }} activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Versão Jogador</Link>
+          <Link to="/categoria/$slug" params={{ slug: "caneleiras" }} activeProps={{ className: "text-brand" }} className="hover:text-brand transition-colors">Acessórios</Link>
         </nav>
 
         <SearchSuggest value={q} onChange={setQ} onSubmit={onSearch} variant="bar" />
         </div>
 
         <Link
+          to="/rastreio"
+          aria-label="Rastrear pedido"
+          title="Rastrear pedido"
+          className="ml-auto lg:ml-0 grid size-10 place-items-center rounded-full ph-glass transition-transform hover:scale-[1.04] lg:size-12"
+        >
+          <Truck className="size-[20px]" strokeWidth={1.5} />
+        </Link>
+        <Link
           to="/carrinho"
           aria-label="Abrir carrinho"
-          className="ph-bag relative ml-auto lg:ml-0 grid size-10 place-items-center rounded-full ph-glass lg:size-12"
+          className="ph-bag relative grid size-10 place-items-center rounded-full ph-glass lg:size-12"
         >
           <span className="ph-bag__icon relative block size-[22px]">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden className="size-full overflow-visible">
@@ -153,11 +170,12 @@ export function Header() {
               variant="menu"
             />
             <nav className="grid gap-1 text-sm font-medium">
-              <Link to="/" hash="produtos" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary">Camisas</Link>
-              <Link to="/categoria/$slug" params={{ slug: "mulheres" }} onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary">Camisas Femininas</Link>
+              <Link to="/" hash="produtos" onClick={() => goRegion("todos")} className="rounded-md px-3 py-2 hover:bg-secondary">Times</Link>
+              <Link to="/" hash="produtos" onClick={() => goRegion("selecoes")} className="rounded-md px-3 py-2 hover:bg-secondary">Seleções</Link>
+              <Link to="/categoria/$slug" params={{ slug: "mulheres" }} onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary">Feminino</Link>
               <Link to="/categoria/$slug" params={{ slug: "retro" }} onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary">Retrô</Link>
               <Link to="/categoria/$slug" params={{ slug: "versao-jogador" }} onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary">Versão Jogador</Link>
-              <Link to="/categoria/$slug" params={{ slug: "caneleiras" }} onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary">Caneleiras</Link>
+              <Link to="/categoria/$slug" params={{ slug: "caneleiras" }} onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary">Acessórios</Link>
               <Link to="/rastreio" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 hover:bg-secondary flex items-center gap-2">
                 <Truck className="size-4" /> Rastrear pedido
               </Link>

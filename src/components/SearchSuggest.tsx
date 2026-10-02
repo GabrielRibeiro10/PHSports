@@ -210,7 +210,7 @@ export function SearchSuggest({
         inputMode="search"
         enterKeyHint="search"
         autoComplete="off"
-        placeholder="Buscar camisa, clube..."
+        placeholder="Busque seu time"
         className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
         aria-label="Buscar produtos"
         role="combobox"
