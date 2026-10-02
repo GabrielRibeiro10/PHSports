@@ -1,64 +1,20 @@
-import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { categoriesQueryOptions } from "@/lib/catalog";
+
+/** Segundos para cada card atravessar a largura dele (ritmo parecido com o carrossel de clubes). */
+const SECONDS_PER_CARD = 6.5;
+/** Máximo de cards visíveis ao mesmo tempo (desktop largo). */
+const MAX_PER_VIEW = 4;
 
 export function CategoryCarousel() {
   const { data: items = [] } = useQuery(categoriesQueryOptions);
-  const [index, setIndex] = useState(0);
-  const [perView, setPerView] = useState(4);
-  const [paused, setPaused] = useState(false);
-  const resumeTimer = useRef<number | null>(null);
-
-  useEffect(() => {
-    const compute = () => {
-      const w = window.innerWidth;
-      if (w < 640) setPerView(1);
-      else if (w < 900) setPerView(2);
-      else if (w < 1200) setPerView(3);
-      else setPerView(4);
-    };
-    compute();
-    window.addEventListener("resize", compute);
-    return () => window.removeEventListener("resize", compute);
-  }, []);
-
-  const maxIndex = Math.max(0, items.length - perView);
-
-  useEffect(() => {
-    if (paused) return;
-    const id = window.setInterval(() => {
-      setIndex((i) => (i >= maxIndex ? 0 : i + 1));
-    }, 3000);
-    return () => clearInterval(id);
-  }, [paused, maxIndex]);
-
-  useEffect(() => {
-    if (index > maxIndex) setIndex(0);
-  }, [maxIndex, index]);
-
-  const nudge = (dir: 1 | -1) => {
-    setPaused(true);
-    setIndex((i) => {
-      const next = i + dir;
-      if (next < 0) return maxIndex;
-      if (next > maxIndex) return 0;
-      return next;
-    });
-    if (resumeTimer.current) window.clearTimeout(resumeTimer.current);
-    resumeTimer.current = window.setTimeout(() => setPaused(false), 5000);
-  };
-
-  const startX = useRef<number | null>(null);
-  const onTouchStart = (e: React.TouchEvent) => (startX.current = e.touches[0].clientX);
-  const onTouchEnd = (e: React.TouchEvent) => {
-    if (startX.current == null) return;
-    const dx = e.changedTouches[0].clientX - startX.current;
-    startX.current = null;
-    if (Math.abs(dx) < 40) return;
-    nudge(dx < 0 ? 1 : -1);
-  };
+  // Esteira contínua para a esquerda, igual ao carrossel de clubes: a sequência se repete até
+  // cobrir a tela e vem duplicada, então ao andar -50% ela emenda sem "pulo".
+  const reps = items.length ? Math.ceil(MAX_PER_VIEW / items.length) : 0;
+  const base = Array.from({ length: reps }, () => items).flat();
+  const loop = [...base, ...base];
 
   return (
     <section id="categorias" className="relative">
@@ -75,26 +31,30 @@ export function CategoryCarousel() {
         </div>
 
         <div
-          className="relative"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
+          data-reveal
+          className="cat-marquee overflow-hidden [container-type:inline-size] [mask-image:linear-gradient(to_right,transparent,black_3%,black_97%,transparent)]"
         >
-          <div className="overflow-hidden" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-            <div
-              className="carousel-track flex"
-              style={{ transform: `translate3d(-${(index * 100) / perView}%, 0, 0)` }}
-            >
-              {items.map((c) => (
-                <div key={c.id} className="shrink-0 px-2" style={{ width: `${100 / perView}%` }}>
+          <div
+            className="cat-track flex w-max"
+            style={{ "--cat-dur": `${base.length * SECONDS_PER_CARD}s` } as CSSProperties}
+          >
+            {loop.map((c, i) => {
+              const copy = i >= items.length;
+              return (
+                <div
+                  key={`${c.id}-${i}`}
+                  className="w-[100cqw] shrink-0 px-2 min-[640px]:w-[50cqw] min-[900px]:w-[33.3333cqw] min-[1200px]:w-[25cqw]"
+                  aria-hidden={copy || undefined}
+                >
                   <Link
-                    data-reveal
                     to="/categoria/$slug"
                     params={{ slug: c.slug }}
+                    tabIndex={copy ? -1 : undefined}
                     className="group relative flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)] transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-premium)]"
                   >
                     <img
                       src={c.image}
-                      alt={c.name}
+                      alt={copy ? "" : c.name}
                       loading="lazy"
                       className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
@@ -108,43 +68,8 @@ export function CategoryCarousel() {
                     </div>
                   </Link>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          <button
-            type="button"
-            aria-label="Anterior"
-            onClick={() => nudge(-1)}
-            className="hidden md:grid absolute -left-3 top-1/2 -translate-y-1/2 size-11 place-items-center rounded-full border border-border bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
-          >
-            <ChevronLeft className="size-5" />
-          </button>
-          <button
-            type="button"
-            aria-label="Próximo"
-            onClick={() => nudge(1)}
-            className="hidden md:grid absolute -right-3 top-1/2 -translate-y-1/2 size-11 place-items-center rounded-full border border-border bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
-          >
-            <ChevronRight className="size-5" />
-          </button>
-
-          <div className="mt-4 flex justify-center gap-1.5">
-            {Array.from({ length: maxIndex + 1 }).map((_, i) => (
-              <button
-                key={i}
-                aria-label={`Ir para ${i + 1}`}
-                onClick={() => {
-                  setIndex(i);
-                  setPaused(true);
-                  if (resumeTimer.current) window.clearTimeout(resumeTimer.current);
-                  resumeTimer.current = window.setTimeout(() => setPaused(false), 5000);
-                }}
-                className={`h-1.5 rounded-full transition-all ${
-                  i === index ? "w-6 bg-brand" : "w-1.5 bg-white/40"
-                }`}
-              />
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
