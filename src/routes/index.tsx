@@ -45,7 +45,6 @@ function Home() {
         <CategoryCarousel />
         <ClubsMarquee />
       </VideoBackdrop>
-      <SearchAndProducts />
       <section className="mx-auto max-w-7xl px-4 py-14" id="destaques">
         <div className="mb-6 flex items-end justify-between">
           <div>
@@ -58,6 +57,7 @@ function Home() {
         </div>
         <ProductCarousel items={products} />
       </section>
+      <SearchAndProducts />
       <section id="beneficios" className="border-y border-border bg-secondary/40 py-10">
         <div className="mx-auto max-w-7xl px-4">
           <BenefitsMarquee />
@@ -76,7 +76,7 @@ function ClubsMarquee() {
     <section id="clubes" className="relative pb-10 md:pb-14">
       <div className="mx-auto max-w-7xl px-4">
         {/* Painel azul translúcido: marca o carrossel sobre o vídeo sem ficar "solto" */}
-        <div className="overflow-hidden rounded-[24px] border border-white/10 bg-[#0f2c57]/55 py-2.5 shadow-[0_24px_60px_-30px_rgb(0_0_0/0.8)] backdrop-blur-md md:py-3">
+        <div className="overflow-hidden rounded-[24px] border border-white/10 bg-black/40 py-2.5 shadow-[0_24px_60px_-30px_rgb(0_0_0/0.8)] backdrop-blur-md md:py-3">
         <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]">
           <div className="clubs-track flex w-max gap-3 md:gap-4">
             {loop.map((p, i) => (
@@ -84,7 +84,7 @@ function ClubsMarquee() {
                 key={`${p.slug}-${i}`}
                 to="/produto/$slug"
                 params={{ slug: p.slug }}
-                className="club-pill group relative block h-[148px] w-[84px] shrink-0 overflow-hidden rounded-b-full bg-gradient-to-b from-transparent via-[#1d4d8f]/75 to-[#5d86bf] md:h-[176px] md:w-[100px]"
+                className="club-pill group relative block h-[148px] w-[84px] shrink-0 overflow-hidden rounded-b-full bg-gradient-to-b from-transparent via-white/10 to-white/25 md:h-[176px] md:w-[100px]"
                 aria-hidden={i >= products.length ? true : undefined}
                 tabIndex={i >= products.length ? -1 : undefined}
               >
@@ -192,10 +192,10 @@ function SearchAndProducts() {
   const [club, setClub] = useState<string>("todos");
   const [gender, setGender] = useState<Gender>("todos");
 
-  // Page size: 40 on desktop, 22 on tablet/mobile. Resolved after mount to avoid SSR mismatch.
-  const [pageSize, setPageSize] = useState(22);
+  // Page size: 12 on desktop, 8 on tablet/mobile. Resolved after mount to avoid SSR mismatch.
+  const [pageSize, setPageSize] = useState(8);
   useEffect(() => {
-    const apply = () => setPageSize(window.innerWidth >= 1024 ? 40 : 22);
+    const apply = () => setPageSize(window.innerWidth >= 1024 ? 12 : 8);
     apply();
     window.addEventListener("resize", apply);
     return () => window.removeEventListener("resize", apply);
@@ -303,9 +303,7 @@ function SearchAndProducts() {
         </form>
       </div>
 
-      <div className="mb-3">
-        <div className="flex flex-wrap gap-2">
-
+      <div className="mb-4 flex flex-wrap items-center gap-2">
           {regionOptions.map((r) => (
             <button
               key={r.id}
@@ -320,7 +318,19 @@ function SearchAndProducts() {
               {r.label}
             </button>
           ))}
-        </div>
+          <span aria-hidden className="mx-1 hidden h-6 w-px bg-border sm:block" />
+          {genderOptions.map((g) => (
+            <button
+              key={g.id}
+              onClick={() => setGender(g.id)}
+              aria-pressed={gender === g.id}
+              className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-colors duration-200 ${
+                gender === g.id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:border-foreground/40"
+              }`}
+            >
+              {g.id === "todos" ? "Todos os gêneros" : g.label}
+            </button>
+          ))}
       </div>
 
       {region !== "todos" && clubsInRegion.length > 0 && (
@@ -355,23 +365,6 @@ function SearchAndProducts() {
         </div>
       )}
 
-      <div className="mb-6 grid gap-3 rounded-2xl border border-border bg-secondary/30 p-3 sm:flex sm:flex-wrap sm:items-center">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Gênero</span>
-          {genderOptions.map((g) => (
-            <button
-              key={g.id}
-              onClick={() => setGender(g.id)}
-              aria-pressed={gender === g.id}
-              className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-colors duration-200 ${
-                gender === g.id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:border-foreground/40"
-              }`}
-            >
-              {g.label}
-            </button>
-          ))}
-        </div>
-      </div>
 
 
       <div className="grid animate-in fade-in duration-300 grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -392,7 +385,7 @@ function SearchAndProducts() {
             onClick={loadMore}
             disabled={loadingMore}
             aria-busy={loadingMore}
-            className="btn-glow inline-flex items-center justify-center gap-2 rounded-full bg-brand px-8 py-3.5 text-sm font-black uppercase tracking-wider text-brand-foreground shadow-[var(--shadow-premium)] disabled:opacity-70"
+            className="btn-glow inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-bold text-primary-foreground disabled:opacity-70"
           >
             {loadingMore ? (
               <>
@@ -401,7 +394,7 @@ function SearchAndProducts() {
               </>
             ) : (
               <>
-                Carregar mais <ArrowRight className="size-4" />
+                Ver mais camisas <ArrowRight className="size-4" />
               </>
             )}
           </button>
