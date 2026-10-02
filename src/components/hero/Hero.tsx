@@ -145,7 +145,7 @@ export function Hero() {
     <section
       ref={sectionRef}
       data-hero
-      className="hero-pending relative isolate overflow-hidden bg-[#782b30]"
+      className="hero-pending relative isolate overflow-hidden bg-[#782b30] supports-[overflow:clip]:overflow-clip"
     >
       {/* Fundo: vídeo do estádio (vai e volta, sem "recomeço"). O 1º quadro aparece na hora, antes do vídeo. */}
       <div
@@ -205,7 +205,7 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 z-0 size-full opacity-0"
       />
 
-      <div className="relative z-10 mx-auto h-[max(100svh,560px)] max-w-7xl px-4 pt-[35vw] md:grid md:h-[max(640px,calc(100svh-28.5px))] md:pt-28 md:grid-cols-2 md:items-center md:gap-8 md:py-16">
+      <div className="relative z-10 mx-auto h-[max(calc(100vh-28.5px),531.5px)] max-w-7xl px-4 pt-[35vw] md:grid md:h-[max(640px,calc(100svh-28.5px))] md:pt-28 md:grid-cols-2 md:items-center md:gap-8 md:py-16">
         <div ref={textRef} className="max-md:[zoom:var(--m-scale,1)]">
           <span
             data-hero-extra
@@ -278,8 +278,9 @@ export function Hero() {
           )}
         </div>
       </div>
-      {/* Carrossel azul no rodapé da HERO, sempre visível na primeira tela do celular */}
-      <Ticker className="absolute inset-x-0 bottom-0 z-20 md:hidden" />
+      {/* Carrossel azul no fim da HERO (celular): fica preso no rodapé da tela enquanto a HERO aparece,
+          mesmo quando as barras do navegador aparecem/somem, e encosta no fim dela. */}
+      <Ticker className="sticky bottom-0 z-20 md:hidden" />
     </section>
   );
 }
