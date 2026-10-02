@@ -1330,3 +1330,48 @@ html.lenis body { height: auto; }
   font-weight: 800;
   letter-spacing: -0.03em;
 }
+
+/* ───────── Revelação ao rolar (títulos e cards) ───────── */
+html.js-reveal [data-reveal]:not([data-revealed]) { opacity: 0; transform: translateY(2rem); }
+html.js-reveal [data-reveal][data-revealed] {
+  animation: reveal-slide-in 0.6s cubic-bezier(0, 0, 0.3, 1) var(--reveal-delay, 0ms) both;
+}
+@keyframes reveal-slide-in {
+  from { opacity: 0; transform: translateY(2rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ───────── Foto das camisas no card ───────── */
+.pc-media { background: #f2f2f2; }
+.pc-img { transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.2, 0, 0, 1); }
+.pc-img--alt { opacity: 0; }
+.pc-quick {
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  z-index: 2;
+  border-radius: 9999px;
+  background: #fff;
+  color: #111;
+  padding: 0.65rem 1rem;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px -12px rgb(0 0 0 / 0.45);
+  opacity: 0;
+  transform: translateY(0.9rem);
+  transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.2, 0, 0, 1);
+  pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .pc-img { transform: scale(1.03); }
+  .group:hover .pc-media--swap .pc-img--main { opacity: 0; }
+  .group:hover .pc-img--alt { opacity: 1; }
+  .group:hover .pc-quick,
+  .group:focus-visible .pc-quick { opacity: 1; transform: translateY(0); }
+}
+@media (hover: none) { .pc-quick { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .pc-img, .pc-quick { transition: none; }
+}

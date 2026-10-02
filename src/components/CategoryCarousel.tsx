@@ -87,6 +87,7 @@ export function CategoryCarousel() {
               {items.map((c) => (
                 <div key={c.id} className="shrink-0 px-2" style={{ width: `${100 / perView}%` }}>
                   <Link
+                    data-reveal
                     to="/categoria/$slug"
                     params={{ slug: c.slug }}
                     className="group relative flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)] transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-premium)]"

@@ -2,37 +2,72 @@ import { Link } from "@tanstack/react-router";
 import { Sparkles } from "@/components/Sparkles";
 import { formatBRL, type Product } from "@/lib/products";
 
-export function ProductCard({ p, priority = false, glow = false }: { p: Product; priority?: boolean; glow?: boolean }) {
+export function ProductCard({
+  p,
+  priority = false,
+  glow = false,
+}: {
+  p: Product;
+  priority?: boolean;
+  glow?: boolean;
+}) {
+  const back = p.gallery.find((u) => u && u !== p.image);
   return (
     <Link
+      data-reveal
       to="/produto/$slug"
       params={{ slug: p.slug }}
       className="group relative z-[1] flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-[var(--shadow-flat)] transition-[box-shadow,transform,border-color] duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/15 hover:shadow-[var(--shadow-raised)] motion-reduce:hover:translate-y-0"
     >
-      <div className="relative aspect-square overflow-hidden bg-secondary/40">
+      {/* Foto da camisa: 2ª foto (costas) aparece no hover, zoom leve e botão subindo */}
+      <div
+        className={`pc-media relative aspect-[4/5] overflow-hidden ${back ? "pc-media--swap" : ""}`}
+      >
         <img
           src={p.image}
           alt={p.name}
           width={800}
-          height={800}
+          height={1000}
           loading={priority ? "eager" : "lazy"}
-          className="size-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          className="pc-img pc-img--main absolute inset-0 size-full object-cover"
         />
-        <span className="absolute left-3 top-3 rounded-full bg-brand px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-brand-foreground">
+        {back && (
+          <img
+            src={back}
+            alt=""
+            aria-hidden
+            width={800}
+            height={1000}
+            loading="lazy"
+            className="pc-img pc-img--alt absolute inset-0 size-full object-cover"
+          />
+        )}
+        <span className="absolute left-3 top-3 z-[2] rounded-full bg-brand px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-brand-foreground">
           Oferta
         </span>
-        <span className="absolute right-3 top-3 rounded-full bg-primary px-2.5 py-1 text-[10px] font-black tabular-nums text-primary-foreground">
+        <span className="absolute right-3 top-3 z-[2] rounded-full bg-primary px-2.5 py-1 text-[10px] font-black tabular-nums text-primary-foreground">
           -{p.discount}%
+        </span>
+        <span aria-hidden className="pc-quick">
+          Adicionar ao carrinho
         </span>
       </div>
       <div className="flex flex-1 flex-col gap-1.5 p-3 sm:p-4">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">{p.club}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+          {p.club}
+        </p>
         <h3 className="text-[0.9375rem] font-bold leading-snug text-foreground">{p.name}</h3>
         <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-          <span className="whitespace-nowrap text-lg font-black tabular-nums tracking-tight text-foreground sm:text-xl">{formatBRL(p.price)}</span>
-          <span className="whitespace-nowrap text-xs tabular-nums text-muted-foreground line-through">{formatBRL(p.oldPrice)}</span>
+          <span className="whitespace-nowrap text-lg font-black tabular-nums tracking-tight text-foreground sm:text-xl">
+            {formatBRL(p.price)}
+          </span>
+          <span className="whitespace-nowrap text-xs tabular-nums text-muted-foreground line-through">
+            {formatBRL(p.oldPrice)}
+          </span>
         </div>
-        <p className="text-[11px] font-semibold text-brand">Promoção — economize {formatBRL(p.oldPrice - p.price)}</p>
+        <p className="text-[11px] font-semibold text-brand">
+          Promoção — economize {formatBRL(p.oldPrice - p.price)}
+        </p>
 
         <div className="mt-auto pt-3.5">
           <span
