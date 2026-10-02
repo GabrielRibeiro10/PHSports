@@ -15,6 +15,7 @@ import { MAX_SEARCH_LEN, sanitizeSearch, sanitizeSearchTyping, checkSearchRate }
 import { BenefitsMarquee } from "@/components/BenefitsMarquee";
 import { Reviews } from "@/components/Reviews";
 import { CategoryCarousel } from "@/components/CategoryCarousel";
+import { VideoBackdrop } from "@/components/VideoBackdrop";
 import { crestFor } from "@/lib/crests";
 import { Hero } from "@/components/hero/Hero";
 
@@ -40,8 +41,10 @@ function Home() {
       <Hero />
       {/* No celular o carrossel azul fica dentro da HERO (ver Hero.tsx) */}
       <Ticker className="hidden md:block" />
-      <CategoryCarousel />
-      <ClubsMarquee />
+      <VideoBackdrop>
+        <CategoryCarousel />
+        <ClubsMarquee />
+      </VideoBackdrop>
       <SearchAndProducts />
       <section className="mx-auto max-w-7xl px-4 py-14" id="destaques">
         <div className="mb-6 flex items-end justify-between">
@@ -70,8 +73,10 @@ function ClubsMarquee() {
   const { data: products = [] } = useQuery(productsQueryOptions);
   const loop = [...products, ...products];
   return (
-    <section id="clubes" className="bg-[#0f2c57]">
-      <div className="mx-auto max-w-7xl px-4 pb-5 md:pb-6">
+    <section id="clubes" className="relative pb-10 md:pb-14">
+      <div className="mx-auto max-w-7xl px-4">
+        {/* Painel azul translúcido: marca o carrossel sobre o vídeo sem ficar "solto" */}
+        <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#0f2c57]/55 py-3 shadow-[0_24px_60px_-30px_rgb(0_0_0/0.8)] backdrop-blur-md md:py-4">
         <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]">
           <div className="clubs-track flex w-max gap-3 md:gap-4">
             {loop.map((p, i) => (
@@ -79,7 +84,7 @@ function ClubsMarquee() {
                 key={`${p.slug}-${i}`}
                 to="/produto/$slug"
                 params={{ slug: p.slug }}
-                className="club-pill group relative block h-[184px] w-[104px] shrink-0 overflow-hidden rounded-b-full bg-gradient-to-b from-[#0f2c57] via-[#1d4d8f] to-[#5d86bf] md:h-[220px] md:w-[124px]"
+                className="club-pill group relative block h-[184px] w-[104px] shrink-0 overflow-hidden rounded-b-full bg-gradient-to-b from-transparent via-[#1d4d8f]/75 to-[#5d86bf] md:h-[220px] md:w-[124px]"
                 aria-hidden={i >= products.length ? true : undefined}
                 tabIndex={i >= products.length ? -1 : undefined}
               >
@@ -109,6 +114,7 @@ function ClubsMarquee() {
               </Link>
             ))}
           </div>
+        </div>
         </div>
       </div>
     </section>
