@@ -286,8 +286,12 @@ function SearchAndProducts() {
   const [pages, setPages] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  // Shuffled once per page load; stays stable while browsing.
-  const seed = useRef(Math.floor(Math.random() * 4294967295) || 7).current;
+  // Shuffled once per page load; stays stable while browsing. Começa fixo (igual no servidor e no
+  // cliente, senão a hidratação não bate) e sorteia logo após montar.
+  const [seed, setSeed] = useState(7);
+  useEffect(() => {
+    setSeed(Math.floor(Math.random() * 4294967295) || 7);
+  }, []);
 
   const term = sanitizeSearch(q).toLowerCase();
 

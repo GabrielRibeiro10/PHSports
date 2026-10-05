@@ -34,9 +34,21 @@ export function ScrollReveal() {
       { rootMargin: "0px 0px -6% 0px", threshold: 0.01 },
     );
 
+    // Só marca elementos que o React já hidratou: mexer nos atributos antes disso faz o HTML do
+    // servidor não bater com o do cliente (aviso de hydration). A rota da home carrega em partes,
+    // então os elementos pendentes são revisitados logo depois.
+    const isHydrated = (el: Element) => Object.keys(el).some((k) => k.startsWith("__reactFiber"));
+    let retry = 0;
+    let retries = 0;
+
     const scan = (late = false) => {
+      let pending = false;
       document.querySelectorAll<HTMLElement>(SELECTOR).forEach((el) => {
         if (seen.has(el) || el.closest(EXCLUDE)) return;
+        if (!isHydrated(el)) {
+          pending = true;
+          return;
+        }
         // Conteúdo que chega depois (catálogo carregado) e já está na tela: não some e volta
         // (isso piscava ao rolar). Só anima o que ainda vai entrar na tela.
         if (late && !el.hasAttribute("data-reveal")) {
@@ -53,6 +65,7 @@ export function ScrollReveal() {
         el.setAttribute("data-reveal", "");
         io.observe(el);
       });
+      if (pending && retries++ < 100) retry = window.setTimeout(() => scan(late), 100);
     };
     scan();
     let queued = 0;
@@ -65,10 +78,11 @@ export function ScrollReveal() {
       mo.disconnect();
       io.disconnect();
       cancelAnimationFrame(queued);
+      clearTimeout(retry);
       root.classList.remove("js-reveal");
       document
         .querySelectorAll("[data-reveal]")
-        .forEach((el) => el.setAttribute("data-revealed", ""));
+        .forEach((el) => isHydrated(el) && el.setAttribute("data-revealed", ""));
     };
   }, []);
   return null;
