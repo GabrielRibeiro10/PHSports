@@ -190,36 +190,44 @@ export type Database = {
       }
       order_events: {
         Row: {
+          actor_email: string | null
+          actor_id: string | null
+          created_at: string
+          data: Json
           id: string
-          order_id: string
           kind: string
           message: string
-          data: Json
-          actor_id: string | null
-          actor_email: string | null
-          created_at: string
+          order_id: string
         }
         Insert: {
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
+          data?: Json
           id?: string
-          order_id: string
           kind: string
           message?: string
-          data?: Json
-          actor_id?: string | null
-          actor_email?: string | null
-          created_at?: string
+          order_id: string
         }
         Update: {
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
+          data?: Json
           id?: string
-          order_id?: string
           kind?: string
           message?: string
-          data?: Json
-          actor_id?: string | null
-          actor_email?: string | null
-          created_at?: string
+          order_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "order_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       order_items: {
         Row: {
@@ -271,159 +279,159 @@ export type Database = {
       }
       orders: {
         Row: {
-          fulfillment_status: string
-          payment_status: string
-          shipping_status: string
-          payment_confirmed_at: string | null
-          payment_confirmed_by: string | null
-          payment_confirmed_by_email: string | null
-          payment_confirmed_amount: number | null
-          refunded_at: string | null
-          refunded_by: string | null
-          refund_amount: number | null
-          refund_note: string | null
-          stock_deducted_at: string | null
-          stock_restored_at: string | null
-          tracking_carrier: string
-          tracking_code: string
-          posted_at: string | null
-          delivered_at: string | null
-          cancelled_at: string | null
           cancel_reason: string | null
-          idempotency_key: string | null
-          subtotal: number
-          discount: number
-          coupon_code: string | null
-          shipping_service: string
-          shipping_service_key: string
-          shipping_carrier: string
-          shipping_days_min: number | null
-          shipping_days_max: number | null
-          shipping_prep_days: number
-          shipping_environment: string
-          shipping_quoted_at: string | null
-          ship_cep: string
-          ship_street: string
-          ship_number: string
-          ship_complement: string
-          ship_district: string
-          ship_city: string
-          ship_uf: string
+          cancelled_at: string | null
           code: string
+          coupon_code: string | null
           created_at: string
           customer_id: string | null
           customer_name: string
           customer_whatsapp: string
+          delivered_at: string | null
+          discount: number
+          fulfillment_status: string
           id: string
+          idempotency_key: string | null
           notes: string | null
+          payment_confirmed_amount: number | null
+          payment_confirmed_at: string | null
+          payment_confirmed_by: string | null
+          payment_confirmed_by_email: string | null
           payment_method: string
+          payment_status: string
+          posted_at: string | null
+          refund_amount: number | null
+          refund_note: string | null
+          refunded_at: string | null
+          refunded_by: string | null
+          ship_cep: string
+          ship_city: string
+          ship_complement: string
+          ship_district: string
+          ship_number: string
+          ship_street: string
+          ship_uf: string
           shipping: number
+          shipping_carrier: string
+          shipping_days_max: number | null
+          shipping_days_min: number | null
+          shipping_environment: string
+          shipping_prep_days: number
+          shipping_quoted_at: string | null
+          shipping_service: string
+          shipping_service_key: string
+          shipping_status: string
           status: Database["public"]["Enums"]["order_status"]
+          stock_deducted_at: string | null
+          stock_restored_at: string | null
+          subtotal: number
           total: number
+          tracking_carrier: string
+          tracking_code: string
           updated_at: string
         }
         Insert: {
-          fulfillment_status?: string
-          payment_status?: string
-          shipping_status?: string
-          payment_confirmed_at?: string | null
-          payment_confirmed_by?: string | null
-          payment_confirmed_by_email?: string | null
-          payment_confirmed_amount?: number | null
-          refunded_at?: string | null
-          refunded_by?: string | null
-          refund_amount?: number | null
-          refund_note?: string | null
-          stock_deducted_at?: string | null
-          stock_restored_at?: string | null
-          tracking_carrier?: string
-          tracking_code?: string
-          posted_at?: string | null
-          delivered_at?: string | null
-          cancelled_at?: string | null
           cancel_reason?: string | null
-          idempotency_key?: string | null
-          subtotal?: number
-          discount?: number
-          coupon_code?: string | null
-          shipping_service?: string
-          shipping_service_key?: string
-          shipping_carrier?: string
-          shipping_days_min?: number | null
-          shipping_days_max?: number | null
-          shipping_prep_days?: number
-          shipping_environment?: string
-          shipping_quoted_at?: string | null
-          ship_cep?: string
-          ship_street?: string
-          ship_number?: string
-          ship_complement?: string
-          ship_district?: string
-          ship_city?: string
-          ship_uf?: string
+          cancelled_at?: string | null
           code?: string
+          coupon_code?: string | null
           created_at?: string
           customer_id?: string | null
           customer_name?: string
           customer_whatsapp?: string
+          delivered_at?: string | null
+          discount?: number
+          fulfillment_status?: string
           id?: string
+          idempotency_key?: string | null
           notes?: string | null
+          payment_confirmed_amount?: number | null
+          payment_confirmed_at?: string | null
+          payment_confirmed_by?: string | null
+          payment_confirmed_by_email?: string | null
           payment_method?: string
+          payment_status?: string
+          posted_at?: string | null
+          refund_amount?: number | null
+          refund_note?: string | null
+          refunded_at?: string | null
+          refunded_by?: string | null
+          ship_cep?: string
+          ship_city?: string
+          ship_complement?: string
+          ship_district?: string
+          ship_number?: string
+          ship_street?: string
+          ship_uf?: string
           shipping?: number
+          shipping_carrier?: string
+          shipping_days_max?: number | null
+          shipping_days_min?: number | null
+          shipping_environment?: string
+          shipping_prep_days?: number
+          shipping_quoted_at?: string | null
+          shipping_service?: string
+          shipping_service_key?: string
+          shipping_status?: string
           status?: Database["public"]["Enums"]["order_status"]
+          stock_deducted_at?: string | null
+          stock_restored_at?: string | null
+          subtotal?: number
           total?: number
+          tracking_carrier?: string
+          tracking_code?: string
           updated_at?: string
         }
         Update: {
-          fulfillment_status?: string
-          payment_status?: string
-          shipping_status?: string
-          payment_confirmed_at?: string | null
-          payment_confirmed_by?: string | null
-          payment_confirmed_by_email?: string | null
-          payment_confirmed_amount?: number | null
-          refunded_at?: string | null
-          refunded_by?: string | null
-          refund_amount?: number | null
-          refund_note?: string | null
-          stock_deducted_at?: string | null
-          stock_restored_at?: string | null
-          tracking_carrier?: string
-          tracking_code?: string
-          posted_at?: string | null
-          delivered_at?: string | null
-          cancelled_at?: string | null
           cancel_reason?: string | null
-          idempotency_key?: string | null
-          subtotal?: number
-          discount?: number
-          coupon_code?: string | null
-          shipping_service?: string
-          shipping_service_key?: string
-          shipping_carrier?: string
-          shipping_days_min?: number | null
-          shipping_days_max?: number | null
-          shipping_prep_days?: number
-          shipping_environment?: string
-          shipping_quoted_at?: string | null
-          ship_cep?: string
-          ship_street?: string
-          ship_number?: string
-          ship_complement?: string
-          ship_district?: string
-          ship_city?: string
-          ship_uf?: string
+          cancelled_at?: string | null
           code?: string
+          coupon_code?: string | null
           created_at?: string
           customer_id?: string | null
           customer_name?: string
           customer_whatsapp?: string
+          delivered_at?: string | null
+          discount?: number
+          fulfillment_status?: string
           id?: string
+          idempotency_key?: string | null
           notes?: string | null
+          payment_confirmed_amount?: number | null
+          payment_confirmed_at?: string | null
+          payment_confirmed_by?: string | null
+          payment_confirmed_by_email?: string | null
           payment_method?: string
+          payment_status?: string
+          posted_at?: string | null
+          refund_amount?: number | null
+          refund_note?: string | null
+          refunded_at?: string | null
+          refunded_by?: string | null
+          ship_cep?: string
+          ship_city?: string
+          ship_complement?: string
+          ship_district?: string
+          ship_number?: string
+          ship_street?: string
+          ship_uf?: string
           shipping?: number
+          shipping_carrier?: string
+          shipping_days_max?: number | null
+          shipping_days_min?: number | null
+          shipping_environment?: string
+          shipping_prep_days?: number
+          shipping_quoted_at?: string | null
+          shipping_service?: string
+          shipping_service_key?: string
+          shipping_status?: string
           status?: Database["public"]["Enums"]["order_status"]
+          stock_deducted_at?: string | null
+          stock_restored_at?: string | null
+          subtotal?: number
           total?: number
+          tracking_carrier?: string
+          tracking_code?: string
           updated_at?: string
         }
         Relationships: [
@@ -439,23 +447,31 @@ export type Database = {
       product_stock: {
         Row: {
           product_id: string
-          size: string
           quantity: number
+          size: string
           updated_at: string
         }
         Insert: {
           product_id: string
-          size: string
           quantity?: number
+          size: string
           updated_at?: string
         }
         Update: {
           product_id?: string
-          size?: string
           quantity?: number
+          size?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "product_stock_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       products: {
         Row: {
@@ -622,45 +638,60 @@ export type Database = {
       }
       stock_movements: {
         Row: {
-          id: string
-          product_id: string
-          size: string
+          actor_email: string | null
+          actor_id: string | null
+          created_at: string
           delta: number
+          id: string
+          note: string | null
+          order_id: string | null
+          product_id: string
           quantity_after: number
           reason: string
-          order_id: string | null
-          note: string | null
-          actor_id: string | null
-          actor_email: string | null
-          created_at: string
+          size: string
         }
         Insert: {
-          id?: string
-          product_id: string
-          size: string
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
           delta: number
+          id?: string
+          note?: string | null
+          order_id?: string | null
+          product_id: string
           quantity_after: number
           reason: string
-          order_id?: string | null
-          note?: string | null
-          actor_id?: string | null
-          actor_email?: string | null
-          created_at?: string
+          size: string
         }
         Update: {
-          id?: string
-          product_id?: string
-          size?: string
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
           delta?: number
+          id?: string
+          note?: string | null
+          order_id?: string | null
+          product_id?: string
           quantity_after?: number
           reason?: string
-          order_id?: string | null
-          note?: string | null
-          actor_id?: string | null
-          actor_email?: string | null
-          created_at?: string
+          size?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       store_settings: {
         Row: {
@@ -706,24 +737,66 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      admin_add_order_note: { Args: { _order_id: string; _text: string }; Returns: Json }
+      actor_email: { Args: never; Returns: string }
+      admin_add_order_note: {
+        Args: { _order_id: string; _text: string }
+        Returns: Json
+      }
       admin_adjust_stock: {
-        Args: { _product_id: string; _size: string; _delta: number; _reason: string; _note?: string | null }
+        Args: {
+          _delta: number
+          _note?: string
+          _product_id: string
+          _reason: string
+          _size: string
+        }
         Returns: Json
       }
-      admin_cancel_order: { Args: { _order_id: string; _reason: string; _restock?: boolean }; Returns: Json }
-      admin_confirm_payment: { Args: { _order_id: string; _amount: number; _note?: string | null }; Returns: Json }
-      admin_dashboard: { Args: { _from: string; _to: string; _low_stock?: number }; Returns: Json }
-      admin_register_refund: { Args: { _order_id: string; _amount: number; _note: string }; Returns: Json }
+      admin_cancel_order: {
+        Args: { _order_id: string; _reason: string; _restock?: boolean }
+        Returns: Json
+      }
+      admin_confirm_payment: {
+        Args: { _amount: number; _note?: string; _order_id: string }
+        Returns: Json
+      }
+      admin_dashboard: {
+        Args: { _from: string; _low_stock?: number; _to: string }
+        Returns: Json
+      }
+      admin_register_refund: {
+        Args: { _amount: number; _note: string; _order_id: string }
+        Returns: Json
+      }
       admin_set_fulfillment: {
-        Args: { _order_id: string; _to: string; _carrier?: string | null; _tracking?: string | null; _posted_at?: string | null }
+        Args: {
+          _carrier?: string
+          _order_id: string
+          _posted_at?: string
+          _to: string
+          _tracking?: string
+        }
         Returns: Json
       }
-      admin_set_shipping: { Args: { _order_id: string; _amount: number; _service: string; _days?: string | null }; Returns: Json }
+      admin_set_shipping: {
+        Args: {
+          _amount: number
+          _days?: string
+          _order_id: string
+          _service: string
+        }
+        Returns: Json
+      }
       admin_update_tracking: {
-        Args: { _order_id: string; _carrier: string; _tracking: string; _posted_at: string | null }
+        Args: {
+          _carrier: string
+          _order_id: string
+          _posted_at: string
+          _tracking: string
+        }
         Returns: Json
       }
+      assert_admin: { Args: never; Returns: undefined }
       create_checkout_order: { Args: { _payload: Json }; Returns: Json }
       has_role: {
         Args: {
@@ -731,6 +804,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      log_order_event: {
+        Args: { _data?: Json; _kind: string; _message: string; _order: string }
+        Returns: undefined
       }
       redeem_coupon: { Args: { _code: string }; Returns: boolean }
     }
