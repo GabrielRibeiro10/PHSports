@@ -239,43 +239,97 @@ export type Database = {
       orders: {
         Row: {
           code: string
+          coupon_code: string | null
           created_at: string
           customer_id: string | null
           customer_name: string
           customer_whatsapp: string
+          discount: number
           id: string
           notes: string | null
           payment_method: string
+          ship_cep: string
+          ship_city: string
+          ship_complement: string
+          ship_district: string
+          ship_number: string
+          ship_street: string
+          ship_uf: string
           shipping: number
+          shipping_carrier: string
+          shipping_days_max: number | null
+          shipping_days_min: number | null
+          shipping_environment: string
+          shipping_prep_days: number
+          shipping_quoted_at: string | null
+          shipping_service: string
+          shipping_service_key: string
           status: Database["public"]["Enums"]["order_status"]
+          subtotal: number
           total: number
           updated_at: string
         }
         Insert: {
           code?: string
+          coupon_code?: string | null
           created_at?: string
           customer_id?: string | null
           customer_name?: string
           customer_whatsapp?: string
+          discount?: number
           id?: string
           notes?: string | null
           payment_method?: string
+          ship_cep?: string
+          ship_city?: string
+          ship_complement?: string
+          ship_district?: string
+          ship_number?: string
+          ship_street?: string
+          ship_uf?: string
           shipping?: number
+          shipping_carrier?: string
+          shipping_days_max?: number | null
+          shipping_days_min?: number | null
+          shipping_environment?: string
+          shipping_prep_days?: number
+          shipping_quoted_at?: string | null
+          shipping_service?: string
+          shipping_service_key?: string
           status?: Database["public"]["Enums"]["order_status"]
+          subtotal?: number
           total?: number
           updated_at?: string
         }
         Update: {
           code?: string
+          coupon_code?: string | null
           created_at?: string
           customer_id?: string | null
           customer_name?: string
           customer_whatsapp?: string
+          discount?: number
           id?: string
           notes?: string | null
           payment_method?: string
+          ship_cep?: string
+          ship_city?: string
+          ship_complement?: string
+          ship_district?: string
+          ship_number?: string
+          ship_street?: string
+          ship_uf?: string
           shipping?: number
+          shipping_carrier?: string
+          shipping_days_max?: number | null
+          shipping_days_min?: number | null
+          shipping_environment?: string
+          shipping_prep_days?: number
+          shipping_quoted_at?: string | null
+          shipping_service?: string
+          shipping_service_key?: string
           status?: Database["public"]["Enums"]["order_status"]
+          subtotal?: number
           total?: number
           updated_at?: string
         }
