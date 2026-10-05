@@ -9,7 +9,6 @@ import videoDesktopAv1 from "@/assets/hero-video-d-av1.mp4";
 import videoDesktopH264 from "@/assets/hero-video-d.mp4";
 import videoMobileAv1 from "@/assets/hero-video-m-av1.mp4";
 import videoMobileH264 from "@/assets/hero-video-m.mp4";
-import person from "@/assets/hero-person.webp";
 import { Ticker } from "@/components/Ticker";
 
 const TITLE = [
@@ -52,7 +51,6 @@ export function Hero() {
   const bgRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoReady, setVideoReady] = useState(false);
-  const personRef = useRef<HTMLImageElement>(null);
   const [webglFailed, setWebglFailed] = useState(false);
 
   // Vídeo de fundo: cada aparelho baixa só a sua versão (celular recortado / desktop; AV1 quando suportado,
@@ -123,7 +121,6 @@ export function Hero() {
         section,
         [
           { el: bgRef.current!, factor: 10, allowUp: true },
-          { el: personRef.current!, factor: 26 },
         ],
         scene,
       );
@@ -175,17 +172,6 @@ export function Hero() {
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-[7] bg-[linear-gradient(to_bottom,rgb(0_0_0/0.7)_0%,rgb(0_0_0/0.35)_45%,transparent_72%)] md:bg-[linear-gradient(to_right,rgb(0_0_0/0.88)_0%,rgb(0_0_0/0.62)_28%,rgb(0_0_0/0.22)_48%,transparent_62%)]"
-      />
-      {/* Modelo PH Sports no canto direito. No celular a foto termina antes do fim da HERO,
-          então a base dela some aos poucos (sem corte seco). */}
-      <img
-        ref={personRef}
-        src={person}
-        alt=""
-        aria-hidden
-        width={834}
-        height={1492}
-        className="hero-person-in pointer-events-none absolute bottom-0 -right-[25.5%] top-[26vw] -z-[5] h-[135.7vw] w-auto max-w-none object-contain object-right-bottom [mask-image:linear-gradient(to_bottom,black_76%,transparent)] md:right-[-6%] md:top-auto md:h-[min(76%,62rem)] lg:right-[max(calc((100%-80rem)/2-2rem),calc(25%-9rem))] lg:h-[min(94%,62rem)] md:[mask-image:none]"
       />
       <canvas
         ref={canvasRef}
