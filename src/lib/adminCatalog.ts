@@ -166,7 +166,8 @@ export type ProductFormValues = {
   old_price: number;
   category: CategoryId;
   brand_id: string | null;
-  stock: number;
+  /** controlado por tamanho em Estoque (product_stock); não é editado aqui */
+  stock?: number;
   featured: boolean;
   colors: string[];
   sizes: string[] | null;

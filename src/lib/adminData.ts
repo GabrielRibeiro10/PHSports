@@ -143,17 +143,7 @@ export async function deleteCustomer(id: string) {
 }
 
 /* ----------------------------------------------------------------- orders */
-export async function setOrderStatus(id: string, status: OrderStatus) {
-  const { error } = await supabase.from("orders").update({ status }).eq("id", id);
-  if (error) throw error;
-  void writeAudit("order.update", { entity: "orders", entityId: id, metadata: { status } });
-}
-
-export async function deleteOrder(id: string) {
-  const { error } = await supabase.from("orders").delete().eq("id", id);
-  if (error) throw error;
-  void writeAudit("order.delete", { entity: "orders", entityId: id });
-}
+// Pedidos não são alterados direto na tabela: use as ações de src/lib/adminOrders.ts (regras no banco).
 
 /* ---------------------------------------------------------------- reviews */
 export async function updateReview(id: string, values: TablesUpdate<"reviews">) {

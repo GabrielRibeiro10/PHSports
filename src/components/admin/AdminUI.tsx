@@ -60,7 +60,7 @@ export function StatCard({
     <AdminCard className="p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <p className="text-xs font-semibold uppercase leading-snug tracking-wide text-muted-foreground">
             {label}
           </p>
           <p className="mt-1.5 text-2xl font-black tabular-nums">{value}</p>

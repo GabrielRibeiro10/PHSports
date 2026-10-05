@@ -8,6 +8,8 @@ import { getProduct, productsQueryOptions } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ProductCard } from "@/components/ProductCard";
+import { ShippingCalc } from "@/components/ShippingCalc";
+import { supabase } from "@/integrations/supabase/client";
 import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/produto/$slug")({
@@ -184,6 +186,24 @@ function ProductPage() {
   }, [product.slug]);
 
   const sizeOptions = product.sizes?.length ? product.sizes : [...SIZES];
+  // Disponibilidade por tamanho (produto sem estoque cadastrado = não controlado, todos liberados).
+  const { data: stockRows } = useQuery({
+    queryKey: ["product-stock", product.slug],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("product_stock")
+        .select("size, quantity, products!inner(slug)")
+        .eq("products.slug", product.slug);
+      if (error) throw error;
+      return (data ?? []) as { size: string; quantity: number }[];
+    },
+    staleTime: 30_000,
+  });
+  const soldOut = (s: string) => Boolean(stockRows?.length) && (stockRows!.find((r) => r.size === s)?.quantity ?? 0) <= 0;
+  useEffect(() => {
+    if (size && soldOut(size)) setSize(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stockRows]);
   const isFemale = product.category === "feminino";
   const related = products.filter((p) => p.slug !== product.slug && p.category === product.category).slice(0, 4);
   const relatedFinal = related.length ? related : products.filter((p) => p.slug !== product.slug).slice(0, 4);
@@ -275,14 +295,17 @@ function ProductPage() {
                 <button
                   key={s}
                   onClick={() => setSize(s)}
+                  disabled={soldOut(s)}
                   aria-pressed={size === s}
-                  className={`min-w-14 rounded-full border px-4 py-2.5 text-sm font-semibold transition-colors duration-200 ${
+                  title={soldOut(s) ? "Esgotado" : undefined}
+                  className={`min-w-14 rounded-full border px-4 py-2.5 text-sm font-semibold transition-colors duration-200 disabled:cursor-not-allowed disabled:border-dashed disabled:text-muted-foreground disabled:line-through ${
                     size === s
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-border bg-background text-foreground hover:border-foreground/40"
                   }`}
                 >
                   {s}
+                  {soldOut(s) && <span className="sr-only"> (esgotado)</span>}
                 </button>
               ))}
             </div>
@@ -323,6 +346,8 @@ function ProductPage() {
               <ShoppingBag className="size-4" /> Adicionar ao carrinho
             </button>
           </div>
+
+          <ShippingCalc className="mt-5" items={[{ slug: product.slug, qty }]} />
 
           <ul className="mt-5 grid gap-2 text-xs text-muted-foreground">
             <li className="inline-flex items-center gap-2"><Check className="size-3.5 text-brand" /> Tecido premium com tecnologia dry-fit</li>
