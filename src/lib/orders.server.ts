@@ -204,6 +204,8 @@ export async function serverOrderDeps(): Promise<OrderDeps> {
     loadStock: async (ids) => {
       if (!ids.length) return [];
       const { data, error } = await supabaseAdmin.from("product_stock").select("product_id, size, quantity").in("product_id", ids);
+      // Tabela ainda não criada no banco (migração pendente) = estoque não controlado.
+      if (error && (error.code === "PGRST205" || error.code === "42P01")) return [];
       if (error) throw error;
       return data ?? [];
     },

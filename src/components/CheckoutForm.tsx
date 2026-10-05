@@ -103,20 +103,23 @@ export function CheckoutForm({
     // Abre a aba no clique (navegadores bloqueiam abrir depois de esperar o servidor);
     // ela só vai para o WhatsApp se o pedido for salvo.
     const popup = window.matchMedia("(pointer: fine)").matches ? window.open("", "_blank") : null;
+    // Pedido não pôde ser salvo no painel (banco sem migração, falha ao gravar ou servidor fora):
+    // a venda não trava — vai pelo WhatsApp da loja com todos os dados, só sem número de pedido.
+    const sendByWhatsapp = () => {
+      const lines = cartLines(items, products ?? []);
+      const sub = lines.reduce((t, l) => t + (l.price ?? 0) * l.qty, 0);
+      const msg = buildCheckoutMessage({ lines, subtotal: sub, discount: 0, coupon, shipping, total: sub, customer, address });
+      const href = whatsappHref(msg);
+      if (popup) popup.location.href = href;
+      else window.location.href = href;
+    };
     setSending(true);
     try {
       const r = await submit({
         data: { requestId: attempt.current.id, items, shipping, customer, address, coupon: coupon ?? undefined },
       });
-      if (!r.ok && r.code === "not_ready") {
-        // Banco ainda não atualizado: pedido vai só pelo WhatsApp (sem número de pedido), mas com
-        // os mesmos dados de cliente e endereço.
-        const lines = cartLines(items, products ?? []);
-        const sub = lines.reduce((t, l) => t + (l.price ?? 0) * l.qty, 0);
-        const msg = buildCheckoutMessage({ lines, subtotal: sub, discount: 0, coupon, shipping, total: sub, customer, address });
-        const href = whatsappHref(msg);
-        if (popup) popup.location.href = href;
-        else window.location.href = href;
+      if (!r.ok && (r.code === "not_ready" || r.code === "save_failed")) {
+        sendByWhatsapp();
         return;
       }
       if (!r.ok) {
@@ -125,9 +128,9 @@ export function CheckoutForm({
         return;
       }
       onSuccess({ ...r, address, customer }, popup);
-    } catch {
-      popup?.close();
-      setError("Não conseguimos registrar o pedido. Confira nome, WhatsApp com DDD e endereço e tente de novo.");
+    } catch (err) {
+      console.warn("[pedido] servidor indisponível, enviando pelo WhatsApp", err);
+      sendByWhatsapp();
     } finally {
       setSending(false);
     }
