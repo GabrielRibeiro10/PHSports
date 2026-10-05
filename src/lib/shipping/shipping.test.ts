@@ -378,3 +378,29 @@ describe("pedido (servidor)", () => {
     expect(await createOrderCore(base, d)).toMatchObject({ ok: false, code: "save_failed" });
   });
 });
+
+describe("banco sem migração", () => {
+  it("devolve not_ready para o site usar o fluxo antigo do WhatsApp", async () => {
+    const { deps } = quoteDeps();
+    const d = {
+      ...deps,
+      loadProducts: async (s: string[]) => PRODUCTS.filter((p) => s.includes(p.slug)).map((p) => ({ ...p, sizes: null })),
+      loadStock: async () => [],
+      loadCoupon: async () => null,
+      redeemCoupon: async () => true,
+      saveOrder: async () => "not_ready" as const,
+      storeWhatsapp: async () => null,
+    };
+    const r = await createOrderCore(
+      {
+        requestId: "req-nr-000000000000001",
+        items: [{ slug: "flamengo", size: "M", qty: 1 }],
+        shipping: null,
+        customer: { name: "Maria", whatsapp: "12999990000" },
+        address: { cep: "01310100", street: "Rua", number: "1", complement: "", district: "C", city: "SP", uf: "SP" },
+      },
+      d,
+    );
+    expect(r).toMatchObject({ ok: false, code: "not_ready" });
+  });
+});

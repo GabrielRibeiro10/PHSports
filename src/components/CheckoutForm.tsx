@@ -2,6 +2,9 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { AlertCircle, Loader2, MessageCircle } from "lucide-react";
 import { createOrder } from "@/lib/orders.functions";
+import { buildOrderMessage, whatsappHref } from "@/lib/whatsapp";
+import { useQuery } from "@tanstack/react-query";
+import { productsQueryOptions } from "@/lib/catalog";
 import type { OrderResult } from "@/lib/orders.server";
 import { maskCep } from "@/lib/shipping/cep";
 import type { ShippingOption } from "@/lib/shipping/types";
@@ -61,6 +64,7 @@ export function CheckoutForm({
   onSuccess: (r: CheckoutSuccess, popup: Window | null) => void;
 }) {
   const submit = useServerFn(createOrder);
+  const { data: products } = useQuery(productsQueryOptions);
   const [name, setName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [addr, setAddr] = useState<Omit<CheckoutAddress, "cep">>({ street: "", number: "", complement: "", district: "", city: "", uf: "" });
@@ -123,6 +127,15 @@ export function CheckoutForm({
       const r = await submit({
         data: { requestId: attempt.current.id, items, shipping, customer, address, coupon: coupon ?? undefined },
       });
+      if (!r.ok && r.code === "not_ready") {
+        // Banco ainda não atualizado: segue como antes (mensagem no WhatsApp, sem número de pedido).
+        const list = products ?? [];
+        const sub = items.reduce((t, i) => t + (list.find((p) => p.slug === i.slug)?.price ?? 0) * i.qty, 0);
+        const href = whatsappHref(buildOrderMessage(items.map((i) => ({ slug: i.slug, size: i.size, qty: i.qty })), sub, list));
+        if (popup) popup.location.href = href;
+        else window.location.href = href;
+        return;
+      }
       if (!r.ok) {
         popup?.close();
         setError(r.message);

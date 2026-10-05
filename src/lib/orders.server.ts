@@ -18,6 +18,8 @@ export type OrderErrorCode =
   | "shipping_changed"
   | "quote_failed"
   | "save_failed"
+  /** banco ainda sem a migração do painel: o site cai no fluxo antigo (WhatsApp sem pedido salvo) */
+  | "not_ready"
   | "rate_limited";
 
 export type OrderResult =
@@ -49,7 +51,7 @@ export type OrderDeps = Omit<QuoteDeps, "loadProducts"> & {
   loadCoupon: (code: string) => Promise<CouponRules | null>;
   redeemCoupon: (code: string) => Promise<boolean>;
   /** cria o pedido de forma atômica e idempotente (mesma chave → mesmo pedido) */
-  saveOrder: (key: string, order: OrderRecord, items: OrderItemRecord[]) => Promise<{ code: string; created: boolean } | null>;
+  saveOrder: (key: string, order: OrderRecord, items: OrderItemRecord[]) => Promise<{ code: string; created: boolean } | "not_ready" | null>;
   storeWhatsapp: () => Promise<string | null>;
 };
 
@@ -167,6 +169,7 @@ export async function createOrderCore(input: OrderInput, deps: OrderDeps): Promi
       return { product_id: p.id, product_name: p.name, size: i.size, quantity: i.qty, unit_price: Number(p.price) };
     }),
   );
+  if (saved === "not_ready") return err("not_ready", "Finalize pelo WhatsApp da loja.");
   if (!saved) return err("save_failed", "Não conseguimos registrar o pedido agora. Tente de novo em instantes.");
 
   // O cupom só conta uso quando o pedido é criado de fato (repetições não contam de novo).
@@ -220,6 +223,8 @@ export async function serverOrderDeps(): Promise<OrderDeps> {
       const { data, error } = await supabaseAdmin.rpc("create_checkout_order", {
         _payload: { idempotency_key: key, order, items },
       });
+      // Função ainda não criada no banco (migração pendente) → avisa o site para usar o fluxo antigo.
+      if (error && (error.code === "PGRST202" || error.code === "42883" || /create_checkout_order/.test(error.message ?? ""))) return "not_ready";
       if (error || !data) {
         console.error("[pedido] falha ao salvar", error);
         return null;
