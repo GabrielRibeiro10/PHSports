@@ -1,15 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Loader2, Save } from "lucide-react";
 import { RequireAdmin } from "@/components/admin/RequireAdmin";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminCard, PageHeader } from "@/components/admin/AdminUI";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { saveSetting, settingsQueryOptions } from "@/lib/adminData";
+import { operationSettingsQuery, saveOperationSettings, type OperationSettings } from "@/lib/adminOrders";
+import { STORE_PHONE } from "@/lib/products";
 
 export const Route = createFileRoute("/admin/configuracoes")({
   head: () => ({
@@ -24,123 +25,82 @@ export const Route = createFileRoute("/admin/configuracoes")({
   ),
 });
 
-const GROUPS: { key: string; label: string; fields: { name: string; label: string }[] }[] = [
-  { key: "geral", label: "Geral", fields: [
-    { name: "site_name", label: "Nome do site" },
-    { name: "tagline", label: "Slogan" },
-  ] },
-  { key: "loja", label: "Loja", fields: [
-    { name: "currency", label: "Moeda" },
-    { name: "opening_hours", label: "Horário de atendimento" },
-  ] },
-  { key: "contato", label: "Contato", fields: [
-    { name: "email", label: "E-mail" },
-    { name: "address", label: "Endereço" },
-  ] },
-  { key: "whatsapp", label: "WhatsApp", fields: [
-    { name: "phone", label: "Número (com DDI)" },
-    { name: "default_message", label: "Mensagem padrão" },
-  ] },
-  { key: "pagamentos", label: "Pagamentos", fields: [
-    { name: "pix_key", label: "Chave Pix" },
-    { name: "pix_owner", label: "Titular da chave" },
-  ] },
-  { key: "frete", label: "Frete", fields: [
-    { name: "default_price", label: "Valor padrão (R$)" },
-    { name: "free_above", label: "Frete grátis acima de (R$)" },
-  ] },
-  { key: "seo", label: "SEO", fields: [
-    { name: "title", label: "Título padrão" },
-    { name: "description", label: "Meta descrição" },
-  ] },
-  { key: "redes", label: "Redes sociais", fields: [
-    { name: "instagram", label: "Instagram" },
-    { name: "facebook", label: "Facebook" },
-  ] },
-  { key: "usuarios", label: "Usuários", fields: [
-    { name: "admin_emails", label: "E-mails com acesso administrativo" },
-  ] },
-  { key: "backup", label: "Backup", fields: [
-    { name: "frequency", label: "Frequência de backup" },
-  ] },
-  { key: "seguranca", label: "Segurança", fields: [
-    { name: "session_timeout", label: "Expiração de sessão (minutos)" },
-    { name: "login_attempts", label: "Máximo de tentativas de login" },
-  ] },
-];
-
 function SettingsPage() {
   const qc = useQueryClient();
-  const { data: settings = {} } = useQuery(settingsQueryOptions);
+  const { data, isLoading } = useQuery(operationSettingsQuery);
+  const [v, setV] = useState<OperationSettings>({});
+  useEffect(() => {
+    if (data) setV(data);
+  }, [data]);
 
-  return (
-    <div>
-      <PageHeader title="Configurações" description="Todas as preferências da loja organizadas em abas." />
-      <Tabs defaultValue="geral">
-        <TabsList className="flex h-auto flex-wrap justify-start">
-          {GROUPS.map((g) => (
-            <TabsTrigger key={g.key} value={g.key}>{g.label}</TabsTrigger>
-          ))}
-        </TabsList>
-        {GROUPS.map((g) => (
-          <TabsContent key={g.key} value={g.key}>
-            <GroupForm
-              group={g}
-              initial={settings[g.key] ?? {}}
-              onSaved={() => qc.invalidateQueries({ queryKey: settingsQueryOptions.queryKey })}
-            />
-          </TabsContent>
-        ))}
-      </Tabs>
-    </div>
-  );
-}
-
-function GroupForm({
-  group,
-  initial,
-  onSaved,
-}: {
-  group: (typeof GROUPS)[number];
-  initial: Record<string, string>;
-  onSaved: () => void;
-}) {
-  const [values, setValues] = useState<Record<string, string>>(initial);
+  const digits = (v.whatsapp ?? "").replace(/\D/g, "");
+  const phoneOk = digits === "" || /^55\d{10,11}$/.test(digits);
+  const lowOk = (v.low_stock ?? "") === "" || /^\d{1,4}$/.test(v.low_stock ?? "");
 
   const save = useMutation({
-    mutationFn: () => saveSetting(group.key, values),
+    mutationFn: () => saveOperationSettings({ ...v, whatsapp: digits }),
     onSuccess: () => {
-      toast.success(`${group.label} salvo`);
-      onSaved();
+      toast.success("Configurações salvas");
+      qc.invalidateQueries({ queryKey: operationSettingsQuery.queryKey });
+      qc.invalidateQueries({ queryKey: ["admin-dashboard"] });
     },
-    onError: () => toast.error("Não foi possível salvar as configurações"),
+    onError: (e) => toast.error((e as Error).message),
   });
 
   return (
-    <AdminCard className="p-5">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          save.mutate();
-        }}
-        className="grid gap-4 sm:grid-cols-2"
-      >
-        {group.fields.map((f) => (
-          <div key={f.name} className="grid gap-1.5">
-            <Label htmlFor={`${group.key}-${f.name}`}>{f.label}</Label>
-            <Input
-              id={`${group.key}-${f.name}`}
-              value={values[f.name] ?? ""}
-              onChange={(e) => setValues((v) => ({ ...v, [f.name]: e.target.value }))}
-            />
-          </div>
-        ))}
-        <div className="sm:col-span-2">
-          <Button type="submit" disabled={save.isPending}>
-            {save.isPending ? "Salvando…" : "Salvar alterações"}
-          </Button>
-        </div>
-      </form>
-    </AdminCard>
+    <div>
+      <PageHeader
+        title="Configurações"
+        description="Dados usados de verdade na operação. Senhas e tokens não ficam aqui: ficam nos segredos da hospedagem."
+      />
+      <AdminCard className="p-5">
+        {isLoading ? (
+          <p className="text-sm text-muted-foreground">Carregando…</p>
+        ) : (
+          <form
+            className="grid max-w-2xl gap-5"
+            onSubmit={(e) => {
+              e.preventDefault();
+              save.mutate();
+            }}
+          >
+            <div className="grid gap-1.5">
+              <Label htmlFor="cfg-wa">WhatsApp da loja (com DDI 55 e DDD)</Label>
+              <Input id="cfg-wa" inputMode="tel" placeholder="55 12 99999-0000" value={v.whatsapp ?? ""} onChange={(e) => setV({ ...v, whatsapp: e.target.value })} />
+              <p className={`text-xs ${phoneOk ? "text-muted-foreground" : "text-destructive"}`}>
+                {phoneOk
+                  ? `Número que recebe os pedidos do “Finalizar pelo WhatsApp”. Vazio = usa o padrão do site (${STORE_PHONE}).`
+                  : "Use 55 + DDD + número (12 ou 13 dígitos)."}
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-1.5">
+                <Label htmlFor="cfg-pix">Chave Pix</Label>
+                <Input id="cfg-pix" value={v.pix_key ?? ""} onChange={(e) => setV({ ...v, pix_key: e.target.value })} maxLength={120} />
+              </div>
+              <div className="grid gap-1.5">
+                <Label htmlFor="cfg-owner">Titular da chave</Label>
+                <Input id="cfg-owner" value={v.pix_owner ?? ""} onChange={(e) => setV({ ...v, pix_owner: e.target.value })} maxLength={120} />
+              </div>
+              <p className="text-xs text-muted-foreground sm:col-span-2">
+                Usados no botão “Enviar dados do Pix” do pedido (mensagem para o cliente). A confirmação continua manual.
+              </p>
+            </div>
+            <div className="grid max-w-xs gap-1.5">
+              <Label htmlFor="cfg-low">Alerta de estoque baixo (unidades)</Label>
+              <Input id="cfg-low" inputMode="numeric" placeholder="3" value={v.low_stock ?? ""} onChange={(e) => setV({ ...v, low_stock: e.target.value.replace(/\D/g, "") })} />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Frete: configure em <Link to="/admin/fretes" className="underline">Fretes</Link>.
+            </p>
+            <div>
+              <Button type="submit" disabled={save.isPending || !phoneOk || !lowOk}>
+                {save.isPending ? <Loader2 className="animate-spin" /> : <Save />} Salvar
+              </Button>
+            </div>
+          </form>
+        )}
+      </AdminCard>
+    </div>
   );
 }

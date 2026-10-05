@@ -80,7 +80,7 @@ function AdminProductsPage() {
       toast.success("Produto removido");
       invalidate();
     },
-    onError: () => toast.error("Não foi possível remover o produto"),
+    onError: (e) => toast.error(e instanceof Error && e.message ? e.message : "Não foi possível remover o produto"),
   });
 
   const filtered = useMemo(() => {

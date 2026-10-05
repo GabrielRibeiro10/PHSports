@@ -1,6 +1,6 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { AlertCircle, Loader2, Lock } from "lucide-react";
+import { AlertCircle, Loader2, MessageCircle } from "lucide-react";
 import { createOrder } from "@/lib/orders.functions";
 import type { OrderResult } from "@/lib/orders.server";
 import { maskCep } from "@/lib/shipping/cep";
@@ -20,6 +20,14 @@ export type CheckoutSuccess = Extract<OrderResult, { ok: true }> & {
   address: CheckoutAddress;
   customer: { name: string; whatsapp: string };
 };
+
+function newRequestId() {
+  try {
+    return crypto.randomUUID();
+  } catch {
+    return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+  }
+}
 
 const input =
   "w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors focus:border-foreground/40 disabled:bg-secondary/60 disabled:text-muted-foreground";
@@ -49,7 +57,8 @@ export function CheckoutForm({
   coupon: string | null;
   /** o servidor achou valor/modalidade diferente: pede nova cotação */
   onShippingStale: () => void;
-  onSuccess: (r: CheckoutSuccess) => void;
+  /** recebe o pedido salvo; `popup` é a aba aberta no clique (para levar ao WhatsApp) */
+  onSuccess: (r: CheckoutSuccess, popup: Window | null) => void;
 }) {
   const submit = useServerFn(createOrder);
   const [name, setName] = useState("");
@@ -57,11 +66,14 @@ export function CheckoutForm({
   const [addr, setAddr] = useState<Omit<CheckoutAddress, "cep">>({ street: "", number: "", complement: "", district: "", city: "", uf: "" });
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const cep = quote?.cep ?? "";
+  const [manualCep, setManualCep] = useState("");
+  const cep = quote?.cep ?? manualCep.replace(/\D/g, "");
+  // Mesma tentativa (mesmos dados) = mesma chave: clique repetido ou nova tentativa não duplica o pedido.
+  const attempt = useRef<{ sig: string; id: string } | null>(null);
 
-  // Preenche rua/bairro/cidade pelo CEP cotado (ViaCEP); o comprador pode corrigir.
+  // Preenche rua/bairro/cidade pelo CEP (ViaCEP); o comprador pode corrigir.
   useEffect(() => {
-    if (!cep) return;
+    if (cep.length !== 8) return;
     let cancelled = false;
     setAddr((a) => ({ ...a, city: quote?.city || a.city, uf: quote?.uf || a.uf }));
     fetch(`https://viacep.com.br/ws/${cep}/json/`)
@@ -87,36 +99,40 @@ export function CheckoutForm({
     if (option) setError(null);
   }, [option?.key, option?.price]);
 
-  const canSubmit = Boolean(quote && option) && !sending;
+  const canSubmit = !sending && cep.length === 8;
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (sending) return;
     setError(null);
-    if (!quote || !option) {
-      setError("Calcule o frete e escolha a modalidade de entrega.");
+    if (quote && !option) {
+      setError("Escolha a modalidade de frete (ou altere o CEP).");
       return;
     }
+    const address = { cep, ...addr };
+    const customer = { name: name.trim(), whatsapp };
+    const shipping = option && quote ? { cep, key: option.key, price: option.price } : null;
+    const sig = JSON.stringify({ items, address, customer, shipping, coupon });
+    if (!attempt.current || attempt.current.sig !== sig) attempt.current = { sig, id: newRequestId() };
+
+    // Abre a aba no clique (navegadores bloqueiam abrir depois de esperar o servidor);
+    // ela só vai para o WhatsApp se o pedido for salvo.
+    const popup = window.matchMedia("(pointer: fine)").matches ? window.open("", "_blank") : null;
     setSending(true);
     try {
-      const address = { cep, ...addr };
-      const customer = { name: name.trim(), whatsapp };
       const r = await submit({
-        data: {
-          items,
-          shipping: { cep, key: option.key, price: option.price },
-          customer,
-          address,
-          coupon: coupon ?? undefined,
-        },
+        data: { requestId: attempt.current.id, items, shipping, customer, address, coupon: coupon ?? undefined },
       });
       if (!r.ok) {
+        popup?.close();
         setError(r.message);
         if (r.code === "shipping_changed" || r.code === "shipping_unavailable" || r.code === "quote_failed") onShippingStale();
         return;
       }
-      onSuccess({ ...r, address, customer });
+      onSuccess({ ...r, address, customer }, popup);
     } catch {
-      setError("Confira os dados de entrega (nome, WhatsApp com DDD e endereço completo) e tente de novo.");
+      popup?.close();
+      setError("Não conseguimos registrar o pedido. Confira nome, WhatsApp com DDD e endereço e tente de novo.");
     } finally {
       setSending(false);
     }
@@ -139,10 +155,24 @@ export function CheckoutForm({
           value={whatsapp}
           onChange={(e) => setWhatsapp(maskPhone(e.target.value))}
         />
-        <div className="grid grid-cols-[1fr_auto] gap-2">
-          <input className={input} disabled value={cep ? maskCep(cep) : ""} placeholder="CEP (calcule o frete)" aria-label="CEP de entrega" />
-          <span className="self-center text-[11px] text-muted-foreground">mude no frete</span>
-        </div>
+        {quote ? (
+          <div className="grid grid-cols-[1fr_auto] gap-2">
+            <input className={input} disabled value={maskCep(quote.cep)} aria-label="CEP de entrega" />
+            <span className="self-center text-[11px] text-muted-foreground">mude no frete</span>
+          </div>
+        ) : (
+          <input
+            className={input}
+            required
+            inputMode="numeric"
+            autoComplete="postal-code"
+            placeholder="CEP de entrega"
+            aria-label="CEP de entrega"
+            pattern="\d{5}-\d{3}"
+            value={maskCep(manualCep)}
+            onChange={(e) => setManualCep(e.target.value)}
+          />
+        )}
         <input className={input} required maxLength={160} autoComplete="address-line1" placeholder="Rua / avenida" aria-label="Rua" value={addr.street} onChange={(e) => setAddr({ ...addr, street: e.target.value })} />
         <div className="grid grid-cols-[110px_1fr] gap-2">
           <input className={input} required maxLength={20} placeholder="Número" aria-label="Número" value={addr.number} onChange={(e) => setAddr({ ...addr, number: e.target.value })} />
@@ -176,11 +206,13 @@ export function CheckoutForm({
         disabled={!canSubmit}
         className="btn-glow inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-brand hover:text-brand-foreground disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {sending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Lock className="size-4" aria-hidden />}
-        {sending ? "Confirmando valores…" : option ? "Finalizar pedido" : "Escolha o frete para finalizar"}
+        {sending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <MessageCircle className="size-4" aria-hidden />}
+        {sending ? "Registrando pedido…" : "Finalizar pelo WhatsApp"}
       </button>
       <p className="text-center text-[11px] text-muted-foreground">
-        Conferimos preços e frete antes de registrar o pedido. Depois você envia o pedido no WhatsApp e paga por Pix.
+        {option
+          ? "Conferimos preços, estoque e frete, registramos o pedido e abrimos o WhatsApp da loja. O pagamento é combinado por lá."
+          : "Sem frete calculado, o frete é combinado no WhatsApp e somado antes do pagamento."}
       </p>
     </form>
   );

@@ -1,32 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  AlertTriangle,
-  Activity,
-  DollarSign,
-  Package,
-  ShoppingCart,
-  TrendingUp,
-  Users,
-} from "lucide-react";
+import { useMemo, useState } from "react";
+import { AlertTriangle, Clock, DollarSign, PackageCheck, ShoppingCart, Wallet } from "lucide-react";
 import { RequireAdmin } from "@/components/admin/RequireAdmin";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import {
-  AdminCard,
-  CardsSkeleton,
-  EmptyState,
-  PageHeader,
-  StatCard,
-  StatusPill,
-} from "@/components/admin/AdminUI";
+import { AdminCard, CardsSkeleton, EmptyState, PageHeader, StatCard } from "@/components/admin/AdminUI";
+import { Badge } from "@/components/admin/OrderBadges";
+import { Button } from "@/components/ui/button";
 import { formatBRL } from "@/lib/products";
-import { adminProductsQueryOptions } from "@/lib/adminCatalog";
-import {
-  auditQueryOptions,
-  customersQueryOptions,
-  orderItemsQueryOptions,
-  ordersQueryOptions,
-} from "@/lib/adminData";
+import { dashboardQuery, FULFILLMENT_LABEL, listOrders, operationSettingsQuery, PAYMENT_LABEL, type Fulfillment, type Payment } from "@/lib/adminOrders";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({
@@ -41,214 +23,152 @@ export const Route = createFileRoute("/admin/")({
   ),
 });
 
-const MONTHS = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+const PERIODS = [
+  { days: 7, label: "7 dias" },
+  { days: 30, label: "30 dias" },
+  { days: 90, label: "90 dias" },
+];
 
 function DashboardPage() {
-  const products = useQuery(adminProductsQueryOptions);
-  const orders = useQuery(ordersQueryOptions);
-  const customers = useQuery(customersQueryOptions);
-  const items = useQuery(orderItemsQueryOptions);
-  const audit = useQuery(auditQueryOptions);
-
-  const loading = products.isLoading || orders.isLoading || customers.isLoading;
-  const orderRows = orders.data ?? [];
-  const paidOrders = orderRows.filter((o) => o.status !== "cancelado");
-  const revenue = paidOrders.reduce((sum, o) => sum + Number(o.total), 0);
-  const lowStock = (products.data ?? []).filter((p) => (p.stock ?? 0) <= 3);
-
-  // last 6 months revenue
-  const now = new Date();
-  const chart = Array.from({ length: 6 }).map((_, i) => {
-    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
-    const total = paidOrders
-      .filter((o) => {
-        const od = new Date(o.created_at);
-        return od.getMonth() === d.getMonth() && od.getFullYear() === d.getFullYear();
-      })
-      .reduce((s, o) => s + Number(o.total), 0);
-    return { label: MONTHS[d.getMonth()], total };
+  const [days, setDays] = useState(30);
+  const settings = useQuery(operationSettingsQuery);
+  const low = Math.max(0, Number(settings.data?.low_stock ?? 3) || 3);
+  // Período fechado no dia de hoje (até o fim do dia).
+  const { from, to } = useMemo(() => {
+    const end = new Date();
+    end.setHours(24, 0, 0, 0);
+    const start = new Date(end.getTime() - days * 86_400_000);
+    return { from: start.toISOString(), to: end.toISOString() };
+  }, [days]);
+  const dash = useQuery(dashboardQuery(from, to, low));
+  const recent = useQuery({
+    queryKey: ["admin-orders-page", "recent"],
+    queryFn: () => listOrders({ page: 1, pageSize: 6, q: "", from: "", to: "", payment: "", fulfillment: "" }),
   });
-  const chartMax = Math.max(1, ...chart.map((c) => c.total));
-
-  const topProducts = Object.values(
-    (items.data ?? []).reduce<Record<string, { name: string; qty: number; total: number }>>(
-      (acc, it) => {
-        const key = it.product_name;
-        acc[key] = acc[key] ?? { name: key, qty: 0, total: 0 };
-        acc[key].qty += it.quantity;
-        acc[key].total += it.quantity * Number(it.unit_price);
-        return acc;
-      },
-      {},
-    ),
-  )
-    .sort((a, b) => b.qty - a.qty)
-    .slice(0, 5);
+  const d = dash.data;
+  const max = Math.max(1, ...(d?.daily ?? []).map((x) => Number(x.total)));
 
   return (
     <div>
       <PageHeader
         title="Dashboard"
-        description="Visão geral da operação da loja em tempo real."
-      />
-
-      {loading ? (
-        <CardsSkeleton count={6} />
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          <StatCard
-            label="Faturamento"
-            value={formatBRL(revenue)}
-            hint={`${paidOrders.length} pedidos válidos`}
-            tone="brand"
-            icon={<DollarSign className="size-5" />}
-          />
-          <StatCard
-            label="Total de vendas"
-            value={String(paidOrders.length)}
-            hint="Pedidos não cancelados"
-            icon={<TrendingUp className="size-5" />}
-          />
-          <StatCard
-            label="Pedidos"
-            value={String(orderRows.length)}
-            hint={`${orderRows.filter((o) => o.status === "pendente").length} pendentes`}
-            icon={<ShoppingCart className="size-5" />}
-          />
-          <StatCard
-            label="Clientes"
-            value={String((customers.data ?? []).length)}
-            icon={<Users className="size-5" />}
-          />
-          <StatCard
-            label="Produtos"
-            value={String((products.data ?? []).length)}
-            hint={`${(products.data ?? []).filter((p) => p.active).length} visíveis na loja`}
-            icon={<Package className="size-5" />}
-          />
-          <StatCard
-            label="Estoque baixo"
-            value={String(lowStock.length)}
-            hint="3 unidades ou menos"
-            tone="warning"
-            icon={<AlertTriangle className="size-5" />}
-          />
-        </div>
-      )}
-
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <AdminCard className="p-5 lg:col-span-2">
-          <h2 className="text-sm font-black uppercase tracking-wide text-muted-foreground">
-            Gráfico de vendas (6 meses)
-          </h2>
-          <div className="mt-6 flex h-48 items-end gap-3">
-            {chart.map((c) => (
-              <div key={c.label} className="flex flex-1 flex-col items-center gap-2">
-                <span className="text-[10px] font-bold tabular-nums text-muted-foreground">
-                  {c.total > 0 ? formatBRL(c.total) : ""}
-                </span>
-                <div
-                  className="w-full rounded-t-lg bg-primary/85 transition-all duration-500 hover:bg-primary"
-                  style={{ height: `${Math.max(4, (c.total / chartMax) * 100)}%` }}
-                />
-                <span className="text-xs font-semibold text-muted-foreground">{c.label}</span>
-              </div>
+        description="Números reais dos pedidos. Vendas contam só pagamentos confirmados (sem pendentes, cancelados ou reembolsados)."
+        actions={
+          <div className="flex gap-1">
+            {PERIODS.map((p) => (
+              <Button key={p.days} size="sm" variant={days === p.days ? "default" : "outline"} onClick={() => setDays(p.days)}>
+                {p.label}
+              </Button>
             ))}
           </div>
-        </AdminCard>
+        }
+      />
 
-        <AdminCard className="p-5">
-          <h2 className="text-sm font-black uppercase tracking-wide text-muted-foreground">
-            Produtos mais vendidos
-          </h2>
-          {topProducts.length === 0 ? (
-            <EmptyState title="Sem vendas registradas" description="Os campeões aparecem aqui." />
-          ) : (
-            <ul className="mt-4 grid gap-3">
-              {topProducts.map((p, i) => (
-                <li key={p.name} className="flex items-center gap-3">
-                  <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-secondary text-xs font-black">
-                    {i + 1}
-                  </span>
-                  <span className="min-w-0 flex-1 truncate text-sm font-semibold">{p.name}</span>
-                  <span className="shrink-0 text-xs font-bold text-muted-foreground">
-                    {p.qty}x
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
+      {dash.isLoading ? (
+        <CardsSkeleton count={4} />
+      ) : dash.error ? (
+        <AdminCard>
+          <EmptyState
+            icon={<AlertTriangle className="size-5" />}
+            title="Não foi possível carregar o resumo"
+            description={(dash.error as Error).message}
+            action={<Button onClick={() => dash.refetch()}>Tentar de novo</Button>}
+          />
         </AdminCard>
-      </div>
-
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <AdminCard className="overflow-hidden">
-          <div className="flex items-center justify-between border-b border-border px-5 py-4">
-            <h2 className="text-sm font-black uppercase tracking-wide text-muted-foreground">
-              Últimos pedidos
-            </h2>
-            <Link to="/admin/pedidos" className="text-xs font-bold text-primary hover:underline">
-              Ver todos
-            </Link>
-          </div>
-          {orderRows.length === 0 ? (
-            <EmptyState
-              icon={<ShoppingCart className="size-5" />}
-              title="Nenhum pedido ainda"
-              description="Os pedidos registrados no painel aparecem aqui."
+      ) : d ? (
+        <>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <StatCard label="Aguardando atendimento" value={String(d.awaiting)} icon={<Clock className="size-5" />} tone={d.awaiting ? "warning" : "default"} hint="Pedidos novos do WhatsApp" />
+            <StatCard
+              label="Pagamento pendente"
+              value={String(d.payment_pending)}
+              icon={<Wallet className="size-5" />}
+              tone={d.payment_pending ? "warning" : "default"}
+              hint={d.shipping_pending ? `${d.shipping_pending} com frete a definir` : "Não contam como venda"}
             />
-          ) : (
-            <ul className="divide-y divide-border">
-              {orderRows.slice(0, 6).map((o) => (
-                <li key={o.id} className="flex items-center gap-3 px-5 py-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-bold">{o.customer_name || o.code}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {o.code} • {new Date(o.created_at).toLocaleDateString("pt-BR")}
-                    </p>
-                  </div>
-                  <StatusPill status={o.status} />
-                  <span className="shrink-0 text-sm font-black tabular-nums">
-                    {formatBRL(Number(o.total))}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </AdminCard>
-
-        <AdminCard className="overflow-hidden">
-          <div className="border-b border-border px-5 py-4">
-            <h2 className="text-sm font-black uppercase tracking-wide text-muted-foreground">
-              Atividades recentes
-            </h2>
-          </div>
-          {(audit.data ?? []).length === 0 ? (
-            <EmptyState
-              icon={<Activity className="size-5" />}
-              title="Sem atividades"
-              description="Ações administrativas ficam registradas aqui."
+            <StatCard label="Pagos aguardando envio" value={String(d.paid_to_ship)} icon={<PackageCheck className="size-5" />} tone={d.paid_to_ship ? "brand" : "default"} hint="Separar e postar" />
+            <StatCard
+              label={`Vendas confirmadas · ${days} dias`}
+              value={formatBRL(Number(d.revenue))}
+              icon={<DollarSign className="size-5" />}
+              tone="brand"
+              hint={`${d.paid_orders} ${d.paid_orders === 1 ? "pedido pago" : "pedidos pagos"}`}
             />
-          ) : (
-            <ul className="divide-y divide-border">
-              {(audit.data ?? []).map((a) => (
-                <li key={a.id} className="flex items-center gap-3 px-5 py-3">
-                  <Activity className="size-4 shrink-0 text-muted-foreground" />
-                  <span className="min-w-0 flex-1 truncate text-sm font-semibold">{a.action}</span>
-                  <span className="shrink-0 text-xs text-muted-foreground">
-                    {new Date(a.created_at).toLocaleString("pt-BR", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </AdminCard>
-      </div>
+          </div>
+
+          <div className="mt-4 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+            <AdminCard className="p-5">
+              <h2 className="mb-4 text-sm font-bold">Vendas confirmadas por dia</h2>
+              {d.daily.length === 0 ? (
+                <p className="py-10 text-center text-sm text-muted-foreground">Nenhum pagamento confirmado neste período.</p>
+              ) : (
+                <ul className="grid gap-1.5">
+                  {d.daily
+                    .slice()
+                    .reverse()
+                    .map((x) => (
+                      <li key={x.day} className="grid grid-cols-[72px_1fr_96px] items-center gap-3 text-sm">
+                        <span className="text-muted-foreground">{new Date(`${x.day}T12:00:00`).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}</span>
+                        <span className="h-2.5 rounded-full bg-primary" style={{ width: `${Math.max(3, (Number(x.total) / max) * 100)}%` }} />
+                        <span className="text-right font-semibold tabular-nums">{formatBRL(Number(x.total))}</span>
+                      </li>
+                    ))}
+                </ul>
+              )}
+            </AdminCard>
+
+            <AdminCard className="p-5">
+              <h2 className="mb-1 text-sm font-bold">Estoque baixo (até {low} un.)</h2>
+              {d.untracked_products > 0 && (
+                <p className="mb-3 text-xs text-amber-700">
+                  {d.untracked_products} {d.untracked_products === 1 ? "produto ativo sem" : "produtos ativos sem"} estoque cadastrado.{" "}
+                  <Link to="/admin/estoque" className="underline">Cadastrar</Link>
+                </p>
+              )}
+              {d.low_stock.length === 0 ? (
+                <p className="py-6 text-center text-sm text-muted-foreground">Nenhum tamanho com estoque baixo.</p>
+              ) : (
+                <ul className="grid max-h-72 gap-1.5 overflow-y-auto text-sm">
+                  {d.low_stock.map((l) => (
+                    <li key={`${l.product_id}-${l.size}`} className="flex justify-between gap-3">
+                      <span className="truncate">
+                        {l.name} · <strong>{l.size}</strong>
+                      </span>
+                      <span className={`shrink-0 font-bold tabular-nums ${l.quantity === 0 ? "text-destructive" : "text-amber-700"}`}>
+                        {l.quantity === 0 ? "esgotado" : `${l.quantity} un.`}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </AdminCard>
+          </div>
+        </>
+      ) : null}
+
+      <AdminCard className="mt-4 overflow-hidden">
+        <div className="flex items-center justify-between px-5 pt-5">
+          <h2 className="text-sm font-bold">Últimos pedidos</h2>
+          <Link to="/admin/pedidos" className="text-sm underline">Ver todos</Link>
+        </div>
+        {recent.data && recent.data.rows.length === 0 ? (
+          <EmptyState icon={<ShoppingCart className="size-5" />} title="Nenhum pedido ainda" description="Os pedidos finalizados pelo WhatsApp aparecem aqui." />
+        ) : (
+          <ul className="mt-3 divide-y divide-border">
+            {(recent.data?.rows ?? []).map((o) => (
+              <li key={o.id} className="flex flex-wrap items-center justify-between gap-2 px-5 py-3 text-sm">
+                <Link to="/admin/pedido/$id" params={{ id: o.id }} className="font-bold hover:underline">
+                  {o.code}
+                </Link>
+                <span className="min-w-0 flex-1 truncate text-muted-foreground">{o.customer_name}</span>
+                <span className="font-semibold tabular-nums">{formatBRL(Number(o.total))}</span>
+                <Badge status={o.payment_status} label={PAYMENT_LABEL[o.payment_status as Payment]} />
+                <Badge status={o.fulfillment_status} label={FULFILLMENT_LABEL[o.fulfillment_status as Fulfillment]} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </AdminCard>
     </div>
   );
 }

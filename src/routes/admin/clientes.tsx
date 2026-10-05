@@ -32,7 +32,7 @@ function CustomersPage() {
     return customers
       .filter((c) => !term || `${c.name} ${c.email} ${c.whatsapp}`.toLowerCase().includes(term))
       .map((c) => {
-        const own = orders.filter((o) => o.customer_id === c.id && o.status !== "cancelado");
+        const own = orders.filter((o) => o.customer_id === c.id && o.payment_status === "confirmado" && o.fulfillment_status !== "cancelado");
         return {
           ...c,
           orders: own.length,

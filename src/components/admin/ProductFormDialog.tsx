@@ -115,7 +115,6 @@ export function ProductFormDialog({ open, onOpenChange, product }: Props) {
         image_url_4: images[3],
         price: Number(form.price) || 0,
         old_price: Number(form.oldPrice) || 0,
-        stock: Number(form.stock) || 0,
         featured: form.featured,
         brand_id: form.brandId === "none" ? null : form.brandId,
         category: form.category,
@@ -284,14 +283,10 @@ export function ProductFormDialog({ open, onOpenChange, product }: Props) {
                 />
               </div>
               <div className="grid gap-1.5">
-                <Label htmlFor="p-stock">Estoque</Label>
-                <Input
-                  id="p-stock"
-                  type="number"
-                  min="0"
-                  value={form.stock}
-                  onChange={(e) => setForm((f) => ({ ...f, stock: e.target.value }))}
-                />
+                <Label>Estoque</Label>
+                <p className="rounded-md border border-dashed border-border px-3 py-2 text-sm text-muted-foreground">
+                  {isEditing ? `${form.stock} un. no total.` : "Depois de criar,"} Controle por tamanho em <strong>Estoque</strong> (com histórico).
+                </p>
               </div>
             </div>
 

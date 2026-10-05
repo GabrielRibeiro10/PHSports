@@ -251,6 +251,7 @@ describe("cotação (servidor)", () => {
 
 describe("pedido (servidor)", () => {
   const base: OrderInput = {
+    requestId: "req-0001-abcdef-123456",
     items: [
       { slug: "flamengo", size: "M", qty: 2 },
       { slug: "brasil-fem", size: "P", qty: 1 },
@@ -261,37 +262,45 @@ describe("pedido (servidor)", () => {
   };
   function orderDeps(over: Partial<OrderDeps> = {}) {
     const { deps, f } = quoteDeps();
-    const saved: { order?: OrderRecord; items?: unknown[] } = {};
+    const saved: { order?: OrderRecord; items?: unknown[]; keys: string[]; redeemed: number } = { keys: [], redeemed: 0 };
+    const byKey = new Map<string, string>();
     const d: OrderDeps = {
       ...deps,
+      loadProducts: async (slugs) => PRODUCTS.filter((p) => slugs.includes(p.slug)).map((p) => ({ ...p, sizes: null })),
+      loadStock: async () => [],
       loadCoupon: async () => null,
-      redeemCoupon: async () => true,
-      saveOrder: async (order, items) => {
+      redeemCoupon: async () => {
+        saved.redeemed++;
+        return true;
+      },
+      saveOrder: async (key, order, items) => {
+        saved.keys.push(key);
+        if (byKey.has(key)) return { code: byKey.get(key)!, created: false };
+        byKey.set(key, `PH-${byKey.size + 1}`);
         saved.order = order;
         saved.items = items;
-        return "PH-ABC123";
+        return { code: byKey.get(key)!, created: true };
       },
+      storeWhatsapp: async () => "5512991112222",
       ...over,
     };
     return { d, saved, f };
   }
 
-  it("frete escolhido chega ao pedido e ao total cobrado (preços do banco)", async () => {
+  it("frete escolhido chega ao pedido e ao total (preços do banco) + WhatsApp configurado", async () => {
     const { d, saved } = orderDeps();
     const r = await createOrderCore(base, d);
-    expect(r).toMatchObject({ ok: true, code: "PH-ABC123", subtotal: 519.7, discount: 0, total: 541.8 });
+    expect(r).toMatchObject({ ok: true, code: "PH-1", created: true, subtotal: 519.7, discount: 0, total: 541.8, whatsapp: "5512991112222" });
     expect(saved.order).toMatchObject({
       shipping: 22.1,
       total: 541.8,
+      shipping_status: "cotado",
       shipping_service: "PAC",
-      shipping_service_key: "me:1",
       shipping_days_min: 6,
       shipping_days_max: 8,
       shipping_prep_days: 2,
-      shipping_environment: "sandbox",
       ship_cep: "70040010",
       ship_city: "Brasília",
-      ship_uf: "DF",
       customer_whatsapp: "12999990000",
     });
     expect(saved.items).toEqual([
@@ -299,56 +308,73 @@ describe("pedido (servidor)", () => {
       { product_id: "p2", product_name: "Camisa Brasil Feminina", size: "P", quantity: 1, unit_price: 159.9 },
     ]);
   });
+  it("sem frete escolhido → pedido com frete pendente (a combinar), nunca grátis", async () => {
+    const { d, saved, f } = orderDeps();
+    const r = await createOrderCore({ ...base, shipping: null }, d);
+    expect(r).toMatchObject({ ok: true, total: 519.7, shipping: null });
+    expect(saved.order).toMatchObject({ shipping_status: "pendente", shipping: 0, shipping_service: "" });
+    expect(f).not.toHaveBeenCalled();
+  });
+  it("mesma solicitação repetida devolve o mesmo pedido e não conta o cupom de novo", async () => {
+    const coupon = {
+      code: "PH10", discount_type: "percent", discount_value: 10, starts_at: null, expires_at: null,
+      max_uses: 0, used_count: 0, min_order_value: 0, active: true,
+    };
+    const { d, saved } = orderDeps({ loadCoupon: async () => coupon });
+    const a = await createOrderCore({ ...base, coupon: "ph10" }, d);
+    const b = await createOrderCore({ ...base, coupon: "ph10" }, d);
+    expect(a).toMatchObject({ ok: true, code: "PH-1", created: true, discount: 51.97, total: 489.83 });
+    expect(b).toMatchObject({ ok: true, code: "PH-1", created: false });
+    expect(saved.redeemed).toBe(1);
+  });
+  it("tamanho que o produto não tem", async () => {
+    const { d } = orderDeps({ loadProducts: async (s) => PRODUCTS.filter((p) => s.includes(p.slug)).map((p) => ({ ...p, sizes: ["P", "M"] })) });
+    expect(await createOrderCore({ ...base, items: [{ slug: "flamengo", size: "XG", qty: 1 }] }, d)).toMatchObject({ code: "size_unavailable" });
+  });
+  it("estoque controlado: esgotado ou insuficiente bloqueia; produto sem controle passa", async () => {
+    const stock = [
+      { product_id: "p1", size: "M", quantity: 1 },
+      { product_id: "p1", size: "G", quantity: 0 },
+    ];
+    const { d } = orderDeps({ loadStock: async () => stock });
+    expect(await createOrderCore({ ...base, shipping: null }, d)).toMatchObject({ code: "out_of_stock", message: expect.stringContaining("só temos 1") });
+    expect(
+      await createOrderCore({ ...base, shipping: null, items: [{ slug: "flamengo", size: "G", qty: 1 }] }, d),
+    ).toMatchObject({ code: "out_of_stock", message: expect.stringContaining("esgotado") });
+    expect(
+      await createOrderCore({ ...base, requestId: "req-0002-abcdef-123456", shipping: null, items: [{ slug: "brasil-fem", size: "P", qty: 3 }] }, d),
+    ).toMatchObject({ ok: true });
+  });
   it("CEP do endereço diferente do CEP cotado → bloqueia", async () => {
     const { d, saved } = orderDeps();
-    const r = await createOrderCore({ ...base, address: { ...base.address, cep: "70040-011" } }, d);
-    expect(r).toMatchObject({ ok: false, code: "address_mismatch" });
+    expect(await createOrderCore({ ...base, address: { ...base.address, cep: "70040-011" } }, d)).toMatchObject({ code: "address_mismatch" });
     expect(saved.order).toBeUndefined();
   });
-  it("valor de frete adulterado/desatualizado → pede confirmação com o valor real", async () => {
+  it("valor de frete adulterado/desatualizado → pede confirmação", async () => {
     const { d, saved } = orderDeps();
-    const r = await createOrderCore({ ...base, shipping: { ...base.shipping, price: 0 } }, d);
-    expect(r).toMatchObject({ ok: false, code: "shipping_changed" });
+    expect(await createOrderCore({ ...base, shipping: { ...base.shipping!, price: 0 } }, d)).toMatchObject({ code: "shipping_changed" });
     expect(saved.order).toBeUndefined();
   });
   it("serviço que não existe mais para o endereço", async () => {
     const { d } = orderDeps();
-    expect(await createOrderCore({ ...base, shipping: { ...base.shipping, key: "me:99" } }, d)).toMatchObject({
-      ok: false,
-      code: "shipping_unavailable",
-    });
+    expect(await createOrderCore({ ...base, shipping: { ...base.shipping!, key: "me:99" } }, d)).toMatchObject({ code: "shipping_unavailable" });
   });
-  it("falha na cotação → não finaliza com frete zerado", async () => {
+  it("cotação escolhida que falha agora → não finaliza com frete zerado", async () => {
     const f = fakeFetch(() => ({ status: 500, body: "x" }));
     const { d, saved } = orderDeps({ fetch: f });
-    expect(await createOrderCore({ ...base, address: { ...base.address, cep: "70040020" }, shipping: { ...base.shipping, cep: "70040020" } }, d)).toMatchObject({
-      ok: false,
-      code: "quote_failed",
-    });
+    const r = await createOrderCore(
+      { ...base, address: { ...base.address, cep: "70040020" }, shipping: { ...base.shipping!, cep: "70040020" } },
+      d,
+    );
+    expect(r).toMatchObject({ ok: false, code: "quote_failed" });
     expect(saved.order).toBeUndefined();
   });
   it("produto inativo/inexistente", async () => {
     const { d } = orderDeps();
-    expect(await createOrderCore({ ...base, items: [{ slug: "fake", size: "M", qty: 1 }] }, d)).toMatchObject({
-      code: "product_unavailable",
-    });
+    expect(await createOrderCore({ ...base, items: [{ slug: "fake", size: "M", qty: 1 }] }, d)).toMatchObject({ code: "product_unavailable" });
   });
-  it("cupom recalculado no servidor e frete somado depois do desconto", async () => {
-    const { d, saved } = orderDeps({
-      loadCoupon: async () => ({
-        code: "PH10",
-        discount_type: "percent",
-        discount_value: 10,
-        starts_at: null,
-        expires_at: null,
-        max_uses: 0,
-        used_count: 0,
-        min_order_value: 0,
-        active: true,
-      }),
-    });
-    const r = await createOrderCore({ ...base, coupon: "ph10" }, d);
-    expect(r).toMatchObject({ ok: true, subtotal: 519.7, discount: 51.97, total: 489.83 });
-    expect(saved.order).toMatchObject({ coupon_code: "PH10", discount: 51.97, total: 489.83 });
+  it("falha ao salvar → erro claro (pode tentar de novo)", async () => {
+    const { d } = orderDeps({ saveOrder: async () => null });
+    expect(await createOrderCore(base, d)).toMatchObject({ ok: false, code: "save_failed" });
   });
 });

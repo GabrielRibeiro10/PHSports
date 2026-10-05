@@ -265,13 +265,13 @@ function CartPage() {
               ) : null}
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Frete{shipping ? ` (${shipping.name})` : ""}</span>
-                <span className="font-semibold">{shipping ? formatBRL(shipping.price) : <span className="text-xs font-normal text-muted-foreground">calcule abaixo</span>}</span>
+                <span className="font-semibold">{shipping ? formatBRL(shipping.price) : <span className="text-xs font-normal text-muted-foreground">a calcular ou combinar</span>}</span>
               </div>
               <div className="mt-2 flex items-baseline justify-between border-t border-border pt-3">
                 <span className="text-sm font-bold">Total</span>
                 <span className="text-2xl font-black">{formatBRL(total)}</span>
               </div>
-              {!shipping && <p className="text-xs text-muted-foreground">O frete é somado ao total quando você escolher a entrega.</p>}
+              {!shipping && <p className="text-xs text-muted-foreground">Total sem frete. O frete é somado quando você escolher a entrega ou combinado no WhatsApp.</p>}
             </div>
           </div>
 
@@ -294,7 +294,7 @@ function CartPage() {
                 setShipping(null);
                 setRefreshQuote((n) => n + 1);
               }}
-              onSuccess={(r) => {
+              onSuccess={(r, popup) => {
                 track.checkout(
                   items.map((it) => {
                     const p = getProduct(it.slug);
@@ -302,12 +302,17 @@ function CartPage() {
                   }),
                   r.total,
                 );
-                setDone({
+                const placed = {
                   ...r,
                   lines: items.map((it) => ({ name: getProduct(it.slug)?.name ?? it.slug, size: String(it.size), qty: it.qty })),
-                } as CheckoutSuccess);
+                } as CheckoutSuccess & { lines: { name: string; size: string; qty: number }[] };
+                setDone(placed);
                 clear();
                 window.scrollTo({ top: 0 });
+                // Pedido salvo: agora sim abre o WhatsApp da loja com o número do pedido.
+                const href = orderWhatsappHref(placed);
+                if (popup) popup.location.href = href;
+                else window.location.href = href;
               }}
             />
           </div>
@@ -317,7 +322,7 @@ function CartPage() {
   );
 }
 
-function OrderPlaced({ order }: { order: CheckoutSuccess & { lines?: { name: string; size: string; qty: number }[] } }) {
+function orderWhatsappHref(order: CheckoutSuccess & { lines?: { name: string; size: string; qty: number }[] }) {
   const msg = buildConfirmedOrderMessage({
     code: order.code,
     lines: order.lines ?? [],
@@ -328,6 +333,10 @@ function OrderPlaced({ order }: { order: CheckoutSuccess & { lines?: { name: str
     address: order.address,
     customer: order.customer,
   });
+  return whatsappHref(msg, order.whatsapp);
+}
+
+function OrderPlaced({ order }: { order: CheckoutSuccess & { lines?: { name: string; size: string; qty: number }[] } }) {
   const s = order.shipping;
   return (
     <div className="mx-auto max-w-lg px-4 py-16 text-center">
@@ -335,6 +344,9 @@ function OrderPlaced({ order }: { order: CheckoutSuccess & { lines?: { name: str
         <Check className="size-7" />
       </div>
       <h1 className="mt-6 text-2xl font-black">Pedido {order.code} registrado</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Envie a mensagem no WhatsApp para a loja atender seu pedido. O pagamento é combinado e confirmado por lá.
+      </p>
       {order.environment === "sandbox" && (
         <p className="mx-auto mt-3 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">Pedido de teste (frete em ambiente de teste)</p>
       )}
@@ -343,24 +355,28 @@ function OrderPlaced({ order }: { order: CheckoutSuccess & { lines?: { name: str
         {order.discount > 0 && (
           <div className="flex justify-between"><span className="text-muted-foreground">Desconto</span><span className="font-semibold">-{formatBRL(order.discount)}</span></div>
         )}
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Frete {s.name} · {s.days.min === s.days.max ? s.days.max : `${s.days.min} a ${s.days.max}`} dias úteis{s.prepDays ? ` + ${s.prepDays} de preparação` : ""}</span>
-          <span className="font-semibold">{formatBRL(s.price)}</span>
+        <div className="flex justify-between gap-3">
+          <span className="text-muted-foreground">
+            {s
+              ? `Frete ${s.name} · ${s.days.min === s.days.max ? s.days.max : `${s.days.min} a ${s.days.max}`} dias úteis${s.prepDays ? ` + ${s.prepDays} de preparação` : ""}`
+              : "Frete"}
+          </span>
+          <span className="font-semibold">{s ? formatBRL(s.price) : "a combinar"}</span>
         </div>
         <div className="flex items-baseline justify-between border-t border-border pt-3">
-          <span className="font-bold">Total a pagar</span>
+          <span className="font-bold">{s ? "Total" : "Total sem frete"}</span>
           <span className="text-2xl font-black">{formatBRL(order.total)}</span>
         </div>
       </div>
       <a
-        href={whatsappHref(msg)}
+        href={orderWhatsappHref(order)}
         target="_blank"
         rel="noopener noreferrer"
         className="btn-glow mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-brand hover:text-brand-foreground"
       >
-        <MessageCircle className="size-4" /> Enviar pedido no WhatsApp e pagar com Pix
+        <MessageCircle className="size-4" /> Abrir o WhatsApp de novo
       </a>
-      <p className="mt-2 text-xs text-muted-foreground">O pedido já está salvo. No WhatsApp mandamos a chave Pix com o valor total.</p>
+      <p className="mt-2 text-xs text-muted-foreground">Guarde o número {order.code} para falar com a gente.</p>
     </div>
   );
 }

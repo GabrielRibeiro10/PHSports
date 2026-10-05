@@ -7,8 +7,16 @@ export const orderInput = z.object({
     .array(z.object({ slug: z.string().min(1).max(120), size: text(20), qty: z.number().int().min(1).max(50) }))
     .min(1)
     .max(40),
-  shipping: z.object({ cep: z.string().max(12), key: z.string().min(1).max(60), price: z.number().finite().min(0).max(10_000) }),
-  customer: z.object({ name: text(120).min(2), whatsapp: text(30).min(10) }),
+  /** identifica a tentativa de compra: repetir o envio devolve o mesmo pedido (sem duplicar) */
+  requestId: z.string().min(16).max(80).regex(/^[\w-]+$/),
+  /** null = frete a combinar pelo WhatsApp (fica pendente; nunca é tratado como grátis) */
+  shipping: z
+    .object({ cep: z.string().max(12), key: z.string().min(1).max(60), price: z.number().finite().min(0).max(10_000) })
+    .nullable(),
+  customer: z.object({
+    name: text(120).min(2),
+    whatsapp: text(30).refine((v) => /^\d{10,11}$/.test(v.replace(/\D/g, "")), "WhatsApp com DDD inválido"),
+  }),
   address: z.object({
     cep: z.string().max(12),
     street: text(160).min(2),
