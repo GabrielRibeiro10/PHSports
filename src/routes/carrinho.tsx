@@ -1,16 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Minus, Plus, Trash2, ShoppingBag, MessageCircle, Ticket, X, Check, Loader2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { formatBRL, SIZES } from "@/lib/products";
 import { productsQueryOptions } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
 import { buildConfirmedOrderMessage, whatsappHref } from "@/lib/whatsapp";
 import { validateCoupon } from "@/lib/coupons.functions";
-import { ShippingCalc, type OkQuote } from "@/components/ShippingCalc";
 import { CheckoutForm, type CheckoutSuccess } from "@/components/CheckoutForm";
-import type { ShippingOption } from "@/lib/shipping/types";
 import { useServerFn } from "@tanstack/react-start";
 import { track } from "@/lib/analytics";
 
@@ -38,16 +36,10 @@ function CartPage() {
   const [checking, setChecking] = useState(false);
   const validate = useServerFn(validateCoupon);
 
-  // Frete: cotação atual e modalidade escolhida. Qualquer mudança no carrinho/CEP refaz a cotação
-  // e a escolha só volta a valer quando a nova cotação chega (ver ShippingCalc).
-  const [quote, setQuote] = useState<OkQuote | null>(null);
-  const [shipping, setShipping] = useState<ShippingOption | null>(null);
-  const [refreshQuote, setRefreshQuote] = useState(0);
   const [done, setDone] = useState<CheckoutSuccess | null>(null);
-  const quoteItems = useMemo(() => items.map((it) => ({ slug: it.slug, qty: it.qty })), [items]);
 
   const discount = applied ? Math.min(applied.discount, subtotal) : 0;
-  const total = Math.max(subtotal - discount, 0) + (shipping?.price ?? 0);
+  const total = Math.max(subtotal - discount, 0);
 
   async function applyCoupon(e: React.FormEvent) {
     e.preventDefault();
@@ -263,37 +255,17 @@ function CartPage() {
                   <span className="font-black">-{formatBRL(discount)}</span>
                 </div>
               ) : null}
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Frete{shipping ? ` (${shipping.name})` : ""}</span>
-                <span className="font-semibold">{shipping ? formatBRL(shipping.price) : <span className="text-xs font-normal text-muted-foreground">a calcular ou combinar</span>}</span>
-              </div>
               <div className="mt-2 flex items-baseline justify-between border-t border-border pt-3">
                 <span className="text-sm font-bold">Total</span>
                 <span className="text-2xl font-black">{formatBRL(total)}</span>
               </div>
-              {!shipping && <p className="text-xs text-muted-foreground">Total sem frete. O frete é somado quando você escolher a entrega ou combinado no WhatsApp.</p>}
             </div>
           </div>
-
-          <ShippingCalc
-            items={quoteItems}
-            selectable
-            selectedKey={shipping?.key ?? null}
-            refreshToken={refreshQuote}
-            onQuote={setQuote}
-            onSelect={(o) => setShipping(o)}
-          />
 
           <div className="rounded-xl border border-border bg-card p-5">
             <CheckoutForm
               items={items.map((it) => ({ slug: it.slug, size: String(it.size), qty: it.qty }))}
-              quote={quote}
-              option={shipping}
               coupon={applied?.code ?? null}
-              onShippingStale={() => {
-                setShipping(null);
-                setRefreshQuote((n) => n + 1);
-              }}
               onSuccess={(r, popup) => {
                 track.checkout(
                   items.map((it) => {
@@ -337,7 +309,6 @@ function orderWhatsappHref(order: CheckoutSuccess & { lines?: { name: string; si
 }
 
 function OrderPlaced({ order }: { order: CheckoutSuccess & { lines?: { name: string; size: string; qty: number }[] } }) {
-  const s = order.shipping;
   return (
     <div className="mx-auto max-w-lg px-4 py-16 text-center">
       <div className="mx-auto grid size-16 place-items-center rounded-full bg-primary text-primary-foreground">
@@ -347,24 +318,13 @@ function OrderPlaced({ order }: { order: CheckoutSuccess & { lines?: { name: str
       <p className="mt-2 text-sm text-muted-foreground">
         Envie a mensagem no WhatsApp para a loja atender seu pedido. O pagamento é combinado e confirmado por lá.
       </p>
-      {order.environment === "sandbox" && (
-        <p className="mx-auto mt-3 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">Pedido de teste (frete em ambiente de teste)</p>
-      )}
       <div className="mt-6 space-y-2 rounded-xl border border-border bg-card p-5 text-left text-sm">
         <div className="flex justify-between"><span className="text-muted-foreground">Produtos</span><span className="font-semibold">{formatBRL(order.subtotal)}</span></div>
         {order.discount > 0 && (
           <div className="flex justify-between"><span className="text-muted-foreground">Desconto</span><span className="font-semibold">-{formatBRL(order.discount)}</span></div>
         )}
-        <div className="flex justify-between gap-3">
-          <span className="text-muted-foreground">
-            {s
-              ? `Frete ${s.name} · ${s.days.min === s.days.max ? s.days.max : `${s.days.min} a ${s.days.max}`} dias úteis${s.prepDays ? ` + ${s.prepDays} de preparação` : ""}`
-              : "Frete"}
-          </span>
-          <span className="font-semibold">{s ? formatBRL(s.price) : "a combinar"}</span>
-        </div>
         <div className="flex items-baseline justify-between border-t border-border pt-3">
-          <span className="font-bold">{s ? "Total" : "Total sem frete"}</span>
+          <span className="font-bold">Total</span>
           <span className="text-2xl font-black">{formatBRL(order.total)}</span>
         </div>
       </div>
