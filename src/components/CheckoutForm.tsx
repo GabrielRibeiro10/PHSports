@@ -7,8 +7,6 @@ import { useQuery } from "@tanstack/react-query";
 import { productsQueryOptions } from "@/lib/catalog";
 import type { OrderResult } from "@/lib/orders.server";
 import { maskCep } from "@/lib/shipping/cep";
-import type { ShippingOption } from "@/lib/shipping/types";
-import type { OkQuote } from "@/components/ShippingCalc";
 
 export type CheckoutAddress = {
   cep: string;
@@ -43,23 +41,16 @@ function maskPhone(v: string) {
 }
 
 /**
- * Dados de entrega + finalização. O CEP vem da cotação escolhida (para trocar, o comprador
- * altera o CEP no frete e recalcula). Preços, cupom e frete são conferidos no servidor.
+ * Dados de entrega + finalização. Preços e cupom são conferidos no servidor; o frete é combinado
+ * pelo WhatsApp (o pedido fica com frete pendente).
  */
 export function CheckoutForm({
   items,
-  quote,
-  option,
   coupon,
-  onShippingStale,
   onSuccess,
 }: {
   items: { slug: string; size: string; qty: number }[];
-  quote: OkQuote | null;
-  option: ShippingOption | null;
   coupon: string | null;
-  /** o servidor achou valor/modalidade diferente: pede nova cotação */
-  onShippingStale: () => void;
   /** recebe o pedido salvo; `popup` é a aba aberta no clique (para levar ao WhatsApp) */
   onSuccess: (r: CheckoutSuccess, popup: Window | null) => void;
 }) {
@@ -71,7 +62,7 @@ export function CheckoutForm({
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [manualCep, setManualCep] = useState("");
-  const cep = quote?.cep ?? manualCep.replace(/\D/g, "");
+  const cep = manualCep.replace(/\D/g, "");
   // Mesma tentativa (mesmos dados) = mesma chave: clique repetido ou nova tentativa não duplica o pedido.
   const attempt = useRef<{ sig: string; id: string } | null>(null);
 
@@ -79,7 +70,6 @@ export function CheckoutForm({
   useEffect(() => {
     if (cep.length !== 8) return;
     let cancelled = false;
-    setAddr((a) => ({ ...a, city: quote?.city || a.city, uf: quote?.uf || a.uf }));
     fetch(`https://viacep.com.br/ws/${cep}/json/`)
       .then((r) => (r.ok ? r.json() : null))
       .then((b: { erro?: unknown; logradouro?: string; bairro?: string; localidade?: string; uf?: string } | null) => {
@@ -96,12 +86,7 @@ export function CheckoutForm({
     return () => {
       cancelled = true;
     };
-  }, [cep, quote?.city, quote?.uf]);
-
-  // Nova escolha de frete: o aviso anterior (ex.: "o valor mudou") já foi resolvido.
-  useEffect(() => {
-    if (option) setError(null);
-  }, [option?.key, option?.price]);
+  }, [cep]);
 
   const canSubmit = !sending && cep.length === 8;
 
@@ -109,13 +94,9 @@ export function CheckoutForm({
     e.preventDefault();
     if (sending) return;
     setError(null);
-    if (quote && !option) {
-      setError("Escolha a modalidade de frete (ou altere o CEP).");
-      return;
-    }
     const address = { cep, ...addr };
     const customer = { name: name.trim(), whatsapp };
-    const shipping = option && quote ? { cep, key: option.key, price: option.price } : null;
+    const shipping = null; // frete combinado no WhatsApp
     const sig = JSON.stringify({ items, address, customer, shipping, coupon });
     if (!attempt.current || attempt.current.sig !== sig) attempt.current = { sig, id: newRequestId() };
 
@@ -139,7 +120,6 @@ export function CheckoutForm({
       if (!r.ok) {
         popup?.close();
         setError(r.message);
-        if (r.code === "shipping_changed" || r.code === "shipping_unavailable" || r.code === "quote_failed") onShippingStale();
         return;
       }
       onSuccess({ ...r, address, customer }, popup);
@@ -168,24 +148,17 @@ export function CheckoutForm({
           value={whatsapp}
           onChange={(e) => setWhatsapp(maskPhone(e.target.value))}
         />
-        {quote ? (
-          <div className="grid grid-cols-[1fr_auto] gap-2">
-            <input className={input} disabled value={maskCep(quote.cep)} aria-label="CEP de entrega" />
-            <span className="self-center text-[11px] text-muted-foreground">mude no frete</span>
-          </div>
-        ) : (
-          <input
-            className={input}
-            required
-            inputMode="numeric"
-            autoComplete="postal-code"
-            placeholder="CEP de entrega"
-            aria-label="CEP de entrega"
-            pattern="\d{5}-\d{3}"
-            value={maskCep(manualCep)}
-            onChange={(e) => setManualCep(e.target.value)}
-          />
-        )}
+        <input
+          className={input}
+          required
+          inputMode="numeric"
+          autoComplete="postal-code"
+          placeholder="CEP de entrega"
+          aria-label="CEP de entrega"
+          pattern="\d{5}-\d{3}"
+          value={maskCep(manualCep)}
+          onChange={(e) => setManualCep(e.target.value)}
+        />
         <input className={input} required maxLength={160} autoComplete="address-line1" placeholder="Rua / avenida" aria-label="Rua" value={addr.street} onChange={(e) => setAddr({ ...addr, street: e.target.value })} />
         <div className="grid grid-cols-[110px_1fr] gap-2">
           <input className={input} required maxLength={20} placeholder="Número" aria-label="Número" value={addr.number} onChange={(e) => setAddr({ ...addr, number: e.target.value })} />
@@ -223,9 +196,7 @@ export function CheckoutForm({
         {sending ? "Registrando pedido…" : "Finalizar pelo WhatsApp"}
       </button>
       <p className="text-center text-[11px] text-muted-foreground">
-        {option
-          ? "Conferimos preços, estoque e frete, registramos o pedido e abrimos o WhatsApp da loja. O pagamento é combinado por lá."
-          : "Sem frete calculado, o frete é combinado no WhatsApp e somado antes do pagamento."}
+        Conferimos preços e estoque, registramos o pedido e abrimos o WhatsApp da loja. Frete e pagamento são combinados por lá.
       </p>
     </form>
   );
