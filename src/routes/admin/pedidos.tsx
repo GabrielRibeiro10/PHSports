@@ -106,6 +106,7 @@ function OrdersPage() {
                 <tr>
                   <th className="px-4 py-3">Pedido</th>
                   <th className="px-4 py-3">Cliente</th>
+                  <th className="px-4 py-3">Entrega</th>
                   <th className="px-4 py-3">Pagamento</th>
                   <th className="px-4 py-3">Total</th>
                   <th className="px-4 py-3">Status</th>
@@ -123,6 +124,29 @@ function OrdersPage() {
                     <td className="px-4 py-3">
                       <p className="font-semibold">{o.customer_name || "—"}</p>
                       <p className="text-xs text-muted-foreground">{o.customer_whatsapp}</p>
+                    </td>
+                    <td className="px-4 py-3 text-xs">
+                      {o.shipping_service ? (
+                        <>
+                          <p className="font-semibold">
+                            {o.shipping_service} · {formatBRL(Number(o.shipping))}
+                            {o.shipping_environment === "sandbox" && (
+                              <span className="ml-1.5 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold text-amber-800">TESTE</span>
+                            )}
+                          </p>
+                          <p className="text-muted-foreground">
+                            {o.shipping_days_min === o.shipping_days_max ? o.shipping_days_max : `${o.shipping_days_min}–${o.shipping_days_max}`} dias úteis
+                            {o.shipping_prep_days ? ` + ${o.shipping_prep_days} prep.` : ""}
+                          </p>
+                          <p className="text-muted-foreground">
+                            {o.ship_street}, {o.ship_number}
+                            {o.ship_complement ? ` - ${o.ship_complement}` : ""} · {o.ship_district} · {o.ship_city}/{o.ship_uf} ·{" "}
+                            {o.ship_cep.replace(/^(\d{5})(\d{3})$/, "$1-$2")}
+                          </p>
+                        </>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
                     </td>
                     <td className="px-4 py-3 capitalize">{o.payment_method}</td>
                     <td className="px-4 py-3 font-bold tabular-nums">{formatBRL(Number(o.total))}</td>

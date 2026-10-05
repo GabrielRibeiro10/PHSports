@@ -46,3 +46,39 @@ export function buildOrderMessage(items: CartItem[], subtotal: number, products:
     "Aguardo as instruções para concluir a compra. Obrigado!",
   ].join("\n");
 }
+
+/** Mensagem do pedido já registrado (código, itens, frete escolhido, endereço e total cobrado). */
+export function buildConfirmedOrderMessage(o: {
+  code: string;
+  lines: { name: string; size: string; qty: number }[];
+  subtotal: number;
+  discount: number;
+  shipping: { name: string; price: number; days: { min: number; max: number }; prepDays: number };
+  total: number;
+  address: { street: string; number: string; complement?: string; district: string; city: string; uf: string; cep: string };
+  customer: { name: string };
+}) {
+  const a = o.address;
+  const prazo = o.shipping.days.min === o.shipping.days.max ? `${o.shipping.days.max}` : `${o.shipping.days.min} a ${o.shipping.days.max}`;
+  return [
+    `Olá, equipe PHSPORTS! Acabei de fazer o pedido *${o.code}*.`,
+    "",
+    "Produtos:",
+    ...o.lines.map((l) => `- ${l.name} | Tam. ${l.size} | x${l.qty}`),
+    "",
+    `Produtos: ${formatBRL(o.subtotal)}`,
+    ...(o.discount > 0 ? [`Desconto: -${formatBRL(o.discount)}`] : []),
+    `Frete ${o.shipping.name}: ${formatBRL(o.shipping.price)} (${prazo} dias úteis após a postagem${
+      o.shipping.prepDays > 0 ? ` + ${o.shipping.prepDays} de preparação` : ""
+    })`,
+    `*Total: ${formatBRL(o.total)}*`,
+    "",
+    "Entrega:",
+    o.customer.name,
+    `${a.street}, ${a.number}${a.complement ? ` - ${a.complement}` : ""}`,
+    `${a.district} - ${a.city}/${a.uf}`,
+    `CEP ${a.cep.replace(/^(\d{5})(\d{3})$/, "$1-$2")}`,
+    "",
+    "Aguardo a chave Pix para pagar. Obrigado!",
+  ].join("\n");
+}

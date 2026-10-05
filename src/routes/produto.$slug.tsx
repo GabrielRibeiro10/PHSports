@@ -8,6 +8,7 @@ import { getProduct, productsQueryOptions } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ProductCard } from "@/components/ProductCard";
+import { ShippingCalc } from "@/components/ShippingCalc";
 import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/produto/$slug")({
@@ -323,6 +324,8 @@ function ProductPage() {
               <ShoppingBag className="size-4" /> Adicionar ao carrinho
             </button>
           </div>
+
+          <ShippingCalc className="mt-5" items={[{ slug: product.slug, qty }]} />
 
           <ul className="mt-5 grid gap-2 text-xs text-muted-foreground">
             <li className="inline-flex items-center gap-2"><Check className="size-3.5 text-brand" /> Tecido premium com tecnologia dry-fit</li>

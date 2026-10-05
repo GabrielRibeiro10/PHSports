@@ -238,6 +238,24 @@ export type Database = {
       }
       orders: {
         Row: {
+          subtotal: number
+          discount: number
+          coupon_code: string | null
+          shipping_service: string
+          shipping_service_key: string
+          shipping_carrier: string
+          shipping_days_min: number | null
+          shipping_days_max: number | null
+          shipping_prep_days: number
+          shipping_environment: string
+          shipping_quoted_at: string | null
+          ship_cep: string
+          ship_street: string
+          ship_number: string
+          ship_complement: string
+          ship_district: string
+          ship_city: string
+          ship_uf: string
           code: string
           created_at: string
           customer_id: string | null
@@ -252,6 +270,24 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          subtotal?: number
+          discount?: number
+          coupon_code?: string | null
+          shipping_service?: string
+          shipping_service_key?: string
+          shipping_carrier?: string
+          shipping_days_min?: number | null
+          shipping_days_max?: number | null
+          shipping_prep_days?: number
+          shipping_environment?: string
+          shipping_quoted_at?: string | null
+          ship_cep?: string
+          ship_street?: string
+          ship_number?: string
+          ship_complement?: string
+          ship_district?: string
+          ship_city?: string
+          ship_uf?: string
           code?: string
           created_at?: string
           customer_id?: string | null
@@ -266,6 +302,24 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          subtotal?: number
+          discount?: number
+          coupon_code?: string | null
+          shipping_service?: string
+          shipping_service_key?: string
+          shipping_carrier?: string
+          shipping_days_min?: number | null
+          shipping_days_max?: number | null
+          shipping_prep_days?: number
+          shipping_environment?: string
+          shipping_quoted_at?: string | null
+          ship_cep?: string
+          ship_street?: string
+          ship_number?: string
+          ship_complement?: string
+          ship_district?: string
+          ship_city?: string
+          ship_uf?: string
           code?: string
           created_at?: string
           customer_id?: string | null

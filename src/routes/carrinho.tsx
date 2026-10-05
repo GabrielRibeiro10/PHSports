@@ -6,8 +6,11 @@ import { toast } from "sonner";
 import { formatBRL, SIZES } from "@/lib/products";
 import { productsQueryOptions } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
-import { buildOrderMessage, whatsappHref } from "@/lib/whatsapp";
-import { redeemCoupon, validateCoupon } from "@/lib/coupons.functions";
+import { buildConfirmedOrderMessage, whatsappHref } from "@/lib/whatsapp";
+import { validateCoupon } from "@/lib/coupons.functions";
+import { ShippingCalc, type OkQuote } from "@/components/ShippingCalc";
+import { CheckoutForm, type CheckoutSuccess } from "@/components/CheckoutForm";
+import type { ShippingOption } from "@/lib/shipping/types";
 import { useServerFn } from "@tanstack/react-start";
 import { track } from "@/lib/analytics";
 
@@ -34,11 +37,17 @@ function CartPage() {
   const [couponError, setCouponError] = useState("");
   const [checking, setChecking] = useState(false);
   const validate = useServerFn(validateCoupon);
-  const redeem = useServerFn(redeemCoupon);
+
+  // Frete: cotação atual e modalidade escolhida. Qualquer mudança no carrinho/CEP refaz a cotação
+  // e a escolha só volta a valer quando a nova cotação chega (ver ShippingCalc).
+  const [quote, setQuote] = useState<OkQuote | null>(null);
+  const [shipping, setShipping] = useState<ShippingOption | null>(null);
+  const [refreshQuote, setRefreshQuote] = useState(0);
+  const [done, setDone] = useState<CheckoutSuccess | null>(null);
+  const quoteItems = useMemo(() => items.map((it) => ({ slug: it.slug, qty: it.qty })), [items]);
 
   const discount = applied ? Math.min(applied.discount, subtotal) : 0;
-  const total = Math.max(subtotal - discount, 0);
-  const msg = useMemo(() => buildOrderMessage(items, total, products), [items, total, products]);
+  const total = Math.max(subtotal - discount, 0) + (shipping?.price ?? 0);
 
   async function applyCoupon(e: React.FormEvent) {
     e.preventDefault();
@@ -91,6 +100,10 @@ function CartPage() {
     toast.success("Cupom removido");
   }
 
+
+  if (done) {
+    return <OrderPlaced order={done} />;
+  }
 
   if (!hydrated) {
     return <div className="mx-auto max-w-4xl px-4 py-16 text-center text-muted-foreground">Carregando…</div>;
@@ -250,38 +263,104 @@ function CartPage() {
                   <span className="font-black">-{formatBRL(discount)}</span>
                 </div>
               ) : null}
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Frete{shipping ? ` (${shipping.name})` : ""}</span>
+                <span className="font-semibold">{shipping ? formatBRL(shipping.price) : <span className="text-xs font-normal text-muted-foreground">calcule abaixo</span>}</span>
+              </div>
               <div className="mt-2 flex items-baseline justify-between border-t border-border pt-3">
                 <span className="text-sm font-bold">Total</span>
                 <span className="text-2xl font-black">{formatBRL(total)}</span>
               </div>
-              <p className="text-xs text-muted-foreground">ou 6x de {formatBRL(total / 6)} sem juros</p>
-
+              {!shipping && <p className="text-xs text-muted-foreground">O frete é somado ao total quando você escolher a entrega.</p>}
             </div>
-            <a
-              href={whatsappHref(msg)}
-              onClick={() => {
-                // Usage is only recorded when the order is actually finalized.
-                if (applied) void redeem({ data: { code: applied.code } }).catch(() => {});
+          </div>
+
+          <ShippingCalc
+            items={quoteItems}
+            selectable
+            selectedKey={shipping?.key ?? null}
+            refreshToken={refreshQuote}
+            onQuote={setQuote}
+            onSelect={(o) => setShipping(o)}
+          />
+
+          <div className="rounded-xl border border-border bg-card p-5">
+            <CheckoutForm
+              items={items.map((it) => ({ slug: it.slug, size: String(it.size), qty: it.qty }))}
+              quote={quote}
+              option={shipping}
+              coupon={applied?.code ?? null}
+              onShippingStale={() => {
+                setShipping(null);
+                setRefreshQuote((n) => n + 1);
+              }}
+              onSuccess={(r) => {
                 track.checkout(
                   items.map((it) => {
                     const p = getProduct(it.slug);
                     return { slug: it.slug, name: p?.name ?? it.slug, club: p?.club, price: p?.price ?? 0, qty: it.qty };
                   }),
-                  total,
+                  r.total,
                 );
+                setDone({
+                  ...r,
+                  lines: items.map((it) => ({ name: getProduct(it.slug)?.name ?? it.slug, size: String(it.size), qty: it.qty })),
+                } as CheckoutSuccess);
+                clear();
+                window.scrollTo({ top: 0 });
               }}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-glow mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-brand px-6 py-3.5 text-sm font-black text-brand-foreground shadow-md"
-            >
-              <MessageCircle className="size-4" /> Finalizar Compra no WhatsApp
-            </a>
-            <p className="mt-2 text-center text-[11px] text-muted-foreground">
-              Você será redirecionado ao nosso WhatsApp para confirmar o pedido.
-            </p>
+            />
           </div>
         </aside>
       </div>
+    </div>
+  );
+}
+
+function OrderPlaced({ order }: { order: CheckoutSuccess & { lines?: { name: string; size: string; qty: number }[] } }) {
+  const msg = buildConfirmedOrderMessage({
+    code: order.code,
+    lines: order.lines ?? [],
+    subtotal: order.subtotal,
+    discount: order.discount,
+    shipping: order.shipping,
+    total: order.total,
+    address: order.address,
+    customer: order.customer,
+  });
+  const s = order.shipping;
+  return (
+    <div className="mx-auto max-w-lg px-4 py-16 text-center">
+      <div className="mx-auto grid size-16 place-items-center rounded-full bg-primary text-primary-foreground">
+        <Check className="size-7" />
+      </div>
+      <h1 className="mt-6 text-2xl font-black">Pedido {order.code} registrado</h1>
+      {order.environment === "sandbox" && (
+        <p className="mx-auto mt-3 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">Pedido de teste (frete em ambiente de teste)</p>
+      )}
+      <div className="mt-6 space-y-2 rounded-xl border border-border bg-card p-5 text-left text-sm">
+        <div className="flex justify-between"><span className="text-muted-foreground">Produtos</span><span className="font-semibold">{formatBRL(order.subtotal)}</span></div>
+        {order.discount > 0 && (
+          <div className="flex justify-between"><span className="text-muted-foreground">Desconto</span><span className="font-semibold">-{formatBRL(order.discount)}</span></div>
+        )}
+        <div className="flex justify-between">
+          <span className="text-muted-foreground">Frete {s.name} · {s.days.min === s.days.max ? s.days.max : `${s.days.min} a ${s.days.max}`} dias úteis{s.prepDays ? ` + ${s.prepDays} de preparação` : ""}</span>
+          <span className="font-semibold">{formatBRL(s.price)}</span>
+        </div>
+        <div className="flex items-baseline justify-between border-t border-border pt-3">
+          <span className="font-bold">Total a pagar</span>
+          <span className="text-2xl font-black">{formatBRL(order.total)}</span>
+        </div>
+      </div>
+      <a
+        href={whatsappHref(msg)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn-glow mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-brand hover:text-brand-foreground"
+      >
+        <MessageCircle className="size-4" /> Enviar pedido no WhatsApp e pagar com Pix
+      </a>
+      <p className="mt-2 text-xs text-muted-foreground">O pedido já está salvo. No WhatsApp mandamos a chave Pix com o valor total.</p>
     </div>
   );
 }
