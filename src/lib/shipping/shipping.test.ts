@@ -281,16 +281,15 @@ describe("pedido (servidor)", () => {
         saved.items = items;
         return { code: byKey.get(key)!, created: true };
       },
-      storeWhatsapp: async () => "5512991112222",
       ...over,
     };
     return { d, saved, f };
   }
 
-  it("frete escolhido chega ao pedido e ao total (preços do banco) + WhatsApp configurado", async () => {
+  it("frete escolhido chega ao pedido e ao total (preços do banco) + WhatsApp da loja", async () => {
     const { d, saved } = orderDeps();
     const r = await createOrderCore(base, d);
-    expect(r).toMatchObject({ ok: true, code: "PH-1", created: true, subtotal: 519.7, discount: 0, total: 541.8, whatsapp: "5512991112222" });
+    expect(r).toMatchObject({ ok: true, code: "PH-1", created: true, subtotal: 519.7, discount: 0, total: 541.8, whatsapp: "5512992319709" });
     expect(saved.order).toMatchObject({
       shipping: 22.1,
       total: 541.8,
@@ -389,7 +388,6 @@ describe("banco sem migração", () => {
       loadCoupon: async () => null,
       redeemCoupon: async () => true,
       saveOrder: async () => "not_ready" as const,
-      storeWhatsapp: async () => null,
     };
     const r = await createOrderCore(
       {

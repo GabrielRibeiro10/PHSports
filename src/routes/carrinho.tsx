@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { formatBRL, SIZES } from "@/lib/products";
 import { productsQueryOptions } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
-import { buildConfirmedOrderMessage, whatsappHref } from "@/lib/whatsapp";
+import { buildCheckoutMessage, whatsappHref, type CheckoutMessageLine } from "@/lib/whatsapp";
 import { validateCoupon } from "@/lib/coupons.functions";
 import { CheckoutForm, type CheckoutSuccess } from "@/components/CheckoutForm";
 import { useServerFn } from "@tanstack/react-start";
@@ -36,7 +36,7 @@ function CartPage() {
   const [checking, setChecking] = useState(false);
   const validate = useServerFn(validateCoupon);
 
-  const [done, setDone] = useState<CheckoutSuccess | null>(null);
+  const [done, setDone] = useState<PlacedOrder | null>(null);
 
   const discount = applied ? Math.min(applied.discount, subtotal) : 0;
   const total = Math.max(subtotal - discount, 0);
@@ -274,10 +274,14 @@ function CartPage() {
                   }),
                   r.total,
                 );
-                const placed = {
+                const placed: PlacedOrder = {
                   ...r,
-                  lines: items.map((it) => ({ name: getProduct(it.slug)?.name ?? it.slug, size: String(it.size), qty: it.qty })),
-                } as CheckoutSuccess & { lines: { name: string; size: string; qty: number }[] };
+                  lines: items.map((it) => {
+                    const p = getProduct(it.slug);
+                    return { name: p?.name ?? it.slug, size: String(it.size), qty: it.qty, price: p?.price };
+                  }),
+                  coupon: applied?.code ?? null,
+                };
                 setDone(placed);
                 clear();
                 window.scrollTo({ top: 0 });
@@ -294,21 +298,26 @@ function CartPage() {
   );
 }
 
-function orderWhatsappHref(order: CheckoutSuccess & { lines?: { name: string; size: string; qty: number }[] }) {
-  const msg = buildConfirmedOrderMessage({
+/** Pedido salvo + o que só a página conhece (itens com preço e o cupom aplicado). */
+type PlacedOrder = CheckoutSuccess & { lines?: CheckoutMessageLine[]; coupon?: string | null };
+
+function orderWhatsappHref(order: PlacedOrder) {
+  const msg = buildCheckoutMessage({
     code: order.code,
     lines: order.lines ?? [],
     subtotal: order.subtotal,
     discount: order.discount,
+    coupon: order.coupon,
     shipping: order.shipping,
     total: order.total,
     address: order.address,
     customer: order.customer,
   });
-  return whatsappHref(msg, order.whatsapp);
+  // Sempre o WhatsApp da loja (STORE_PHONE).
+  return whatsappHref(msg);
 }
 
-function OrderPlaced({ order }: { order: CheckoutSuccess & { lines?: { name: string; size: string; qty: number }[] } }) {
+function OrderPlaced({ order }: { order: PlacedOrder }) {
   return (
     <div className="mx-auto max-w-lg px-4 py-16 text-center">
       <div className="mx-auto grid size-16 place-items-center rounded-full bg-primary text-primary-foreground">

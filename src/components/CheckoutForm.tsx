@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { AlertCircle, Loader2, MessageCircle } from "lucide-react";
 import { createOrder } from "@/lib/orders.functions";
-import { buildOrderMessage, whatsappHref } from "@/lib/whatsapp";
+import { buildCheckoutMessage, cartLines, whatsappHref } from "@/lib/whatsapp";
 import { useQuery } from "@tanstack/react-query";
 import { productsQueryOptions } from "@/lib/catalog";
 import type { OrderResult } from "@/lib/orders.server";
@@ -109,10 +109,12 @@ export function CheckoutForm({
         data: { requestId: attempt.current.id, items, shipping, customer, address, coupon: coupon ?? undefined },
       });
       if (!r.ok && r.code === "not_ready") {
-        // Banco ainda não atualizado: segue como antes (mensagem no WhatsApp, sem número de pedido).
-        const list = products ?? [];
-        const sub = items.reduce((t, i) => t + (list.find((p) => p.slug === i.slug)?.price ?? 0) * i.qty, 0);
-        const href = whatsappHref(buildOrderMessage(items.map((i) => ({ slug: i.slug, size: i.size, qty: i.qty })), sub, list));
+        // Banco ainda não atualizado: pedido vai só pelo WhatsApp (sem número de pedido), mas com
+        // os mesmos dados de cliente e endereço.
+        const lines = cartLines(items, products ?? []);
+        const sub = lines.reduce((t, l) => t + (l.price ?? 0) * l.qty, 0);
+        const msg = buildCheckoutMessage({ lines, subtotal: sub, discount: 0, coupon, shipping, total: sub, customer, address });
+        const href = whatsappHref(msg);
         if (popup) popup.location.href = href;
         else window.location.href = href;
         return;

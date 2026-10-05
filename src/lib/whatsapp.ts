@@ -19,68 +19,71 @@ export const TRACKING_MESSAGE =
 export const EXCHANGE_MESSAGE =
   "Olá! Gostaria de solicitar uma troca ou devolução. Poderiam me orientar sobre os próximos passos?";
 
-export function buildOrderMessage(items: CartItem[], subtotal: number, products: Product[]) {
-  const enriched = items
-    .map((it) => ({ it, p: products.find((pr) => pr.slug === it.slug) }))
-    .filter((x) => x.p);
+export type CheckoutMessageLine = { name: string; size: string; qty: number; /** preço unitário */ price?: number };
 
-  const produtos = enriched.map(({ it, p }) => `- ${p!.name} (x${it.qty})`).join("\n");
-  const tamanhos = enriched.map(({ it, p }) => `- ${p!.name}: ${it.size}`).join("\n");
-  const quantidades = enriched.map(({ it, p }) => `- ${p!.name}: ${it.qty}`).join("\n");
-
-  return [
-    "Olá, equipe PHSPORTS! Gostaria de finalizar meu pedido.",
-    "",
-    "Produtos:",
-    produtos,
-    "",
-    "Tamanhos:",
-    tamanhos,
-    "",
-    "Quantidade:",
-    quantidades,
-    "",
-    `Valor Total:`,
-    formatBRL(subtotal),
-    "",
-    "Aguardo as instruções para concluir a compra. Obrigado!",
-  ].join("\n");
+/** Itens do carrinho com nome e preço do catálogo (itens sem produto ficam de fora). */
+export function cartLines(items: Pick<CartItem, "slug" | "size" | "qty">[], products: Product[]): CheckoutMessageLine[] {
+  return items.flatMap((it) => {
+    const p = products.find((pr) => pr.slug === it.slug);
+    return p ? [{ name: p.name, size: String(it.size), qty: it.qty, price: p.price }] : [];
+  });
 }
 
-/** Mensagem do pedido já registrado (código, itens, frete escolhido, endereço e total cobrado). */
-export function buildConfirmedOrderMessage(o: {
-  code: string;
-  lines: { name: string; size: string; qty: number }[];
+/**
+ * Mensagem do "Finalizar pelo WhatsApp": tudo o que a loja precisa para fechar a venda
+ * (pedido, itens, valores, cliente e endereço). `code` vazio = pedido não registrado no painel.
+ */
+export function buildCheckoutMessage(o: {
+  code?: string | null;
+  lines: CheckoutMessageLine[];
   subtotal: number;
   discount: number;
+  coupon?: string | null;
   /** null = frete a combinar */
   shipping: { name: string; price: number; days: { min: number; max: number }; prepDays: number } | null;
   total: number;
+  customer: { name: string; whatsapp: string };
   address: { street: string; number: string; complement?: string; district: string; city: string; uf: string; cep: string };
-  customer: { name: string };
 }) {
   const a = o.address;
   const s = o.shipping;
   const prazo = s ? (s.days.min === s.days.max ? `${s.days.max}` : `${s.days.min} a ${s.days.max}`) : "";
+  const cupom = o.coupon
+    ? o.discount > 0
+      ? [`Cupom ${o.coupon}: -${formatBRL(o.discount)}`]
+      : [`Cupom informado: ${o.coupon} (a confirmar)`]
+    : o.discount > 0
+      ? [`Desconto: -${formatBRL(o.discount)}`]
+      : [];
   return [
-    `Olá, equipe PHSPORTS! Acabei de fazer o pedido *${o.code}*.`,
+    "Olá, PH Sports! Quero finalizar minha compra pelo site.",
+    ...(o.code ? [`*Pedido ${o.code}*`] : []),
     "",
-    "Produtos:",
-    ...o.lines.map((l) => `- ${l.name} | Tam. ${l.size} | x${l.qty}`),
+    "*Itens*",
+    ...o.lines.flatMap((l, i) => [
+      `${i + 1}. ${l.name}`,
+      `   Tamanho ${l.size} · ${l.qty} un.${l.price != null ? ` · ${formatBRL(l.price * l.qty)}` : ""}`,
+    ]),
     "",
+    "*Valores*",
     `Produtos: ${formatBRL(o.subtotal)}`,
-    ...(o.discount > 0 ? [`Desconto: -${formatBRL(o.discount)}`] : []),
+    ...cupom,
     s
       ? `Frete ${s.name}: ${formatBRL(s.price)} (${prazo} dias úteis após a postagem${s.prepDays > 0 ? ` + ${s.prepDays} de preparação` : ""})`
-      : "Frete: a combinar (por favor, me passem o valor)",
+      : "Frete: a combinar",
     s ? `*Total: ${formatBRL(o.total)}*` : `*Total: ${formatBRL(o.total)} + frete*`,
     "",
-    "Entrega:",
-    o.customer.name,
+    "*Cliente*",
+    `Nome: ${o.customer.name}`,
+    `WhatsApp: ${o.customer.whatsapp}`,
+    "",
+    "*Endereço de entrega*",
     `${a.street}, ${a.number}${a.complement ? ` - ${a.complement}` : ""}`,
     `${a.district} - ${a.city}/${a.uf}`,
     `CEP ${a.cep.replace(/^(\d{5})(\d{3})$/, "$1-$2")}`,
     "",
-    "Aguardo as instruções de pagamento. Obrigado!",
+    s
+      ? "Pode me passar os dados para pagamento? Obrigado!"
+      : "Pode me passar o valor do frete e os dados para pagamento? Obrigado!",
   ].join("\n");
 }

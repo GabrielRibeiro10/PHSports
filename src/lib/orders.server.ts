@@ -34,7 +34,7 @@ export type OrderResult =
       /** null = frete a combinar pelo WhatsApp */
       shipping: (ShippingOption & { prepDays: number }) | null;
       environment: ShippingEnvironment | null;
-      /** número de WhatsApp da loja (configurado no painel) */
+      /** número de WhatsApp da loja que recebe o pedido (fixo: STORE_PHONE) */
       whatsapp: string;
     }
   | { ok: false; code: OrderErrorCode; message: string; quote?: QuoteResult };
@@ -52,7 +52,6 @@ export type OrderDeps = Omit<QuoteDeps, "loadProducts"> & {
   redeemCoupon: (code: string) => Promise<boolean>;
   /** cria o pedido de forma atômica e idempotente (mesma chave → mesmo pedido) */
   saveOrder: (key: string, order: OrderRecord, items: OrderItemRecord[]) => Promise<{ code: string; created: boolean } | "not_ready" | null>;
-  storeWhatsapp: () => Promise<string | null>;
 };
 
 const round = (n: number) => Math.round(n * 100) / 100;
@@ -184,7 +183,8 @@ export async function createOrderCore(input: OrderInput, deps: OrderDeps): Promi
     total,
     shipping: option ? { ...option, prepDays } : null,
     environment,
-    whatsapp: ((await deps.storeWhatsapp()) || STORE_PHONE).replace(/\D/g, ""),
+    // Pedidos do site vão sempre para o WhatsApp da loja (não usa o número do painel).
+    whatsapp: STORE_PHONE,
   };
 }
 
@@ -231,12 +231,6 @@ export async function serverOrderDeps(): Promise<OrderDeps> {
       }
       const r = data as { code: string; created: boolean };
       return { code: r.code, created: r.created };
-    },
-    storeWhatsapp: async () => {
-      const { data } = await supabaseAdmin.from("store_settings").select("value").eq("key", "operacao").maybeSingle();
-      const v = (data?.value ?? {}) as { whatsapp?: unknown };
-      const digits = typeof v.whatsapp === "string" ? v.whatsapp.replace(/\D/g, "") : "";
-      return digits.length >= 12 ? digits : null;
     },
   };
 }

@@ -69,7 +69,7 @@ function SettingsPage() {
               <Input id="cfg-wa" inputMode="tel" placeholder="55 12 99999-0000" value={v.whatsapp ?? ""} onChange={(e) => setV({ ...v, whatsapp: e.target.value })} />
               <p className={`text-xs ${phoneOk ? "text-muted-foreground" : "text-destructive"}`}>
                 {phoneOk
-                  ? `Número que recebe os pedidos do “Finalizar pelo WhatsApp”. Vazio = usa o padrão do site (${STORE_PHONE}).`
+                  ? `Os pedidos do “Finalizar pelo WhatsApp” vão sempre para o número da loja (${STORE_PHONE}); este campo não muda isso.`
                   : "Use 55 + DDD + número (12 ou 13 dígitos)."}
               </p>
             </div>
