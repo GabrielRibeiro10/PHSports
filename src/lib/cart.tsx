@@ -28,15 +28,30 @@ const KEY = "phsports.cart.v1";
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
-  const { data: products = [] } = useQuery(productsQueryOptions);
+  const { data: products = [], isSuccess } = useQuery(productsQueryOptions);
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(KEY);
-      if (raw) setItems(JSON.parse(raw));
+      const saved: unknown = raw ? JSON.parse(raw) : [];
+      if (Array.isArray(saved))
+        setItems(
+          saved.filter(
+            (i): i is CartItem =>
+              !!i && typeof i.slug === "string" && typeof i.size === "string" && Number.isFinite(i.qty) && i.qty > 0,
+          ),
+        );
     } catch {}
     setHydrated(true);
   }, []);
+
+  // Produto que saiu do catálogo (ou foi desativado) ficava guardado no navegador: o carrinho não
+  // mostrava, mas o número do ícone e o checkout ainda contavam. Some assim que o catálogo carrega.
+  useEffect(() => {
+    if (!hydrated || !isSuccess || products.length === 0) return;
+    const known = new Set(products.map((p) => p.slug));
+    setItems((prev) => (prev.every((i) => known.has(i.slug)) ? prev : prev.filter((i) => known.has(i.slug))));
+  }, [hydrated, isSuccess, products]);
 
   useEffect(() => {
     if (!hydrated) return;
