@@ -43,6 +43,11 @@ assert.equal((await user((tx) => tx.query("select * from public.order_items"))).
 assert.equal((await user((tx) => tx.query("select * from public.customers"))).rows.length, 0);
 assert.equal((await user((tx) => tx.query("select * from public.order_events"))).rows.length, 0);
 ok("visitante/usuário sem admin não leem pedidos, itens, clientes nem histórico");
+await svc((tx) => tx.query(`insert into public.store_settings (key, value) values ('operacao', '{"pix_key":"chave-teste"}') on conflict (key) do update set value = excluded.value`));
+await fails(anon((tx) => tx.query("select * from public.store_settings")), /permission denied/);
+assert.equal((await user((tx) => tx.query("select * from public.store_settings"))).rows.length, 0);
+assert.ok((await admin((tx) => tx.query("select * from public.store_settings where key='operacao'"))).rows.length === 1);
+ok("configurações da loja (chave Pix, WhatsApp) só o admin lê");
 await fails(rpc(user, "select public.admin_confirm_payment($1, 100)", [r1.id]), /restrito a administradores/);
 await fails(rpc(anon, "select public.admin_confirm_payment($1, 100)", [r1.id]), /permission denied/);
 await fails(rpc(user, "select public.admin_adjust_stock($1,'M',5,'reposicao')", [p1.id]), /restrito a administradores/);
