@@ -63,11 +63,7 @@ export function Header() {
       data-on-dark={onDark}
       className={`sticky top-0 z-40 transition-[background-color,box-shadow,backdrop-filter] duration-300 ${
         pathname === "/" ? "-mb-[calc(4rem*var(--m-scale,1)+1px)] lg:-mb-[calc(5rem+1px)]" : ""
-      } ${
-        onDark
-          ? "bg-transparent"
-          : "bg-transparent"
-      }`}
+      } bg-transparent`}
     >
       {/* Cápsula fina de vidro (desktop) que contorna a header depois da HERO, sem esticar até as bordas da tela */}
       <div
