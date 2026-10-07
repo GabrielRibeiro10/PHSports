@@ -46,3 +46,13 @@ service-account*.json
 *.dump
 supabase/.temp/
 supabase/.env*
+
+# Keep credentials and local sensitive files out of Git
+.env
+.dev.vars.*
+id_rsa
+id_ed25519
+credentials*.json
+*.db
+*.db-wal
+*.db-shm
