@@ -49,8 +49,12 @@ function isH3SwallowedErrorBody(body: string): boolean {
 // bundling model (TanStack Start ships inline hydration scripts and Tailwind
 // utility styles are inlined by Vite in production) while restricting all
 // external origins to Supabase + a small set of trusted CDNs used by images.
-const SUPABASE_HOST = "https://jvwdeuwxkuwbbmdundwn.supabase.co";
-const SUPABASE_WS = "wss://jvwdeuwxkuwbbmdundwn.supabase.co";
+// Mesmo banco que o navegador usa (VITE_SUPABASE_URL do build): Lovable Cloud na Lovable,
+// o Supabase próprio na Vercel. Com o endereço fixo, a CSP bloquearia o outro banco.
+const SUPABASE_HOST = new URL(
+  import.meta.env.VITE_SUPABASE_URL || "https://jvwdeuwxkuwbbmdundwn.supabase.co",
+).origin;
+const SUPABASE_WS = SUPABASE_HOST.replace(/^https:/, "wss:");
 
 const CSP = [
   "default-src 'self'",
