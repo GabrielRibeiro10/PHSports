@@ -210,7 +210,7 @@ export function Hero() {
           </span>
           <h1
             aria-label={TITLE_LABEL}
-            className="hero-serif mt-4 text-[40px] leading-[0.98] md:text-[clamp(3.3rem,5.4vw,5rem)] lg:mt-6 lg:text-[clamp(4.25rem,6.9vw,6.75rem)] lg:leading-[0.94]"
+            className="hero-display mt-4 max-md:max-w-[6.2em] text-[33px] leading-[0.98] md:text-[clamp(2.7rem,4.4vw,4rem)] lg:mt-6 lg:text-[clamp(3.4rem,5.5vw,5.4rem)] lg:leading-[0.94]"
           >
             <SplitTitle />
           </h1>
