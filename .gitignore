@@ -48,3 +48,12 @@ supabase/.temp/
 supabase/.env*
 
 .env
+
+# Keep credentials and local sensitive files out of Git
+.dev.vars.*
+id_rsa
+id_ed25519
+credentials*.json
+*.db
+*.db-wal
+*.db-shm
