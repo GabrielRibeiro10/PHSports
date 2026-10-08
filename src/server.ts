@@ -72,7 +72,9 @@ const CSP = [
   "font-src 'self' data: https://fonts.gstatic.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   // SSR hydration ships inline module scripts; keep 'unsafe-inline' for now.
-  ["script-src 'self' 'unsafe-inline' 'unsafe-eval'", ...ANALYTICS_SCRIPT].join(" "),
+  // challenges.cloudflare.com: desafio anti-robô (Turnstile) do login do painel.
+  ["script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com", ...ANALYTICS_SCRIPT].join(" "),
+  "frame-src https://challenges.cloudflare.com",
   // ViaCEP: o checkout preenche rua/bairro/cidade pelo CEP.
   [`connect-src 'self' ${SUPABASE_HOST} ${SUPABASE_WS} https://viacep.com.br`, ...ANALYTICS_CONNECT].join(" "),
   "frame-ancestors 'none'",

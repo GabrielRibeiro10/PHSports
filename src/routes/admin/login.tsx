@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { sanitizeEmail, checkBackoff, recordFailure, resetBackoff } from "@/lib/input-safety";
 import { writeAudit } from "@/lib/audit";
+import { Turnstile } from "@/components/admin/Turnstile";
 
 export const Route = createFileRoute("/admin/login")({
   head: () => ({
@@ -25,6 +26,8 @@ function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaReset, setCaptchaReset] = useState(0);
 
   useEffect(() => {
     if (!loading && session && isAdmin) {
@@ -48,12 +51,19 @@ function AdminLoginPage() {
       setError("Credenciais inválidas.");
       return;
     }
+    if (!captchaToken) {
+      setError("Confirme que você não é um robô.");
+      return;
+    }
 
     setSubmitting(true);
+    // O Supabase confere o desafio anti-robô antes da senha (vale também para quem chama a API direto).
     const { data, error: signInError } = await supabase.auth.signInWithPassword({
       email: cleanEmail,
       password,
+      options: { captchaToken },
     });
+    setCaptchaReset((n) => n + 1); // o token só vale uma vez
     if (signInError || !data.user) {
       const { blockedForMs } = recordFailure(BACKOFF_KEY);
       void writeAudit("admin.login.failure", { metadata: { email: cleanEmail } });
@@ -121,8 +131,13 @@ function AdminLoginPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          <Turnstile
+            onToken={setCaptchaToken}
+            onLoadError={() => setError("Não foi possível carregar a verificação anti-robô. Recarregue a página.")}
+            resetKey={captchaReset}
+          />
           {error && <p className="text-sm font-medium text-destructive">{error}</p>}
-          <Button type="submit" disabled={submitting} className="mt-1">
+          <Button type="submit" disabled={submitting || !captchaToken} className="mt-1">
             {submitting ? "Entrando…" : "Entrar"}
           </Button>
         </form>
