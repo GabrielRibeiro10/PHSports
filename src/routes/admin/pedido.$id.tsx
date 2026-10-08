@@ -298,6 +298,12 @@ function PaymentSection({ o }: { o: OrderRow }) {
   const confirm = useAction(() => confirmPayment(o.id, parseMoney(amount), note), "Pagamento confirmado e estoque baixado.");
   const refundM = useAction(() => registerRefund(o.id, parseMoney(refund), refundNote), "Reembolso registrado.");
   const cancelled = o.fulfillment_status === "cancelado";
+  // A caixa Frete fica na outra coluna (no celular, bem mais abaixo): leva até ela e já foca o valor.
+  const goToShipping = () => {
+    const input = document.getElementById("s-value");
+    input?.scrollIntoView({ behavior: "smooth", block: "center" });
+    input?.focus({ preventScroll: true });
+  };
 
   return (
     <Section title="Pagamento" icon={<CheckCircle2 className="size-4" />}>
@@ -305,9 +311,16 @@ function PaymentSection({ o }: { o: OrderRow }) {
         cancelled ? (
           <p className="text-sm text-muted-foreground">Pedido cancelado: pagamento não pode ser confirmado.</p>
         ) : o.shipping_status === "pendente" ? (
-          <p className="rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-sm text-amber-800">
-            O frete ainda está pendente. Registre o frete (ao lado) para fechar o total antes de confirmar o pagamento.
-          </p>
+          <div className="grid gap-3 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-3">
+            <p className="text-sm text-amber-800">
+              Falta registrar o frete. O botão “Confirmar pagamento” aparece assim que o frete for salvo (frete grátis: registre 0,00).
+            </p>
+            <div>
+              <Button type="button" variant="outline" onClick={goToShipping}>
+                <Truck /> Registrar frete
+              </Button>
+            </div>
+          </div>
         ) : (
           <div className="grid gap-3">
             <p className="text-sm text-muted-foreground">
