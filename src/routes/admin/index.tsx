@@ -1,7 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { AlertTriangle, Clock, DollarSign, PackageCheck, ShoppingCart, Wallet } from "lucide-react";
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { AlertTriangle, CheckCircle2, Clock, DollarSign, PackageCheck, Receipt, ShoppingCart, TrendingDown, TrendingUp, Wallet } from "lucide-react";
+import { useAttention } from "@/lib/attention";
+import { delta, fillDays, soldLinesQuery, topProducts } from "@/lib/insights";
 import { RequireAdmin } from "@/components/admin/RequireAdmin";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminCard, CardsSkeleton, EmptyState, PageHeader, StatCard } from "@/components/admin/AdminUI";
@@ -41,12 +44,21 @@ function DashboardPage() {
     return { from: start.toISOString(), to: end.toISOString() };
   }, [days]);
   const dash = useQuery(dashboardQuery(from, to, low));
+  const prevRange = useMemo(() => ({ from: new Date(new Date(from).getTime() - days * 86_400_000).toISOString(), to: from }), [from, days]);
+  const prev = useQuery(dashboardQuery(prevRange.from, prevRange.to, low));
+  const sold = useQuery(soldLinesQuery(from, to));
+  const today = useAttention();
+  const navigate = useNavigate();
   const recent = useQuery({
     queryKey: ["admin-orders-page", "recent"],
     queryFn: () => listOrders({ page: 1, pageSize: 6, q: "", from: "", to: "", payment: "", fulfillment: "" }),
   });
   const d = dash.data;
-  const max = Math.max(1, ...(d?.daily ?? []).map((x) => Number(x.total)));
+  const series = useMemo(() => fillDays(d?.daily ?? [], days), [d, days]);
+  const top = useMemo(() => topProducts(sold.data ?? []), [sold.data]);
+  const revenue = Number(d?.revenue ?? 0);
+  const ticket = d && d.paid_orders > 0 ? revenue / d.paid_orders : 0;
+  const change = prev.data ? delta(revenue, Number(prev.data.revenue)) : null;
 
   return (
     <div>
@@ -63,6 +75,26 @@ function DashboardPage() {
           </div>
         }
       />
+
+      <AdminCard className="mb-4 p-5">
+        <h2 className="mb-3 text-sm font-bold">O que fazer hoje</h2>
+        {today.loading ? (
+          <p className="text-sm text-muted-foreground">Carregando…</p>
+        ) : today.items.length === 0 ? (
+          <p className="flex items-center gap-2 text-sm text-muted-foreground"><CheckCircle2 className="size-4 text-emerald-600" /> Tudo em dia: nenhum pedido, pagamento ou estoque pedindo atenção.</p>
+        ) : (
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {today.items.map((i) => (
+              <li key={i.id}>
+                <button className="flex w-full items-start gap-3 rounded-xl border border-border p-3 text-left transition-colors hover:bg-secondary/60" onClick={() => void navigate({ to: i.to, search: i.search } as never)}>
+                  <span className={`mt-1.5 size-2 shrink-0 rounded-full ${i.tone === "danger" ? "bg-destructive" : i.tone === "warning" ? "bg-amber-500" : "bg-sky-500"}`} aria-hidden />
+                  <span><span className="block text-sm font-semibold">{i.title}</span><span className="block text-xs text-muted-foreground">{i.hint}</span></span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </AdminCard>
 
       {dash.isLoading ? (
         <CardsSkeleton count={4} />
@@ -92,8 +124,13 @@ function DashboardPage() {
               value={formatBRL(Number(d.revenue))}
               icon={<DollarSign className="size-5" />}
               tone="brand"
-              hint={`${d.paid_orders} ${d.paid_orders === 1 ? "pedido pago" : "pedidos pagos"}`}
+              hint={`${d.paid_orders} ${d.paid_orders === 1 ? "pedido pago" : "pedidos pagos"}${change === null ? "" : ` · ${change >= 0 ? "+" : ""}${change}% vs período anterior`}`}
             />
+          </div>
+
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <StatCard label="Ticket médio" value={d.paid_orders ? formatBRL(ticket) : "—"} icon={<Receipt className="size-5" />} hint="Valor médio por pedido pago" />
+            <StatCard label="Período anterior" value={prev.data ? formatBRL(Number(prev.data.revenue)) : "—"} icon={change !== null && change < 0 ? <TrendingDown className="size-5" /> : <TrendingUp className="size-5" />} tone={change !== null && change >= 0 ? "brand" : "default"} hint={change === null ? "Sem vendas no período anterior para comparar" : `${change >= 0 ? "Crescimento" : "Queda"} de ${Math.abs(change)}%`} />
           </div>
 
           <div className="mt-4 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
@@ -102,21 +139,45 @@ function DashboardPage() {
               {d.daily.length === 0 ? (
                 <p className="py-10 text-center text-sm text-muted-foreground">Nenhum pagamento confirmado neste período.</p>
               ) : (
-                <ul className="grid gap-1.5">
-                  {d.daily
-                    .slice()
-                    .reverse()
-                    .map((x) => (
-                      <li key={x.day} className="grid grid-cols-[72px_1fr_96px] items-center gap-3 text-sm">
-                        <span className="text-muted-foreground">{new Date(`${x.day}T12:00:00`).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}</span>
-                        <span className="h-2.5 rounded-full bg-primary" style={{ width: `${Math.max(3, (Number(x.total) / max) * 100)}%` }} />
-                        <span className="text-right font-semibold tabular-nums">{formatBRL(Number(x.total))}</span>
-                      </li>
-                    ))}
-                </ul>
+                <div role="img" aria-label={`Gráfico de vendas confirmadas por dia, total ${formatBRL(revenue)}`}>
+                  <ResponsiveContainer width="100%" height={240}>
+                    <AreaChart data={series} margin={{ left: 0, right: 8, top: 8 }}>
+                      <defs>
+                        <linearGradient id="salesFill" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.35} />
+                          <stop offset="100%" stopColor="var(--primary)" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                      <XAxis dataKey="label" tickLine={false} axisLine={false} fontSize={11} interval="preserveStartEnd" minTickGap={24} />
+                      <YAxis tickLine={false} axisLine={false} fontSize={11} width={48} tickFormatter={(v) => (v >= 1000 ? `${Math.round(v / 100) / 10}k` : String(v))} />
+                      <Tooltip formatter={(v) => [formatBRL(Number(v)), "Vendas"]} labelFormatter={(l) => `Dia ${l}`} />
+                      <Area type="monotone" dataKey="total" stroke="var(--primary)" strokeWidth={2} fill="url(#salesFill)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
               )}
             </AdminCard>
 
+            <div className="grid gap-4">
+            <AdminCard className="p-5">
+              <h2 className="mb-3 text-sm font-bold">Mais vendidos no período</h2>
+              {sold.isLoading ? (
+                <p className="py-4 text-center text-sm text-muted-foreground">Carregando…</p>
+              ) : top.length === 0 ? (
+                <p className="py-4 text-center text-sm text-muted-foreground">Nenhuma venda confirmada no período.</p>
+              ) : (
+                <ol className="grid gap-2 text-sm">
+                  {top.map((t, idx) => (
+                    <li key={t.name} className="flex items-center gap-3">
+                      <span className="grid size-6 shrink-0 place-items-center rounded-full bg-secondary text-xs font-black">{idx + 1}</span>
+                      <span className="min-w-0 flex-1 truncate font-semibold">{t.name}</span>
+                      <span className="shrink-0 text-xs text-muted-foreground">{t.qty} un. · {formatBRL(t.revenue)}</span>
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </AdminCard>
             <AdminCard className="p-5">
               <h2 className="mb-1 text-sm font-bold">Estoque baixo (até {low} un.)</h2>
               {d.untracked_products > 0 && (
@@ -142,6 +203,7 @@ function DashboardPage() {
                 </ul>
               )}
             </AdminCard>
+            </div>
           </div>
         </>
       ) : null}

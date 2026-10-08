@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Ban, CheckCircle2, Copy, History, Loader2, MessageCircle, Package, PackageCheck, Send, StickyNote, Truck, Undo2 } from "lucide-react";
+import { ArrowLeft, Ban, CheckCircle2, Copy, History, Loader2, MessageCircle, Package, PackageCheck, Printer, Send, StickyNote, Truck, Undo2 } from "lucide-react";
 import { RequireAdmin } from "@/components/admin/RequireAdmin";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminCard, EmptyState, PageHeader, TableSkeleton } from "@/components/admin/AdminUI";
@@ -23,6 +23,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { formatBRL } from "@/lib/products";
+import { pickingPage, printDocument, receiptPage } from "@/lib/print";
 import {
   addOrderNote,
   cancelOrder,
@@ -174,6 +175,9 @@ function OrderPage() {
         description={`Criado em ${new Date(o.created_at).toLocaleString("pt-BR")}`}
         actions={
           <div className="flex flex-wrap gap-2">
+            <Button variant="outline" onClick={() => { try { printDocument(`Pedido ${o.code}`, pickingPage(o, items) + receiptPage(o, items)); } catch (e) { toast.error(e instanceof Error ? e.message : "Não foi possível imprimir."); } }}>
+              <Printer /> Imprimir separação e recibo
+            </Button>
             {canCharge && (
               <Button asChild variant="outline">
                 <a href={customerWhatsappHref(o.customer_whatsapp, chargeText)} target="_blank" rel="noopener noreferrer">

@@ -16,6 +16,7 @@ import {
   Users,
   X, Boxes } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
+import { AttentionBell } from "@/components/admin/AttentionBell";
 import { useAuth } from "@/lib/auth";
 import { PH_SPORTS_LOGO } from "@/lib/brand";
 import { cn } from "@/lib/utils";
@@ -182,6 +183,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
               {session?.user.email}
             </span>
             <div className="col-start-3 flex items-center gap-2">
+              <AttentionBell />
               <Link
                 to="/"
                 className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-bold transition-all hover:-translate-y-px hover:bg-secondary"

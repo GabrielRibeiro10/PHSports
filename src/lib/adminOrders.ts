@@ -191,3 +191,47 @@ export function customerWhatsappHref(phone: string, text: string) {
   const full = d.length <= 11 ? `55${d}` : d;
   return `https://wa.me/${full}?text=${encodeURIComponent(text.slice(0, 1500))}`;
 }
+
+/* ─────────────────────────── exportação e lote ─────────────────────────── */
+
+/** Todos os pedidos que batem com os filtros (para planilha), em lotes de 500, no máximo 5.000. */
+export async function listAllOrders(f: Omit<OrderFilters, "page" | "pageSize">, cap = 5000) {
+  const rows: OrderRow[] = [];
+  for (let page = 1; rows.length < cap; page++) {
+    const r = await listOrders({ ...f, page, pageSize: 500 });
+    rows.push(...r.rows);
+    if (r.rows.length < 500 || rows.length >= r.count) break;
+  }
+  return rows.slice(0, cap);
+}
+
+/** Itens de vários pedidos (consulta em blocos de 100 para não estourar o limite da URL). */
+export async function itemsOfOrders(ids: string[]) {
+  const out: OrderItemRow[] = [];
+  for (let i = 0; i < ids.length; i += 100) {
+    const { data, error } = await supabase.from("order_items").select("*").in("order_id", ids.slice(i, i + 100)).order("created_at");
+    if (error) fail(error, "Não foi possível carregar os itens dos pedidos.");
+    out.push(...((data ?? []) as OrderItemRow[]));
+  }
+  return out;
+}
+
+export async function fetchOrdersByIds(ids: string[]) {
+  const out: OrderRow[] = [];
+  for (let i = 0; i < ids.length; i += 100) {
+    const { data, error } = await supabase.from("orders").select("*").in("id", ids.slice(i, i + 100));
+    if (error) fail(error, "Não foi possível carregar os pedidos.");
+    out.push(...((data ?? []) as OrderRow[]));
+  }
+  return ids.map((id) => out.find((o) => o.id === id)).filter((o): o is OrderRow => Boolean(o));
+}
+
+/** Aplica a mesma ação em vários pedidos, um por vez; cada pedido segue as regras do banco e falhas não param os demais. */
+export async function runBatch(ids: string[], action: (id: string) => Promise<unknown>) {
+  let ok = 0;
+  const failures: { id: string; message: string }[] = [];
+  for (const id of ids) {
+    try { await action(id); ok++; } catch (e) { failures.push({ id, message: e instanceof Error ? e.message : "Erro" }); }
+  }
+  return { ok, failures };
+}
