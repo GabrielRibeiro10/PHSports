@@ -5,11 +5,26 @@ import { supabase } from "@/integrations/supabase/client";
 type AuthCtx = {
   session: Session | null;
   isAdmin: boolean;
+  /** Sessão passou pela verificação em duas etapas (senha + código do aplicativo). */
+  mfaVerified: boolean;
   loading: boolean;
   signOut: () => Promise<void>;
 };
 
 const Ctx = createContext<AuthCtx | null>(null);
+
+// O nível de verificação vem no próprio token ("aal2" = senha + código); ler daqui evita
+// chamar o supabase.auth de dentro do onAuthStateChange.
+function sessionAal(session: Session | null): string | null {
+  try {
+    const payload = session?.access_token.split(".")[1];
+    if (!payload) return null;
+    const claims = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+    return typeof claims.aal === "string" ? claims.aal : null;
+  } catch {
+    return null;
+  }
+}
 
 async function checkIsAdmin(userId: string | undefined): Promise<boolean> {
   if (!userId) return false;
@@ -57,7 +72,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
   };
 
-  return <Ctx.Provider value={{ session, isAdmin, loading, signOut }}>{children}</Ctx.Provider>;
+  const mfaVerified = sessionAal(session) === "aal2";
+
+  return <Ctx.Provider value={{ session, isAdmin, mfaVerified, loading, signOut }}>{children}</Ctx.Provider>;
 }
 
 export function useAuth() {
