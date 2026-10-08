@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Package, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { Copy, Download, Eye, EyeOff, FileUp, Package, Pencil, Plus, Search, Tags, Trash2 } from "lucide-react";
 import { RequireAdmin } from "@/components/admin/RequireAdmin";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { ProductFormDialog } from "@/components/admin/ProductFormDialog";
@@ -28,6 +28,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { formatBRL } from "@/lib/products";
+import { ImportDialog, PriceDialog } from "@/components/admin/ProductBulkDialogs";
+import { datedName, downloadCsv } from "@/lib/csv";
+import { bulkSetActive, duplicateProduct, productsToCsv } from "@/lib/productBulk";
 import { safeImageUrl } from "@/lib/input-safety";
 import {
   adminProductsQueryOptions,
@@ -62,11 +65,28 @@ function AdminProductsPage() {
   const [status, setStatus] = useState("all");
   const [sort, setSort] = useState("recent");
   const [page, setPage] = useState(1);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [priceOpen, setPriceOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+  const [bulkBusy, setBulkBusy] = useState(false);
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: adminProductsQueryOptions.queryKey });
     queryClient.invalidateQueries({ queryKey: ["products"] });
   };
+
+  const selectedRows = products.filter((p) => selected.has(p.id));
+  const toggleOne = (id: string) => setSelected((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+  const setActiveBulk = async (active: boolean) => {
+    setBulkBusy(true);
+    try { await bulkSetActive([...selected], active); toast.success(active ? "Produtos visíveis na loja" : "Produtos ocultos da loja"); setSelected(new Set()); invalidate(); }
+    catch (e) { toast.error(e instanceof Error ? e.message : "Não foi possível atualizar."); } finally { setBulkBusy(false); }
+  };
+  const duplicate = useMutation({
+    mutationFn: (p: AdminProductRow) => duplicateProduct(p, new Set(products.map((x) => x.slug))),
+    onSuccess: (slug) => { toast.success(`Cópia criada e oculta da loja (/${slug}). Edite e ative quando estiver pronta.`); invalidate(); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Não foi possível duplicar."),
+  });
 
   const toggleActive = useMutation({
     mutationFn: ({ id, active }: { id: string; active: boolean }) => setProductActive(id, active),
@@ -100,6 +120,12 @@ function AdminProductsPage() {
     return sorted;
   }, [products, search, category, status, sort]);
 
+  const exportCsv = () => {
+    if (!filtered.length) { toast.info("Nenhum produto para exportar com esses filtros."); return; }
+    downloadCsv(datedName("produtos"), productsToCsv(filtered));
+    toast.success(`${filtered.length} produtos exportados`);
+  };
+
   const pages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const current = Math.min(page, pages);
   const rows = filtered.slice((current - 1) * PER_PAGE, current * PER_PAGE);
@@ -110,14 +136,18 @@ function AdminProductsPage() {
         title="Produtos"
         description="Altere preços, estoque, imagens e disponibilidade. Tudo reflete na loja na hora."
         actions={
-          <Button
-            onClick={() => {
-              setEditing(null);
-              setDialogOpen(true);
-            }}
-          >
-            <Plus /> Novo produto
-          </Button>
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button variant="outline" onClick={exportCsv}><Download /> <span className="hidden sm:inline">Exportar</span></Button>
+            <Button variant="outline" onClick={() => setImportOpen(true)}><FileUp /> <span className="hidden sm:inline">Importar</span></Button>
+            <Button
+              onClick={() => {
+                setEditing(null);
+                setDialogOpen(true);
+              }}
+            >
+              <Plus /> Novo produto
+            </Button>
+          </div>
         }
       />
 
@@ -165,6 +195,16 @@ function AdminProductsPage() {
         </Select>
       </AdminCard>
 
+      {selected.size > 0 && (
+        <div className="sticky top-16 z-20 mb-3 flex flex-wrap items-center gap-2 rounded-2xl border border-primary/30 bg-background p-3 shadow-md" role="region" aria-label="Ações em lote">
+          <span className="mr-auto text-sm font-bold">{selected.size} {selected.size === 1 ? "selecionado" : "selecionados"}</span>
+          <Button size="sm" variant="outline" disabled={bulkBusy} onClick={() => void setActiveBulk(true)}><Eye /> Mostrar na loja</Button>
+          <Button size="sm" variant="outline" disabled={bulkBusy} onClick={() => void setActiveBulk(false)}><EyeOff /> Ocultar</Button>
+          <Button size="sm" disabled={bulkBusy} onClick={() => setPriceOpen(true)}><Tags /> Ajustar preço</Button>
+          <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())}>Limpar</Button>
+        </div>
+      )}
+
       <AdminCard className="overflow-hidden">
         {isLoading ? (
           <TableSkeleton rows={6} cols={5} />
@@ -179,6 +219,7 @@ function AdminProductsPage() {
             <table className="w-full text-sm">
               <thead className="border-b border-border bg-secondary/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
+                  <th className="w-10 px-4 py-3"><input type="checkbox" aria-label="Selecionar todos desta página" checked={rows.length > 0 && rows.every((p) => selected.has(p.id))} onChange={() => setSelected((s) => { const n = new Set(s); const all = rows.every((p) => n.has(p.id)); for (const p of rows) { if (all) n.delete(p.id); else n.add(p.id); } return n; })} /></th>
                   <th className="px-4 py-3">Produto</th>
                   <th className="px-4 py-3">Categoria</th>
                   <th className="px-4 py-3">Preço</th>
@@ -189,7 +230,8 @@ function AdminProductsPage() {
               </thead>
               <tbody>
                 {rows.map((p) => (
-                  <tr key={p.id} className="border-b border-border transition-colors last:border-0 hover:bg-secondary/30">
+                  <tr key={p.id} className={`border-b border-border transition-colors last:border-0 hover:bg-secondary/30 ${selected.has(p.id) ? "bg-primary/5" : ""}`}>
+                    <td className="px-4 py-3"><input type="checkbox" aria-label={`Selecionar ${p.name}`} checked={selected.has(p.id)} onChange={() => toggleOne(p.id)} /></td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <img src={safeImageUrl(p.image_url) ?? ""} alt="" className="size-12 rounded-lg border border-border object-cover" />
@@ -226,6 +268,9 @@ function AdminProductsPage() {
                         <Button size="icon" variant="outline" aria-label="Editar" onClick={() => { setEditing(p); setDialogOpen(true); }}>
                           <Pencil />
                         </Button>
+                        <Button size="icon" variant="outline" aria-label="Duplicar" title="Duplicar (a cópia fica oculta)" disabled={duplicate.isPending} onClick={() => duplicate.mutate(p)}>
+                          <Copy />
+                        </Button>
                         <Button size="icon" variant="outline" aria-label="Remover" onClick={() => setToDelete(p)}>
                           <Trash2 />
                         </Button>
@@ -256,6 +301,8 @@ function AdminProductsPage() {
       )}
 
       <ProductFormDialog open={dialogOpen} onOpenChange={setDialogOpen} product={editing} />
+      <PriceDialog rows={selectedRows} open={priceOpen} onOpenChange={setPriceOpen} onDone={() => { setSelected(new Set()); invalidate(); }} />
+      <ImportDialog products={products} open={importOpen} onOpenChange={setImportOpen} onDone={invalidate} />
 
       <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
         <AlertDialogContent>
