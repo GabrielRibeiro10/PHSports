@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Loader2, Save } from "lucide-react";
+import { DatabaseBackup, Loader2, Megaphone, Save } from "lucide-react";
 import { RequireAdmin } from "@/components/admin/RequireAdmin";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminCard, PageHeader } from "@/components/admin/AdminUI";
@@ -11,6 +11,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { operationSettingsQuery, saveOperationSettings, type OperationSettings } from "@/lib/adminOrders";
 import { STORE_PHONE } from "@/lib/products";
+import { supabase } from "@/integrations/supabase/client";
+import { announcementQuery, MAX_TEXT, safeHref } from "@/lib/announcement";
+import { saveSetting } from "@/lib/adminData";
+import { downloadBackup } from "@/lib/backup";
 
 export const Route = createFileRoute("/admin/configuracoes")({
   head: () => ({
@@ -24,6 +28,80 @@ export const Route = createFileRoute("/admin/configuracoes")({
     </RequireAdmin>
   ),
 });
+
+function AnnouncementCard() {
+  const qc = useQueryClient();
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin-aviso"],
+    queryFn: async () => {
+      const { data: row } = await supabase.from("store_settings").select("value").eq("key", "aviso").maybeSingle();
+      return (row?.value ?? {}) as Record<string, string>;
+    },
+  });
+  const [v, setV] = useState<Record<string, string>>({ active: "0", text: "", href: "", label: "" });
+  useEffect(() => { if (data) setV({ active: "0", text: "", href: "", label: "", ...data }); }, [data]);
+  const hrefOk = !v.href?.trim() || safeHref(v.href) !== null;
+  const save = useMutation({
+    mutationFn: () => saveSetting("aviso", { active: v.active === "1" ? "1" : "0", text: (v.text ?? "").trim().slice(0, MAX_TEXT), href: (v.href ?? "").trim(), label: (v.label ?? "").trim().slice(0, 30) }),
+    onSuccess: () => { toast.success("Aviso salvo. Já aparece na loja."); void qc.invalidateQueries({ queryKey: ["admin-aviso"] }); void qc.invalidateQueries({ queryKey: announcementQuery.queryKey }); },
+    onError: () => toast.error("Não foi possível salvar o aviso."),
+  });
+  return (
+    <AdminCard className="mt-4 p-5">
+      <h2 className="mb-1 flex items-center gap-2 text-sm font-bold"><Megaphone className="size-4" /> Aviso no topo da loja</h2>
+      <p className="mb-4 text-sm text-muted-foreground">Uma faixa colorida acima do menu, para promoção, prazo de envio ou recado. Aparece em todas as páginas da loja.</p>
+      {isLoading ? <p className="text-sm text-muted-foreground">Carregando…</p> : (
+        <form className="grid max-w-2xl gap-4" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
+          <label className="flex items-center gap-2 text-sm font-semibold">
+            <input type="checkbox" checked={v.active === "1"} onChange={(e) => setV({ ...v, active: e.target.checked ? "1" : "0" })} /> Mostrar o aviso na loja
+          </label>
+          <div className="grid gap-1.5">
+            <Label htmlFor="av-text">Texto ({(v.text ?? "").length}/{MAX_TEXT})</Label>
+            <Input id="av-text" maxLength={MAX_TEXT} value={v.text ?? ""} onChange={(e) => setV({ ...v, text: e.target.value })} placeholder="Ex.: Camisas retrô com 10% de desconto até domingo" />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-[1fr_180px]">
+            <div className="grid gap-1.5">
+              <Label htmlFor="av-href">Link (opcional)</Label>
+              <Input id="av-href" value={v.href ?? ""} onChange={(e) => setV({ ...v, href: e.target.value })} placeholder="/categoria/retro ou https://…" />
+              {!hrefOk && <p className="text-xs text-destructive">Use um caminho do site (começando com /) ou um link https://.</p>}
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="av-label">Texto do link</Label>
+              <Input id="av-label" maxLength={30} value={v.label ?? ""} onChange={(e) => setV({ ...v, label: e.target.value })} placeholder="Ver agora" />
+            </div>
+          </div>
+          <div><Button type="submit" disabled={save.isPending || !hrefOk}>{save.isPending ? <Loader2 className="animate-spin" /> : <Save />} Salvar aviso</Button></div>
+        </form>
+      )}
+    </AdminCard>
+  );
+}
+
+function BackupCard() {
+  const [busy, setBusy] = useState("");
+  return (
+    <AdminCard className="mt-4 p-5">
+      <h2 className="mb-1 flex items-center gap-2 text-sm font-bold"><DatabaseBackup className="size-4" /> Cópia de segurança</h2>
+      <p className="mb-4 text-sm text-muted-foreground">
+        Baixa produtos, pedidos, clientes, estoque, cupons e configurações num arquivo. Faça de vez em quando e guarde fora do computador (nuvem ou pen drive).
+        O arquivo tem dados de clientes: não envie para ninguém que não seja de confiança.
+      </p>
+      <Button
+        variant="outline"
+        disabled={!!busy}
+        onClick={() => {
+          setBusy("preparando");
+          downloadBackup((t) => setBusy(t))
+            .then((c) => toast.success(`Backup baixado: ${c.orders ?? 0} pedidos, ${c.products ?? 0} produtos`))
+            .catch((e) => toast.error(e instanceof Error ? e.message : "Não foi possível gerar o backup."))
+            .finally(() => setBusy(""));
+        }}
+      >
+        {busy ? <Loader2 className="animate-spin" /> : <DatabaseBackup />} {busy ? `Lendo ${busy}…` : "Baixar cópia de segurança"}
+      </Button>
+    </AdminCard>
+  );
+}
 
 function SettingsPage() {
   const qc = useQueryClient();
@@ -101,6 +179,8 @@ function SettingsPage() {
           </form>
         )}
       </AdminCard>
+      <AnnouncementCard />
+      <BackupCard />
     </div>
   );
 }

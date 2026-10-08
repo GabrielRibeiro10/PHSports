@@ -14,6 +14,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/Header";
+import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { Footer } from "@/components/Footer";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { ScrollReveal } from "@/components/ScrollReveal";
@@ -158,6 +159,7 @@ function RootComponent() {
             <Outlet />
           ) : (
             <div className="flex min-h-screen flex-col">
+              <AnnouncementBar />
               <Header />
               <main className="flex-1">
                 <Outlet />
