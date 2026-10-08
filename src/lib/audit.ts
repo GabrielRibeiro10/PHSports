@@ -7,8 +7,6 @@ export type AuditAction =
   | "admin.login.success"
   | "admin.login.failure"
   | "admin.logout"
-  | "admin.mfa.enrolled"
-  | "admin.mfa.failure"
   | "upload.rejected"
   | `${string}.create`
   | `${string}.update`

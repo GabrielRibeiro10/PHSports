@@ -3,10 +3,9 @@ import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 
 export function RequireAdmin({ children }: { children: ReactNode }) {
-  const { session, isAdmin, mfaVerified, loading } = useAuth();
+  const { session, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
-  // Sem o código do aplicativo a sessão não entra no painel (o login pede o código).
-  const denied = !loading && (!session || !isAdmin || !mfaVerified);
+  const denied = !loading && (!session || !isAdmin);
 
   useEffect(() => {
     if (denied) navigate({ to: "/admin/login" });
