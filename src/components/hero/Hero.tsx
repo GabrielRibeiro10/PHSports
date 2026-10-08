@@ -10,6 +10,7 @@ import videoDesktopH264 from "@/assets/hero-video-d.mp4";
 import videoMobileAv1 from "@/assets/hero-video-m-av1.mp4";
 import videoMobileH264 from "@/assets/hero-video-m.mp4";
 import person from "@/assets/hero-person.webp";
+import personSm from "@/assets/hero-person-640.webp";
 import { Ticker } from "@/components/Ticker";
 
 const TITLE = [
@@ -181,6 +182,10 @@ export function Hero() {
       <img
         ref={personRef}
         src={person}
+        // Celular com tela menos densa baixa a versão de 640px; telas densas (iPhone) e o
+        // computador continuam com a original. Larguras: celular ≈76vw, tablet/PC no máx. 556px.
+        srcSet={`${personSm} 640w, ${person} 834w`}
+        sizes="(min-width: 768px) 556px, 76vw"
         alt=""
         aria-hidden
         width={834}

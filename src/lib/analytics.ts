@@ -24,9 +24,10 @@ export function analyticsHeadScripts() {
     });
   }
   if (/^G-[A-Z0-9]{4,20}$/.test(GA4_ID)) {
-    scripts.push({ src: `https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`, async: true });
+    // gtag.js só é baixado depois que a página terminou de carregar (não disputa banda com a
+    // HERO no celular). Até lá os eventos ficam na fila do dataLayer e são enviados quando ele chega.
     scripts.push({
-      children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${GA4_ID}',{send_page_view:false});`,
+      children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${GA4_ID}',{send_page_view:false});(function(){var d=false;function l(){if(d)return;d=true;var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=${GA4_ID}';document.head.appendChild(s)}function w(){'requestIdleCallback' in window?requestIdleCallback(l,{timeout:3000}):setTimeout(l,1500)}document.readyState==='complete'?w():addEventListener('load',w)})();`,
     });
   }
   return scripts;
