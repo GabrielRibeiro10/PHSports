@@ -17,6 +17,7 @@ import {
   X, Boxes } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
+import { PH_SPORTS_LOGO } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -80,14 +81,26 @@ export function AdminLayout({ children }: { children: ReactNode }) {
     </nav>
   );
 
+  // Mesma logo do cabeçalho da loja.
+  const logo = (
+    <img
+      src={PH_SPORTS_LOGO}
+      alt="PH Sports"
+      width={72}
+      height={72}
+      decoding="async"
+      className="size-9 shrink-0 rounded-full object-contain ring-1 ring-border"
+    />
+  );
+
   const brand = (
     <div className="flex h-16 items-center gap-2 px-4">
       <Link to="/admin" className="flex min-w-0 items-center gap-2">
-        <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-primary text-sm font-black text-primary-foreground">
-          PH
-        </span>
+        {logo}
         <span className={cn("min-w-0", collapsed && "lg:hidden")}>
-          <span className="block truncate text-sm font-black leading-tight">PH SPORTS</span>
+          <span className="block truncate text-sm font-black leading-tight">
+            PH<span className="text-brand">SPORTS</span>
+          </span>
           <span className="block text-[11px] font-semibold text-muted-foreground">
             Painel administrativo
           </span>
@@ -149,13 +162,22 @@ export function AdminLayout({ children }: { children: ReactNode }) {
       <div className={cn("transition-[padding] duration-300", collapsed ? "lg:pl-[76px]" : "lg:pl-64")}>
         <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur">
           <div className="grid h-16 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4">
-            <button
-              onClick={() => setMobileOpen(true)}
-              aria-label="Abrir menu"
-              className="rounded-md p-2 hover:bg-secondary lg:hidden"
-            >
-              <Menu className="size-5" />
-            </button>
+            {/* No celular a barra lateral fica escondida: a logo aparece aqui, ao lado do menu. */}
+            <div className="flex items-center gap-1 lg:hidden">
+              <button
+                onClick={() => setMobileOpen(true)}
+                aria-label="Abrir menu"
+                className="rounded-md p-2 hover:bg-secondary"
+              >
+                <Menu className="size-5" />
+              </button>
+              <Link to="/admin" className="flex items-center gap-2">
+                {logo}
+                <span className="text-sm font-black">
+                  PH<span className="text-brand">SPORTS</span>
+                </span>
+              </Link>
+            </div>
             <span className="hidden min-w-0 truncate text-xs font-semibold text-muted-foreground sm:block">
               {session?.user.email}
             </span>
