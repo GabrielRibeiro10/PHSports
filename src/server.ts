@@ -2,6 +2,7 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+import { GA4_ID, META_PIXEL_ID } from "./lib/analytics";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -49,12 +50,21 @@ function isH3SwallowedErrorBody(body: string): boolean {
 // bundling model (TanStack Start ships inline hydration scripts and Tailwind
 // utility styles are inlined by Vite in production) while restricting all
 // external origins to Supabase + a small set of trusted CDNs used by images.
-// Mesmo banco que o navegador usa (VITE_SUPABASE_URL do build): Lovable Cloud na Lovable,
-// o Supabase próprio na Vercel. Com o endereço fixo, a CSP bloquearia o outro banco.
+// Mesmo banco que o navegador usa (VITE_SUPABASE_URL do build).
 const SUPABASE_HOST = new URL(
-  import.meta.env.VITE_SUPABASE_URL || "https://jvwdeuwxkuwbbmdundwn.supabase.co",
+  import.meta.env.VITE_SUPABASE_URL || "https://jqdvpdnaeuzjdbmxzyxc.supabase.co",
 ).origin;
 const SUPABASE_WS = SUPABASE_HOST.replace(/^https:/, "wss:");
+
+// Rastreamento só é liberado quando o ID está preenchido em src/lib/analytics.ts.
+const ANALYTICS_SCRIPT = [
+  GA4_ID && "https://*.googletagmanager.com",
+  META_PIXEL_ID && "https://connect.facebook.net",
+].filter(Boolean);
+const ANALYTICS_CONNECT = [
+  GA4_ID && "https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
+  META_PIXEL_ID && "https://www.facebook.com https://connect.facebook.net",
+].filter(Boolean);
 
 const CSP = [
   "default-src 'self'",
@@ -62,8 +72,9 @@ const CSP = [
   "font-src 'self' data: https://fonts.gstatic.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   // SSR hydration ships inline module scripts; keep 'unsafe-inline' for now.
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-  `connect-src 'self' ${SUPABASE_HOST} ${SUPABASE_WS} https://api.lovable.dev https://*.lovable.dev`,
+  ["script-src 'self' 'unsafe-inline' 'unsafe-eval'", ...ANALYTICS_SCRIPT].join(" "),
+  // ViaCEP: o checkout preenche rua/bairro/cidade pelo CEP.
+  [`connect-src 'self' ${SUPABASE_HOST} ${SUPABASE_WS} https://viacep.com.br`, ...ANALYTICS_CONNECT].join(" "),
   "frame-ancestors 'none'",
   "form-action 'self' https://wa.me https://api.whatsapp.com",
   "base-uri 'self'",
