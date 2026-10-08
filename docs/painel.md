@@ -36,3 +36,13 @@
   Supabase, e verifica 23 regras (duplicidade, acesso, baixa única, falta de estoque, último item, transições, cancelamento,
   reembolso, preço histórico, resumo). Rodar: `bun add -d @electric-sql/pglite && node supabase/tests/rules.test.mjs`.
 - `src/lib/shipping/shipping.test.ts` (35 casos): checkout no servidor (tamanho, estoque, idempotência, frete pendente/cotado, cupom).
+
+## Recursos de produtividade do painel
+- **Sino de avisos** (canto superior do painel) e cartão **"O que fazer hoje"** no dashboard: pedidos novos, frete a definir, pagamentos pendentes, pagos esperando envio, estoque baixo/esgotado. Atualiza a cada minuto; o título da aba mostra o número de itens urgentes e, se o navegador permitir, avisa quando chega pedido novo.
+- **Dashboard**: gráfico de vendas por dia (dias sem venda aparecem zerados), ticket médio, comparação com o período anterior e produtos mais vendidos.
+- **Pedidos**: filtros por link (`/admin/pedidos?situacao=...&pagamento=...`), seleção em lote (imprimir lista de separação, recibos, passar para "Em preparação" — cada pedido segue as regras do banco), exportar planilha (CSV para Excel, `;` e vírgula decimal, com proteção contra fórmulas). No pedido: "Imprimir separação e recibo".
+- **Produtos**: exportar/importar planilha (atualiza por `slug`; novos entram **ocultos**; máx. 500 linhas, 1 MB), ajustar preço em lote (% ou R$, com prévia), mostrar/ocultar em lote, duplicar (a cópia fica oculta, estoque zerado).
+- **Clientes**: aba "Compradores" (agrupa pelo WhatsApp, só pedidos pagos e não cancelados) com filtros de recompra e "sem comprar há 60/90 dias", botão de WhatsApp e exportação.
+- **Estoque**: exportar planilha. **Configurações**: aviso/promoção no topo da loja (`store_settings`, chave `aviso`; link só `/caminho` ou `https://`) e cópia de segurança (arquivo JSON com todas as tabelas).
+- Não há migrações novas: tudo usa tabelas e funções que já existem.
+- Verificação em duas etapas **não** foi ativada: sem regras no banco que exijam o segundo fator, ela só bloquearia a tela de login e daria falsa sensação de segurança.
