@@ -4,7 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import { STORE_EMAIL, STORE_PHONE_DISPLAY } from "@/lib/products";
 import { EXCHANGE_MESSAGE, whatsappHref } from "@/lib/whatsapp";
-import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
+import { PH_SPORTS_LOGO } from "@/lib/brand";
 
 const INSTAGRAM_URL = "https://www.instagram.com/phsportsilha?igsh=bXA4NDM2YmR6d2lq";
 const CONTACT_MESSAGE = "Olá! Vim pelo site da PH Sports e queria tirar uma dúvida.";
@@ -161,7 +161,7 @@ export function Footer() {
               className="inline-flex items-center gap-3"
             >
               <img
-                src={logo.url}
+                src={PH_SPORTS_LOGO}
                 alt=""
                 width={40}
                 height={40}
