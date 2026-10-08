@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Boxes, History, Loader2, Minus, Plus } from "lucide-react";
+import { Boxes, Download, History, Loader2, Minus, Plus } from "lucide-react";
 import { RequireAdmin } from "@/components/admin/RequireAdmin";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminCard, EmptyState, PageHeader, TableSkeleton } from "@/components/admin/AdminUI";
@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { adminProductsQueryOptions } from "@/lib/adminCatalog";
 import { adjustStock, movementsQuery, stockQuery } from "@/lib/adminOrders";
 import { SIZES } from "@/lib/products";
+import { datedName, downloadCsv, toCsv } from "@/lib/csv";
 
 export const Route = createFileRoute("/admin/estoque")({
   head: () => ({ meta: [{ title: "Estoque — Painel PH Sports" }, { name: "robots", content: "noindex" }] }),
@@ -46,6 +47,18 @@ function StockPage() {
       });
   }, [products.data, stock.data, q]);
 
+  const exportCsv = () => {
+    const lines = rows.flatMap(({ p, own, sizes }) =>
+      sizes.map((size) => ({ produto: p.name, clube: p.club, visivel: p.active, tamanho: size, quantidade: own.find((x) => x.size === size)?.quantity ?? null })),
+    );
+    if (!lines.length) { toast.info("Nada para exportar."); return; }
+    downloadCsv(datedName("estoque"), toCsv(lines, [
+      { header: "Produto", value: (l) => l.produto }, { header: "Clube", value: (l) => l.clube }, { header: "Visível na loja", value: (l) => l.visivel },
+      { header: "Tamanho", value: (l) => l.tamanho }, { header: "Quantidade", value: (l) => (l.quantidade === null ? "não cadastrado" : l.quantidade) },
+    ]));
+    toast.success("Estoque exportado");
+  };
+
   const loading = products.isLoading || stock.isLoading;
   const err = products.error || stock.error;
 
@@ -54,6 +67,7 @@ function StockPage() {
       <PageHeader
         title="Estoque"
         description="Quantidade por produto e tamanho. A baixa acontece só quando o pagamento é confirmado."
+        actions={<Button variant="outline" onClick={exportCsv}><Download /> Exportar planilha</Button>}
       />
       <AdminCard className="mb-4 p-4">
         <Input placeholder="Buscar produto ou clube" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Buscar produto" />
