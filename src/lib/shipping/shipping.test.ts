@@ -5,7 +5,7 @@ import { computeQuote, type QuoteDeps } from "./quote.server";
 import { isValidCep, maskCep } from "./cep";
 import { quoteSignature } from "./types";
 import { createOrderCore, type OrderDeps, type OrderRecord } from "@/lib/orders.server";
-import type { OrderInput } from "@/lib/orders.schema";
+import { orderInput, type OrderInput } from "@/lib/orders.schema";
 
 const SETTINGS = {
   origin_cep: "11630-000",
@@ -262,17 +262,13 @@ describe("pedido (servidor)", () => {
   };
   function orderDeps(over: Partial<OrderDeps> = {}) {
     const { deps, f } = quoteDeps();
-    const saved: { order?: OrderRecord; items?: unknown[]; keys: string[]; redeemed: number } = { keys: [], redeemed: 0 };
+    const saved: { order?: OrderRecord; items?: unknown[]; keys: string[] } = { keys: [] };
     const byKey = new Map<string, string>();
     const d: OrderDeps = {
       ...deps,
       loadProducts: async (slugs) => PRODUCTS.filter((p) => slugs.includes(p.slug)).map((p) => ({ ...p, sizes: null })),
       loadStock: async () => [],
       loadCoupon: async () => null,
-      redeemCoupon: async () => {
-        saved.redeemed++;
-        return true;
-      },
       saveOrder: async (key, order, items) => {
         saved.keys.push(key);
         if (byKey.has(key)) return { code: byKey.get(key)!, created: false };
@@ -314,7 +310,36 @@ describe("pedido (servidor)", () => {
     expect(saved.order).toMatchObject({ shipping_status: "pendente", shipping: 0, shipping_service: "" });
     expect(f).not.toHaveBeenCalled();
   });
-  it("mesma solicitação repetida devolve o mesmo pedido e não conta o cupom de novo", async () => {
+  it("cupom esgotado entre a validação e o pedido: o banco recusa e o site não cria pedido com desconto", async () => {
+    const coupon = {
+      code: "PH10", discount_type: "percent", discount_value: 10, starts_at: null, expires_at: null,
+      max_uses: 1, used_count: 0, min_order_value: 0, active: true,
+    };
+    const { d } = orderDeps({ loadCoupon: async () => coupon, saveOrder: async () => "coupon_unavailable" });
+    expect(await createOrderCore({ ...base, coupon: "ph10" }, d)).toMatchObject({ ok: false, code: "coupon_invalid" });
+  });
+  it("excesso de pedidos pendentes do mesmo WhatsApp (regra do banco) vira mensagem clara", async () => {
+    const { d } = orderDeps({ saveOrder: async () => "rate_limited" });
+    expect(await createOrderCore(base, d)).toMatchObject({ ok: false, code: "rate_limited" });
+  });
+  it("preço e total enviados pelo navegador são ignorados: o pedido sai com os valores do banco", async () => {
+    const { d, saved } = orderDeps();
+    // O schema aceita só slug/tamanho/quantidade; campos extras de preço/total/desconto são descartados.
+    const tampered = orderInput.parse({ ...base, total: 1, subtotal: 1, discount: 999, items: base.items.map((i) => ({ ...i, price: 0.01, unit_price: 0.01 })) });
+    const r = await createOrderCore(tampered, d);
+    expect(r).toMatchObject({ ok: true, subtotal: 519.7, discount: 0, total: 541.8 });
+    expect(saved.order).toMatchObject({ subtotal: 519.7, discount: 0, total: 541.8 });
+    expect(saved.items).toEqual([
+      { product_id: "p1", product_name: "Camisa Flamengo", size: "M", quantity: 2, unit_price: 179.9 },
+      { product_id: "p2", product_name: "Camisa Brasil Feminina", size: "P", quantity: 1, unit_price: 159.9 },
+    ]);
+  });
+  it("frete com preço diferente do recalculado no servidor é recusado", async () => {
+    const { d } = orderDeps();
+    const r = await createOrderCore({ ...base, shipping: { ...base.shipping!, price: 0.01 } }, d);
+    expect(r).toMatchObject({ ok: false, code: "shipping_changed" });
+  });
+  it("mesma solicitação repetida devolve o mesmo pedido (uma só criação) e o pedido carrega o cupom para o banco debitar", async () => {
     const coupon = {
       code: "PH10", discount_type: "percent", discount_value: 10, starts_at: null, expires_at: null,
       max_uses: 0, used_count: 0, min_order_value: 0, active: true,
@@ -324,7 +349,8 @@ describe("pedido (servidor)", () => {
     const b = await createOrderCore({ ...base, coupon: "ph10" }, d);
     expect(a).toMatchObject({ ok: true, code: "PH-1", created: true, discount: 51.97, total: 489.83 });
     expect(b).toMatchObject({ ok: true, code: "PH-1", created: false });
-    expect(saved.redeemed).toBe(1);
+    expect(saved.keys).toHaveLength(2);
+    expect(saved.order).toMatchObject({ coupon_code: "PH10", discount: 51.97 });
   });
   it("tamanho que o produto não tem", async () => {
     const { d } = orderDeps({ loadProducts: async (s) => PRODUCTS.filter((p) => s.includes(p.slug)).map((p) => ({ ...p, sizes: ["P", "M"] })) });
@@ -386,7 +412,6 @@ describe("banco sem migração", () => {
       loadProducts: async (s: string[]) => PRODUCTS.filter((p) => s.includes(p.slug)).map((p) => ({ ...p, sizes: null })),
       loadStock: async () => [],
       loadCoupon: async () => null,
-      redeemCoupon: async () => true,
       saveOrder: async () => "not_ready" as const,
     };
     const r = await createOrderCore(

@@ -6,9 +6,6 @@ export const couponSchema = z.object({
   subtotal: z.number().finite().min(0).max(1_000_000),
 });
 
-export const redeemSchema = z.object({
-  code: z.string().min(1).max(40),
-});
 
 export const GENERIC_ERROR = "Cupom inválido ou não disponível para esta compra.";
 
@@ -86,4 +83,9 @@ export function evaluateCoupon(row: CouponRules | null, subtotal: number): Coupo
     discount,
     total: Math.round((safeSubtotal - discount) * 100) / 100,
   };
+}
+
+/** Padrão para ilike que casa o código exatamente (sem diferenciar maiúsculas): "_" e "%" são curingas no ilike. */
+export function exactIlike(code: string): string {
+  return code.replace(/[\%_]/g, "\$&");
 }

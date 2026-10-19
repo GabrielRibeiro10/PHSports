@@ -1,6 +1,7 @@
 import { PGlite } from "@electric-sql/pglite";
 import fs from "node:fs";
-const MIG = new URL("../migrations", import.meta.url).pathname;
+import { fileURLToPath } from "node:url";
+const MIG = fileURLToPath(new URL("../migrations", import.meta.url));
 export async function makeDb() {
   const db = new PGlite();
   await db.exec(`

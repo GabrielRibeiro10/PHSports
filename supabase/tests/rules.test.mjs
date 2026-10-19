@@ -163,3 +163,81 @@ await admin((tx) => tx.query("update public.products set active=true where id=$1
 assert.equal(Number((await anon((tx) => tx.query("select price from public.products where id=$1", [p2.id]))).rows[0].price), 199.9);
 ok("admin edita/desativa/publica produto (loja vê só ativos); produto já vendido não pode ser apagado, sem vendas pode");
 console.log(`\n${n} verificações passaram.`);
+
+console.log("Endurecimento (migração 20261007120000)");
+{
+const [f1, f2] = (await db.query("select id, name, price from public.products where active order by sort_order, name limit 2")).rows;
+const fi = (p, size, q, over = {}) => ({ product_id: p.id, product_name: p.name, size, quantity: q, unit_price: Number(p.price), ...over });
+const countOrders = async () => (await db.query("select count(*)::int c from public.orders")).rows[0].c;
+const usedCount = async (code) => (await db.query("select used_count from public.coupons where code=$1", [code])).rows[0].used_count;
+
+// 24. Preço/total adulterados não viram pedido (o banco reconfere contra o catálogo)
+const ordersBefore = await countOrders();
+const sub = Number(f1.price);
+await fails(create("chave-tamper-preco-00001", [fi(f1, "M", 1, { unit_price: 1 })]), /Preço do item diferente do catálogo/);
+await fails(create("chave-tamper-subtot-0001", [fi(f1, "M", 1)], { subtotal: 1, total: 1 }), /Subtotal diferente do catálogo/);
+await fails(create("chave-tamper-total-0001", [fi(f1, "M", 1)], { subtotal: sub, total: 1 }), /Total diferente do calculado/);
+await fails(create("chave-tamper-desc-00001", [fi(f1, "M", 1)], { subtotal: sub, discount: 10, total: sub - 10 }), /Desconto sem cupom/);
+await fails(create("chave-tamper-frete-0001", [fi(f1, "M", 1)], { subtotal: sub, shipping: -50, total: sub - 50 }), /Frete inválido/);
+await fails(create("chave-tamper-qtd-000001", [fi(f1, "M", 0)], { subtotal: 0, total: 0 }), /Quantidade inválida/);
+await db.query("update public.products set active=false where id=$1", [f2.id]);
+await fails(create("chave-tamper-inativo-01", [fi(f2, "M", 1)]), /Produto indisponível/);
+await db.query("update public.products set active=true where id=$1", [f2.id]);
+assert.equal(await countOrders(), ordersBefore);
+ok("preço, subtotal, total, desconto, frete, quantidade ou produto inativo adulterados são recusados e nenhum pedido é criado");
+
+// 25. Cupom: debitado junto com o pedido; esgotado = pedido recusado; repetição não debita de novo
+await db.query("insert into public.coupons (code, discount_type, discount_value, max_uses, active) values ('UMUSO','percent',10,1,true), ('INATIVO','percent',10,0,false), ('VENCIDO','percent',10,0,true)");
+await db.query("update public.coupons set expires_at = current_date - 1 where code='VENCIDO'");
+const withCoupon = (key, code) => create(key, [fi(f1, "M", 1)], { subtotal: sub, discount: Math.round(sub * 10) / 100, total: Math.round((sub - Math.round(sub * 10) / 100) * 100) / 100, coupon_code: code });
+const c1 = await withCoupon("chave-cupom-a-000001", "umuso");
+assert.equal(c1.created, true); assert.equal(await usedCount("UMUSO"), 1);
+const ordersAfterA = await countOrders();
+await fails(withCoupon("chave-cupom-b-000001", "UMUSO"), /coupon_unavailable/);
+assert.equal(await countOrders(), ordersAfterA); assert.equal(await usedCount("UMUSO"), 1);
+const c1b = await withCoupon("chave-cupom-a-000001", "UMUSO");
+assert.equal(c1b.created, false); assert.equal(c1b.code, c1.code); assert.equal(await usedCount("UMUSO"), 1);
+await fails(withCoupon("chave-cupom-c-000001", "INATIVO"), /coupon_unavailable/);
+await fails(withCoupon("chave-cupom-d-000001", "VENCIDO"), /coupon_unavailable/);
+assert.equal(await countOrders(), ordersAfterA);
+ok("cupom de 1 uso: o 2º pedido é recusado (sem desconto e sem pedido criado); repetir o 1º não debita de novo; cupom inativo/vencido recusado");
+
+// 26. Limite de pedidos pendentes por WhatsApp (vale para qualquer instância do servidor)
+for (let i = 0; i < 10; i++) await create(`chave-spam-${String(i).padStart(10, "0")}`, [fi(f1, "M", 1)], { subtotal: sub, total: sub, customer_whatsapp: "11988887777" });
+await fails(create("chave-spam-extra-000001", [fi(f1, "M", 1)], { subtotal: sub, total: sub, customer_whatsapp: "11988887777" }), /rate_limited/);
+const outro = await create("chave-spam-outro-00001", [fi(f1, "M", 1)], { subtotal: sub, total: sub, customer_whatsapp: "11977776666" });
+assert.equal(outro.created, true);
+const repeat = await create("chave-spam-0000000003", [fi(f1, "M", 1)], { subtotal: sub, total: sub, customer_whatsapp: "11988887777" });
+assert.equal(repeat.created, false);
+ok("11º pedido pendente do mesmo WhatsApp na hora é recusado; outro número e repetição de chave existente continuam funcionando");
+
+// 27. Auditoria: ninguém forja ação de admin
+await fails(anon((tx) => tx.query("insert into public.audit_log (actor_id, action) values (null, 'product.update')")), /permission denied|row-level security/);
+await fails(user((tx) => tx.query("insert into public.audit_log (actor_id, action) values ($1, 'product.update')", [USER])), /row-level security/);
+await fails(user((tx) => tx.query("insert into public.audit_log (actor_id, action) values ($1, 'admin.login.failure')", [ADMIN])), /row-level security/);
+await user((tx) => tx.query("insert into public.audit_log (actor_id, action) values ($1, 'admin.login.failure')", [USER]));
+await admin((tx) => tx.query("insert into public.audit_log (actor_id, action) values ($1, 'product.update')", [ADMIN]));
+assert.equal((await user((tx) => tx.query("select * from public.audit_log"))).rows.length, 0);
+assert.equal((await admin((tx) => tx.query("select * from public.audit_log"))).rows.length, 2);
+ok("usuário comum só registra a própria tentativa de login (nunca ação de admin, nem em nome do admin); só admin lê o log");
+
+// 28. Configurações da loja (Pix/frete/operação) deixam de ser públicas
+await db.query("insert into public.store_settings (key, value) values ('operacao', '{\"pix\":\"chave-secreta-pix\"}') on conflict (key) do update set value=excluded.value");
+await fails(anon((tx) => tx.query("select * from public.store_settings")), /permission denied/);
+assert.equal((await user((tx) => tx.query("select * from public.store_settings"))).rows.length, 0);
+assert.ok((await admin((tx) => tx.query("select * from public.store_settings"))).rows.length >= 1);
+assert.ok((await svc((tx) => tx.query("select * from public.store_settings"))).rows.length >= 1);
+await fails(user((tx) => tx.query("update public.store_settings set value='{}'")).then((r) => { if (!r.affectedRows) throw new Error("row-level: 0 linhas"); }), /row-level|permission/);
+ok("visitante e usuário comum não leem nem alteram as configurações; admin e servidor continuam lendo");
+
+// 29. Cupom não pode ser 'queimado' por fora + não dá para virar admin + escrita direta bloqueada
+await fails(rpc(anon, "select public.redeem_coupon('UMUSO')"), /permission denied/);
+await fails(rpc(user, "select public.redeem_coupon('UMUSO')"), /permission denied/);
+await fails(user((tx) => tx.query("insert into public.user_roles (user_id, role) values ($1, 'admin')", [USER])), /row-level security/);
+assert.equal((await db.query("select count(*)::int c from public.user_roles where user_id=$1", [USER])).rows[0].c, 0);
+await fails(user((tx) => tx.query("insert into public.coupons (code, discount_value) values ('GRATIS',100)")), /row-level security/);
+const priceTry = await user((tx) => tx.query("update public.products set price = 1")); assert.equal(priceTry.affectedRows, 0);
+await fails(user((tx) => tx.query("insert into public.product_stock values ($1,'XG',999)", [f1.id])), /permission denied|row-level/);
+ok("visitante/usuário não queimam cupom, não se promovem a admin, não criam cupom, não mudam preço nem estoque");
+}
+console.log(`\n${n} verificações passaram.`);

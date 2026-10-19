@@ -1,5 +1,5 @@
 import { Star } from "lucide-react";
-import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
+import { PH_SPORTS_LOGO } from "@/lib/brand";
 
 const reviews = [
   { name: "Rafael M.", rating: 5, comment: "Qualidade absurda! Camisa parece a original, tecido muito confortável.", club: "Flamengo" },
@@ -46,7 +46,7 @@ export function Reviews() {
                   <p className="text-[10px] uppercase tracking-wider opacity-70">Torcedor {r.club}</p>
                 </div>
               </div>
-              <img src={logo.url} alt="PH Sports" width={24} height={24} loading="lazy" className="size-6 rounded-full bg-white object-cover ring-1 ring-white/30" />
+              <img src={PH_SPORTS_LOGO} alt="PH Sports" width={24} height={24} loading="lazy" className="size-6 rounded-full bg-white object-cover ring-1 ring-white/30" />
             </div>
             <div className="flex-1 p-4">
               <div className="mb-2 flex">

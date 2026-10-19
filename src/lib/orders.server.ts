@@ -1,5 +1,5 @@
 // Server-only: cria o pedido do checkout (WhatsApp) com tudo recalculado no servidor.
-import { evaluateCoupon, normalizeCode, type CouponRules } from "@/lib/coupons.server";
+import { evaluateCoupon, exactIlike, normalizeCode, type CouponRules } from "@/lib/coupons.server";
 import { computeQuote, normalizeItems, type DbProduct, type QuoteDeps } from "@/lib/shipping/quote.server";
 import { cepDigits, isValidCep } from "@/lib/shipping/cep";
 import { SIZES, STORE_PHONE } from "@/lib/products";
@@ -49,9 +49,15 @@ export type OrderDeps = Omit<QuoteDeps, "loadProducts"> & {
   /** estoque por produto/tamanho; produto sem linhas = estoque ainda não controlado */
   loadStock: (productIds: string[]) => Promise<{ product_id: string; size: string; quantity: number }[]>;
   loadCoupon: (code: string) => Promise<CouponRules | null>;
-  redeemCoupon: (code: string) => Promise<boolean>;
-  /** cria o pedido de forma atômica e idempotente (mesma chave → mesmo pedido) */
-  saveOrder: (key: string, order: OrderRecord, items: OrderItemRecord[]) => Promise<{ code: string; created: boolean } | "not_ready" | null>;
+  /**
+   * Cria o pedido de forma atômica e idempotente (mesma chave → mesmo pedido). O cupom é debitado
+   * dentro da mesma transação: se o limite de usos acabou, nada é criado ("coupon_unavailable").
+   */
+  saveOrder: (
+    key: string,
+    order: OrderRecord,
+    items: OrderItemRecord[],
+  ) => Promise<{ code: string; created: boolean } | "not_ready" | "coupon_unavailable" | "rate_limited" | null>;
 };
 
 const round = (n: number) => Math.round(n * 100) / 100;
@@ -169,10 +175,9 @@ export async function createOrderCore(input: OrderInput, deps: OrderDeps): Promi
     }),
   );
   if (saved === "not_ready") return err("not_ready", "Finalize pelo WhatsApp da loja.");
+  if (saved === "coupon_unavailable") return err("coupon_invalid", "Este cupom acabou de esgotar ou não está mais disponível. Remova o cupom e finalize de novo.");
+  if (saved === "rate_limited") return err("rate_limited", "Você já tem vários pedidos em aberto. Aguarde o atendimento da loja ou tente de novo mais tarde.");
   if (!saved) return err("save_failed", "Não conseguimos registrar o pedido agora. Tente de novo em instantes.");
-
-  // O cupom só conta uso quando o pedido é criado de fato (repetições não contam de novo).
-  if (couponCode && saved.created) await deps.redeemCoupon(couponCode);
 
   return {
     ok: true,
@@ -213,20 +218,19 @@ export async function serverOrderDeps(): Promise<OrderDeps> {
       const { data } = await supabaseAdmin
         .from("coupons")
         .select("code, discount_type, discount_value, starts_at, expires_at, max_uses, used_count, min_order_value, active")
-        .ilike("code", code)
+        .ilike("code", exactIlike(code))
         .maybeSingle();
       return (data as CouponRules | null) ?? null;
-    },
-    redeemCoupon: async (code) => {
-      const { data, error } = await supabaseAdmin.rpc("redeem_coupon", { _code: code });
-      return !error && Boolean(data);
     },
     saveOrder: async (key, order, items) => {
       const { data, error } = await supabaseAdmin.rpc("create_checkout_order", {
         _payload: { idempotency_key: key, order, items },
       });
+      // Recusas de regra do banco (cupom esgotado entre a validação e o pedido; excesso de pedidos pendentes).
+      if (error?.message?.includes("coupon_unavailable")) return "coupon_unavailable";
+      if (error?.message?.includes("rate_limited")) return "rate_limited";
       // Função ainda não criada no banco (migração pendente) → avisa o site para usar o fluxo antigo.
-      if (error && (error.code === "PGRST202" || error.code === "42883" || /create_checkout_order/.test(error.message ?? ""))) return "not_ready";
+      if (error && (error.code === "PGRST202" || error.code === "42883" || /function .*create_checkout_order/.test(error.message ?? ""))) return "not_ready";
       if (error || !data) {
         console.error("[pedido] falha ao salvar", error);
         return null;

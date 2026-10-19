@@ -7,7 +7,7 @@ import { scrollToTop } from "@/lib/smooth-scroll";
 import { sanitizeSearch, checkSearchRate } from "@/lib/search-safety";
 import { SearchSuggest } from "@/components/SearchSuggest";
 import { track } from "@/lib/analytics";
-import logo from "@/assets/ph-sports-logo.jpeg.asset.json";
+import { PH_SPORTS_LOGO } from "@/lib/brand";
 
 export function Header() {
   const { count } = useCart();
@@ -108,12 +108,12 @@ export function Header() {
             className="ph-glass absolute inset-0 -z-10 rounded-full transition-[filter] duration-300 group-hover:[filter:drop-shadow(0_0_10px_oklch(0.55_0.22_27/0.45))]"
           />
           <img
-            src={logo.url}
+            src={PH_SPORTS_LOGO}
             alt="PH Sports"
             width={72}
             height={72}
             decoding="async"
-            className="size-9 rounded-full object-cover ring-1 ring-border [image-rendering:auto]"
+            className="size-9 shrink-0 rounded-full object-contain ring-1 ring-border [image-rendering:auto]"
           />
           <span className="text-lg font-black tracking-tight">
             PH<span className="text-brand">SPORTS</span>

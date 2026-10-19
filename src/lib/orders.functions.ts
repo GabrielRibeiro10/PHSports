@@ -7,7 +7,9 @@ import type { OrderResult } from "@/lib/orders.server";
 export const createOrder = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => orderInput.parse(input))
   .handler(async ({ data }): Promise<OrderResult> => {
-    if (throttled(`pedido:${data.customer.whatsapp}`, 8))
+    // Balde global (por instância) além do por-WhatsApp: trocar o número a cada pedido não escapa do limite.
+    // O limite entre instâncias fica no banco (máx. 10 pedidos pendentes por WhatsApp por hora).
+    if (throttled("pedido:*", 120) || throttled(`pedido:${data.customer.whatsapp.replace(/\D/g, "")}`, 8))
       return { ok: false, code: "rate_limited", message: "Muitas tentativas seguidas. Aguarde um minuto e tente de novo." };
     const { createOrderCore, serverOrderDeps } = await import("@/lib/orders.server");
     try {

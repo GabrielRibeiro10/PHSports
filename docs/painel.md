@@ -19,6 +19,8 @@
    - produto já vendido não pode ser apagado (desative).
 
 ## Segurança
+> Revisão completa, correções e testes: ver `docs/seguranca.md`.
+
 - Pedidos, itens, clientes e histórico: só admin lê (RLS) e ninguém escreve direto na tabela (permissões revogadas);
   visitante não tem privilégio nenhum nessas tabelas. Não existe consulta pública por número/telefone.
 - Estoque por tamanho: leitura pública (para mostrar "esgotado"); escrita só pelas funções.

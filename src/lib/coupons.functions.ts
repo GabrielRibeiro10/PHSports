@@ -3,8 +3,8 @@ import {
   couponSchema,
   evaluateCoupon,
   GENERIC_ERROR,
+  exactIlike,
   normalizeCode,
-  redeemSchema,
   throttled,
   type CouponResult,
 } from "@/lib/coupons.server";
@@ -13,7 +13,11 @@ export type { CouponResult } from "@/lib/coupons.server";
 
 // NOTE: request-context helpers (getRequestIP/getRequestHeader) throw
 // "No Start context found in AsyncLocalStorage" in the production Worker
-// runtime, so throttling is keyed by the coupon code per worker instance.
+// runtime, so throttling is keyed by the coupon code (and by a global bucket)
+// per worker instance.
+//
+// O uso do cupom NÃO é registrado por aqui: ele é debitado dentro do banco, na mesma transação que
+// cria o pedido (função create_checkout_order). Não existe endpoint público para "queimar" cupom.
 
 export const validateCoupon = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => couponSchema.parse(input))
@@ -21,7 +25,8 @@ export const validateCoupon = createServerFn({ method: "POST" })
     const code = normalizeCode(data.code);
     if (!code) return { ok: false, message: GENERIC_ERROR };
 
-    if (throttled(`validate:${code}`, 60)) {
+    // Balde global além do por-código: sem ele, quem testa códigos diferentes nunca bate no limite.
+    if (throttled("validate:*", 240) || throttled(`validate:${code}`, 60)) {
       return { ok: false, message: "Muitas tentativas. Aguarde um instante e tente novamente." };
     }
 
@@ -31,24 +36,9 @@ export const validateCoupon = createServerFn({ method: "POST" })
       .select(
         "code, discount_type, discount_value, starts_at, expires_at, max_uses, used_count, min_order_value, active",
       )
-      .ilike("code", code)
+      .ilike("code", exactIlike(code))
       .maybeSingle();
 
     if (error) return { ok: false, message: GENERIC_ERROR };
     return evaluateCoupon(row, data.subtotal);
-  });
-
-// Registers an actual usage (increments used_count) — called only when the
-// order is finalized, never on "Aplicar".
-export const redeemCoupon = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => redeemSchema.parse(input))
-  .handler(async ({ data }): Promise<{ ok: boolean }> => {
-    const code = normalizeCode(data.code);
-    if (!code) return { ok: false };
-    if (throttled(`redeem:${code}`, 60)) return { ok: false };
-
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: ok, error } = await supabaseAdmin.rpc("redeem_coupon", { _code: code });
-    if (error) return { ok: false };
-    return { ok: Boolean(ok) };
   });
