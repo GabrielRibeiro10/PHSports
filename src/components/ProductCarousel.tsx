@@ -15,22 +15,26 @@ export function ProductCarousel({ items }: { items: Product[] }) {
         <div ref={trackRef} data-no-reveal className="carousel-track flex" style={trackStyle}>
           {slides.map((p, i) => {
             const copy = i >= n;
+            // Só monta os cards perto da tela (a anterior, a atual e as 2 próximas); os outros
+            // ficam como espaço vazio da mesma largura. Antes os ~77 cards completos ficavam na
+            // página, e cada recálculo de estilo durante a rolagem pesava (travadinhas).
+            // O começo e as cópias do fim ficam sempre montados: na volta do loop o carrossel salta
+            // de um para o outro, e a foto não pode chegar em branco nesse instante.
+            const near =
+              (i >= index - perView && i < index + perView * 3) || i < perView * 2 || i >= n - perView;
             return (
               <div
                 key={`${p.slug}-${i}`}
                 className="shrink-0 px-1.5 py-4 sm:px-2"
                 style={{ width: `${100 / perView}%` }}
-                aria-hidden={copy || undefined}
+                aria-hidden={copy || !near || undefined}
               >
-                <div className="premium-glow h-full">
-                  {/* fotos da tela atual e das próximas já carregadas: não chegam em branco */}
-                  <ProductCard
-                    p={p}
-                    glow
-                    priority={i >= index - perView && i < index + perView * 2}
-                    tabIndex={copy ? -1 : undefined}
-                  />
-                </div>
+                {near && (
+                  <div className="premium-glow h-full">
+                    {/* montados já com a foto pedida: não chegam em branco */}
+                    <ProductCard p={p} glow priority tabIndex={copy ? -1 : undefined} />
+                  </div>
+                )}
               </div>
             );
           })}

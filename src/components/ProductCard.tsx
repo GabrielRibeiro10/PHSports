@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { useRef, type TouchEvent } from "react";
+import { memo, useRef, type TouchEvent } from "react";
 import { formatBRL, type Product } from "@/lib/products";
 
-export function ProductCard({
+// memo: o carrossel muda de posição a cada 3 s; sem isso todos os cards eram redesenhados juntos
+export const ProductCard = memo(function ProductCard({
   p,
   priority = false,
   glow = false,
@@ -48,6 +49,8 @@ export function ProductCard({
           width={800}
           height={1000}
           loading={priority ? "eager" : "lazy"}
+          // decodifica fora da linha principal: as fotos (1000x1000) travavam a rolagem ao entrar
+          decoding="async"
           className="pc-img pc-img--main absolute inset-0 size-full object-cover"
         />
         {back && (
@@ -58,6 +61,7 @@ export function ProductCard({
             width={800}
             height={1000}
             loading="lazy"
+            decoding="async"
             className="pc-img pc-img--alt absolute inset-0 size-full object-cover"
           />
         )}
@@ -95,4 +99,4 @@ export function ProductCard({
       </div>
     </Link>
   );
-}
+});

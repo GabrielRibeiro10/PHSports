@@ -46,6 +46,7 @@ export function CategoryCarousel() {
                         src={c.image}
                         alt={copy ? "" : c.name}
                         loading="lazy"
+                        decoding="async"
                         className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />

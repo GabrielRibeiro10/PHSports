@@ -79,7 +79,7 @@ function ClubsMarquee() {
   const { data: products = [] } = useQuery(productsQueryOptions);
   const ref = useRef<HTMLElement>(null);
   const [near, setNear] = useState(false);
-  const [onScreen, setOnScreen] = useState(true);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   // Uma camisa por clube (a primeira do catálogo), no máximo 24: antes entravam TODAS as camisas
   // em dobro e, com o catálogo grande, a faixa ficava enorme, rápida e pesada (sumia no iPhone).
@@ -121,8 +121,11 @@ function ClubsMarquee() {
     );
     io.observe(el);
     // Fora da tela a esteira para: antes ela seguia animando (e redesenhando as fotos que
-    // entram) mesmo com a pessoa já lá embaixo no catálogo.
-    const vis = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting));
+    // entram) mesmo com a pessoa já lá embaixo no catálogo. Muda o estilo direto, sem estado
+    // do React: com estado, as 56 pílulas eram redesenhadas no meio da rolagem (travadinha).
+    const vis = new IntersectionObserver(([e]) => {
+      if (trackRef.current) trackRef.current.style.animationPlayState = e.isIntersecting ? "" : "paused";
+    });
     vis.observe(el);
     return () => {
       io.disconnect();
@@ -139,8 +142,9 @@ function ClubsMarquee() {
         <div className="overflow-hidden rounded-[24px] border border-white/10 bg-black/50 py-2.5 shadow-[0_24px_60px_-30px_rgb(0_0_0/0.8)] md:py-3">
           <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]">
             <div
+              ref={trackRef}
               className="clubs-track flex w-max gap-3 md:gap-4"
-              style={{ animationDuration: `${duration}s`, animationPlayState: onScreen ? undefined : "paused" }}
+              style={{ animationDuration: `${duration}s` }}
             >
               {loop.map((p, i) => {
                 const copy = i >= clubs.length;
