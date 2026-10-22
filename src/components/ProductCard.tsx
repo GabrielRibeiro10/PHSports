@@ -6,10 +6,13 @@ export function ProductCard({
   p,
   priority = false,
   glow = false,
+  tabIndex,
 }: {
   p: Product;
   priority?: boolean;
   glow?: boolean;
+  /** -1 nas cópias do carrossel em loop (o Tab não passa duas vezes pela mesma camisa) */
+  tabIndex?: number;
 }) {
   const back = p.gallery.find((u) => u && u !== p.image);
   // Toque: mostra a foto de trás enquanto o dedo está no card e um pouco depois de soltar.
@@ -30,6 +33,7 @@ export function ProductCard({
       onTouchEnd={touchOff}
       onTouchCancel={touchOff}
       data-reveal
+      tabIndex={tabIndex}
       to="/produto/$slug"
       params={{ slug: p.slug }}
       className="group relative z-[1] flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-[var(--shadow-flat)] transition-[box-shadow,transform,border-color] duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/15 hover:shadow-[var(--shadow-raised)] motion-reduce:hover:translate-y-0"

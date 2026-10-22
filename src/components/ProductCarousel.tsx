@@ -1,116 +1,39 @@
-import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductCard } from "./ProductCard";
 import type { Product } from "@/lib/products";
+import { useLoopCarousel } from "@/hooks/use-loop-carousel";
 
 export function ProductCarousel({ items }: { items: Product[] }) {
-  const [index, setIndex] = useState(0);
-  const [perView, setPerView] = useState(4);
-  const [paused, setPaused] = useState(false);
-  const resumeTimer = useRef<number | null>(null);
-
-  useEffect(() => {
-    const compute = () => {
-      const w = window.innerWidth;
-      if (w < 640) setPerView(1);
-      else if (w < 900) setPerView(2);
-      else if (w < 1200) setPerView(3);
-      else setPerView(4);
-    };
-    compute();
-    window.addEventListener("resize", compute);
-    return () => window.removeEventListener("resize", compute);
-  }, []);
-
-  const maxIndex = Math.max(0, items.length - perView);
-
-  useEffect(() => {
-    if (paused || maxIndex <= 0) return;
-
-    let id: number | null = null;
-
-    function tick() {
-      if (document.hidden) return;
-      setIndex((i) => (i >= maxIndex ? 0 : i + 1));
-    }
-
-    function start() {
-      if (document.hidden) return;
-      if (id !== null) return;
-      id = window.setInterval(tick, 3000);
-    }
-
-    function stop() {
-      if (id === null) return;
-      window.clearInterval(id);
-      id = null;
-    }
-
-    const onVisibility = () => {
-      if (document.hidden) stop();
-      else start();
-    };
-
-    const onPageShow = () => start();
-
-    const firstFrame = window.requestAnimationFrame(() => start());
-    document.addEventListener("visibilitychange", onVisibility);
-    window.addEventListener("pageshow", onPageShow);
-
-    return () => {
-      window.cancelAnimationFrame(firstFrame);
-      stop();
-      document.removeEventListener("visibilitychange", onVisibility);
-      window.removeEventListener("pageshow", onPageShow);
-    };
-  }, [paused, maxIndex]);
-
-  useEffect(() => () => {
-    if (resumeTimer.current !== null) window.clearTimeout(resumeTimer.current);
-  }, []);
-
-  useEffect(() => {
-    if (index > maxIndex) setIndex(0);
-  }, [maxIndex, index]);
-
-
-  const nudge = (dir: 1 | -1) => {
-    setPaused(true);
-    setIndex((i) => {
-      const next = i + dir;
-      if (next < 0) return maxIndex;
-      if (next > maxIndex) return 0;
-      return next;
-    });
-    if (resumeTimer.current) window.clearTimeout(resumeTimer.current);
-    resumeTimer.current = window.setTimeout(() => setPaused(false), 5000);
-  };
-
-  // Swipe
-  const startX = useRef<number | null>(null);
-  const onTouchStart = (e: React.TouchEvent) => (startX.current = e.touches[0].clientX);
-  const onTouchEnd = (e: React.TouchEvent) => {
-    if (startX.current == null) return;
-    const dx = e.changedTouches[0].clientX - startX.current;
-    startX.current = null;
-    if (Math.abs(dx) < 40) return;
-    nudge(dx < 0 ? 1 : -1);
-  };
+  const { slides, n, index, perView, trackRef, trackStyle, nudge, touch, hover } = useLoopCarousel(items);
 
   return (
-    <div className="relative">
-      <div className="overflow-hidden" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-        <div
-          className="carousel-track flex"
-          style={{ transform: `translate3d(-${(index * 100) / perView}%, 0, 0)` }}
-        >
-          {items.map((p) => (
-            <div key={p.slug} className="shrink-0 px-2 py-4" style={{ width: `${100 / perView}%` }}>
-              <div className="premium-glow h-full">
-                <ProductCard p={p} glow />
+    <div className="relative" {...hover}>
+      {/* O carrossel aparece inteiro ao rolar (data-reveal aqui). Os cards ficam fora do efeito
+          (data-no-reveal): cada card escondido na lateral nascia invisível e só surgia, subindo,
+          depois de entrar pela seta — era o "bug" ao trocar de camisa. */}
+      <div data-reveal className="overflow-hidden" {...touch}>
+        <div ref={trackRef} data-no-reveal className="carousel-track flex" style={trackStyle}>
+          {slides.map((p, i) => {
+            const copy = i >= n;
+            return (
+              <div
+                key={`${p.slug}-${i}`}
+                className="shrink-0 px-2 py-4"
+                style={{ width: `${100 / perView}%` }}
+                aria-hidden={copy || undefined}
+              >
+                <div className="premium-glow h-full">
+                  {/* fotos da tela atual e das próximas já carregadas: não chegam em branco */}
+                  <ProductCard
+                    p={p}
+                    glow
+                    priority={i >= index - perView && i < index + perView * 2}
+                    tabIndex={copy ? -1 : undefined}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -130,7 +53,6 @@ export function ProductCarousel({ items }: { items: Product[] }) {
       >
         <ChevronRight className="size-5" />
       </button>
-
     </div>
   );
 }

@@ -1,127 +1,14 @@
-import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { categoriesQueryOptions } from "@/lib/catalog";
-
-/** Mesmo tempo da transição do .carousel-track (700ms) + folga. */
-const SLIDE_MS = 720;
+import { useLoopCarousel } from "@/hooks/use-loop-carousel";
 
 export function CategoryCarousel() {
   const { data: items = [] } = useQuery(categoriesQueryOptions);
-  const [index, setIndex] = useState(0);
-  const [perView, setPerView] = useState(4);
-  const [paused, setPaused] = useState(false);
-  const [animate, setAnimate] = useState(true);
-  const resumeTimer = useRef<number | null>(null);
-  const pending = useRef<number | null>(null);
-  const indexRef = useRef(0);
-  indexRef.current = index;
-
-  useEffect(() => {
-    const compute = () => {
-      const w = window.innerWidth;
-      if (w < 640) setPerView(1);
-      else if (w < 900) setPerView(2);
-      else if (w < 1200) setPerView(3);
-      else setPerView(4);
-    };
-    compute();
-    window.addEventListener("resize", compute);
-    return () => window.removeEventListener("resize", compute);
-  }, []);
-
-  const n = items.length;
-  const maxIndex = Math.max(0, n - perView);
-  // Loop infinito: os primeiros cards se repetem no fim. Ao chegar neles, o carrossel volta
-  // sem animação para os originais (mesma imagem), então sempre anda para a esquerda.
-  const loop = n > perView;
-  const slides = loop ? [...items, ...items.slice(0, perView)] : items;
-  const last = loop ? n : maxIndex;
-
-  // Salta sem animação para `to` e, em seguida, anda com animação até `then` (se houver).
-  const jump = (to: number, then: number | null) => {
-    pending.current = then;
-    setAnimate(false);
-    setIndex(to);
-  };
-
-  const step = (dir: 1 | -1) => {
-    const i = indexRef.current;
-    if (!loop) {
-      const next = i + dir;
-      setIndex(next < 0 ? maxIndex : next > maxIndex ? 0 : next);
-    } else if (dir === 1) {
-      if (i >= n) jump(i - n, i - n + 1);
-      else setIndex(i + 1);
-    } else if (i === 0) jump(n, n - 1);
-    else setIndex(i - 1);
-  };
-
-  const goTo = (target: number) => {
-    const i = indexRef.current;
-    if (loop && i >= n) jump(i - n, target);
-    else setIndex(target);
-  };
-
-  useEffect(() => {
-    if (paused) return;
-    const id = window.setInterval(() => step(1), 3000);
-    return () => clearInterval(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paused, loop, n, maxIndex]);
-
-  useEffect(() => {
-    if (index > last) setIndex(0);
-  }, [last, index]);
-
-  // Chegou nas cópias do início: troca para os cards originais sem o usuário perceber.
-  useEffect(() => {
-    if (!loop || index < n) return;
-    const t = window.setTimeout(() => jump(index - n, null), SLIDE_MS);
-    return () => clearTimeout(t);
-  }, [loop, index, n]);
-
-  // Depois de um salto sem animação, religa a transição e faz o passo pendente.
-  useEffect(() => {
-    if (animate) return;
-    let r2 = 0;
-    const r1 = requestAnimationFrame(() => {
-      r2 = requestAnimationFrame(() => {
-        setAnimate(true);
-        if (pending.current != null) setIndex(pending.current);
-        pending.current = null;
-      });
-    });
-    return () => {
-      cancelAnimationFrame(r1);
-      cancelAnimationFrame(r2);
-    };
-  }, [animate]);
-
-  const holdAutoplay = () => {
-    setPaused(true);
-    if (resumeTimer.current) window.clearTimeout(resumeTimer.current);
-    resumeTimer.current = window.setTimeout(() => setPaused(false), 5000);
-  };
-
-  const nudge = (dir: 1 | -1) => {
-    holdAutoplay();
-    step(dir);
-  };
-
-  const startX = useRef<number | null>(null);
-  const onTouchStart = (e: React.TouchEvent) => (startX.current = e.touches[0].clientX);
-  const onTouchEnd = (e: React.TouchEvent) => {
-    if (startX.current == null) return;
-    const dx = e.changedTouches[0].clientX - startX.current;
-    startX.current = null;
-    if (Math.abs(dx) < 40) return;
-    nudge(dx < 0 ? 1 : -1);
-  };
-
-  const dots = loop ? n : maxIndex + 1;
-  const active = loop ? index % n : index;
+  // loop infinito, setas, toque e autoplay: src/hooks/use-loop-carousel.ts
+  const { slides, n, perView, trackRef, trackStyle, dots, active, nudge, goTo, holdAutoplay, touch, hover } =
+    useLoopCarousel(items);
 
   return (
     <section id="categorias" className="relative">
@@ -137,19 +24,9 @@ export function CategoryCarousel() {
           </div>
         </div>
 
-        <div
-          className="relative"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-        >
-          <div data-reveal className="overflow-hidden" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-            <div
-              className="carousel-track flex"
-              style={{
-                transform: `translate3d(-${(index * 100) / perView}%, 0, 0)`,
-                transition: animate ? undefined : "none",
-              }}
-            >
+        <div className="relative" {...hover}>
+          <div data-reveal className="overflow-hidden" {...touch}>
+            <div ref={trackRef} className="carousel-track flex" style={trackStyle}>
               {slides.map((c, i) => {
                 const copy = i >= n;
                 return (
