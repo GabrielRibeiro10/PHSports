@@ -72,7 +72,9 @@ export function Header() {
           onDark ? "opacity-0" : "opacity-100"
         }`}
       >
-        <div className="mx-auto h-[50px] max-w-7xl rounded-full border border-white/50 bg-white/45 shadow-[0_8px_24px_-14px_rgb(0_0_0/0.35)] backdrop-blur-xl" />
+        {/* desfoque leve (8px) e fundo mais branco: com 24px o navegador refazia um desfoque
+            grande a cada quadro do vídeo das categorias logo abaixo da HERO e o FPS caía */}
+        <div className="mx-auto h-[50px] max-w-7xl rounded-full border border-white/50 bg-white/70 shadow-[0_8px_24px_-14px_rgb(0_0_0/0.35)] backdrop-blur-sm" />
       </div>
       <div className="ph-head-in max-md:[zoom:var(--m-scale,1)] relative mx-auto flex h-16 max-w-7xl items-center gap-2.5 px-3 sm:gap-4 sm:px-4 lg:h-20">
         <button

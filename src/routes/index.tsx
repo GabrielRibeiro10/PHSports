@@ -79,6 +79,7 @@ function ClubsMarquee() {
   const { data: products = [] } = useQuery(productsQueryOptions);
   const ref = useRef<HTMLElement>(null);
   const [near, setNear] = useState(false);
+  const [onScreen, setOnScreen] = useState(true);
 
   // Uma camisa por clube (a primeira do catálogo), no máximo 24: antes entravam TODAS as camisas
   // em dobro e, com o catálogo grande, a faixa ficava enorme, rápida e pesada (sumia no iPhone).
@@ -119,7 +120,14 @@ function ClubsMarquee() {
       { rootMargin: "900px 0px" },
     );
     io.observe(el);
-    return () => io.disconnect();
+    // Fora da tela a esteira para: antes ela seguia animando (e redesenhando as fotos que
+    // entram) mesmo com a pessoa já lá embaixo no catálogo.
+    const vis = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting));
+    vis.observe(el);
+    return () => {
+      io.disconnect();
+      vis.disconnect();
+    };
   }, []);
 
   if (!clubs.length) return null;
@@ -132,7 +140,7 @@ function ClubsMarquee() {
           <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]">
             <div
               className="clubs-track flex w-max gap-3 md:gap-4"
-              style={{ animationDuration: `${duration}s` }}
+              style={{ animationDuration: `${duration}s`, animationPlayState: onScreen ? undefined : "paused" }}
             >
               {loop.map((p, i) => {
                 const copy = i >= clubs.length;

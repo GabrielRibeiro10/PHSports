@@ -23,8 +23,8 @@ export function useLoopCarousel<T>(items: T[], autoplayMs = 3000) {
   useEffect(() => {
     const compute = () => {
       const w = window.innerWidth;
-      if (w < 640) setPerView(1);
-      else if (w < 900) setPerView(2);
+      // celular: 2 por vez, como a grade do catálogo (com 1, cada card passava da altura da tela)
+      if (w < 900) setPerView(2);
       else if (w < 1200) setPerView(3);
       else setPerView(4);
     };
@@ -64,11 +64,23 @@ export function useLoopCarousel<T>(items: T[], autoplayMs = 3000) {
     else setIndex(target);
   };
 
+  // Só gira sozinho com o carrossel na tela (fora dela não redesenha nada à toa).
+  const onScreen = useRef(true);
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([e]) => {
+      onScreen.current = e.isIntersecting;
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   // Autoplay: para com a aba escondida (não acumula passos para quando a pessoa voltar).
   useEffect(() => {
     if (paused || last <= 0) return;
     const id = window.setInterval(() => {
-      if (!document.hidden) step(1);
+      if (!document.hidden && onScreen.current) step(1);
     }, autoplayMs);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps

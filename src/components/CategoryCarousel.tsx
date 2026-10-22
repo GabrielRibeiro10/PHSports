@@ -32,7 +32,7 @@ export function CategoryCarousel() {
                 return (
                   <div
                     key={`${c.id}-${i}`}
-                    className="shrink-0 px-2"
+                    className="shrink-0 px-1.5 sm:px-2"
                     style={{ width: `${100 / perView}%` }}
                     aria-hidden={copy || undefined}
                   >
@@ -49,8 +49,8 @@ export function CategoryCarousel() {
                         className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-                      <div className="relative z-10 p-5 text-white">
-                        <h3 className="text-2xl font-black leading-none">{c.name}</h3>
+                      <div className="relative z-10 p-3 text-white sm:p-5">
+                        <h3 className="text-xl font-black leading-none sm:text-2xl">{c.name}</h3>
                         <p className="mt-1 text-xs opacity-90">{c.tagline}</p>
                       </div>
                     </Link>

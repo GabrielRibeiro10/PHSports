@@ -18,7 +18,7 @@ export function ProductCarousel({ items }: { items: Product[] }) {
             return (
               <div
                 key={`${p.slug}-${i}`}
-                className="shrink-0 px-2 py-4"
+                className="shrink-0 px-1.5 py-4 sm:px-2"
                 style={{ width: `${100 / perView}%` }}
                 aria-hidden={copy || undefined}
               >
@@ -37,11 +37,12 @@ export function ProductCarousel({ items }: { items: Product[] }) {
         </div>
       </div>
 
+      {/* celular: setas na altura da foto (no meio do card, cobriam o nome do time) */}
       <button
         type="button"
         aria-label="Anterior"
         onClick={() => nudge(-1)}
-        className="absolute left-1 top-1/2 z-10 grid size-9 -translate-y-1/2 md:-left-3 md:size-11 place-items-center rounded-full border border-border bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
+        className="absolute left-1 top-[36%] md:top-1/2 z-10 grid size-9 -translate-y-1/2 md:-left-3 md:size-11 place-items-center rounded-full border border-border bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
       >
         <ChevronLeft className="size-5" />
       </button>
@@ -49,7 +50,7 @@ export function ProductCarousel({ items }: { items: Product[] }) {
         type="button"
         aria-label="Próximo"
         onClick={() => nudge(1)}
-        className="absolute right-1 top-1/2 z-10 grid size-9 -translate-y-1/2 md:-right-3 md:size-11 place-items-center rounded-full border border-border bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
+        className="absolute right-1 top-[36%] md:top-1/2 z-10 grid size-9 -translate-y-1/2 md:-right-3 md:size-11 place-items-center rounded-full border border-border bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
       >
         <ChevronRight className="size-5" />
       </button>
