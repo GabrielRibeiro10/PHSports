@@ -351,10 +351,11 @@ button, a.btn-glow, button.btn-glow {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
 
-/* Brilho dos cards do carrossel "As que a torcida mais leva" (computador).
+/* Sombra dos cards do carrossel "As que a torcida mais leva" (computador).
    Antes: filter: blur + animação infinita em cada um dos ~77 cards (inclusive os escondidos
    nas laterais) — o navegador redesenhava dezenas de camadas desfocadas e o FPS caía logo
-   abaixo da HERO. Agora é só sombra fixa (pintada uma vez), com o mesmo halo suave. */
+   abaixo da HERO. Agora é só sombra fixa (pintada uma vez). Era um halo rosa (vermelho da marca);
+   virou uma sombra neutra e discreta, só embaixo do card, como em loja grande. */
 .premium-glow {
   position: relative;
 }
@@ -365,12 +366,11 @@ button, a.btn-glow, button.btn-glow {
   z-index: 0;
   border-radius: 0.9rem;
   box-shadow:
-    0 0 22px 2px color-mix(in oklab, var(--brand) 22%, transparent),
-    0 16px 34px -8px color-mix(in oklab, var(--brand) 32%, transparent),
-    0 30px 60px -20px color-mix(in oklab, var(--brand) 24%, transparent);
+    0 14px 28px -18px rgb(0 0 0 / 0.22),
+    0 28px 48px -30px rgb(0 0 0 / 0.16);
   pointer-events: none;
 }
-/* Sem glow no mobile — apenas desktop */
+/* Sem sombra extra no mobile — apenas desktop */
 @media (max-width: 767px) {
   .premium-glow::before { display: none; }
 }
