@@ -10,7 +10,7 @@ const items = [
 export function Ticker({ className = "" }: { className?: string }) {
   const seq = [...items, ...items, ...items, ...items];
   return (
-    <div className={`w-full overflow-hidden bg-[#0d0d0d] text-white ${className}`}>
+    <div className={`ticker-bar w-full overflow-hidden text-white ${className}`}>
       <div className="flex">
         <div className="ticker-track flex shrink-0 items-center gap-8 whitespace-nowrap py-1.5 pr-8 text-[11px] font-medium tracking-wide">
           {seq.map((it, i) => {
@@ -19,7 +19,7 @@ export function Ticker({ className = "" }: { className?: string }) {
               <span key={i} className="inline-flex items-center gap-2">
                 <Icon className="size-3 text-white/90" />
                 {it.text}
-                <span className="text-white/25">•</span>
+                <span className="text-white/50">•</span>
               </span>
             );
           })}
@@ -34,7 +34,7 @@ export function Ticker({ className = "" }: { className?: string }) {
               <span key={i} className="inline-flex items-center gap-2">
                 <Icon className="size-3 text-white/90" />
                 {it.text}
-                <span className="text-white/25">•</span>
+                <span className="text-white/50">•</span>
               </span>
             );
           })}
