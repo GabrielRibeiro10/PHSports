@@ -128,6 +128,8 @@ export function BrandSignature() {
           className="block h-auto w-full md:absolute md:inset-0 md:h-full md:object-cover md:object-right"
         />
       </picture>
+      {/* Entrada suave: o branco da página se dissolve na textura (antes era um corte seco) */}
+      <div aria-hidden className="wm-fade-top pointer-events-none absolute inset-x-0 top-0 h-[16%] md:h-[13%]" />
       {/* Torcedores PH Sports recortados, embaixo da palavra (desktop e mobile) */}
       <div
         aria-hidden
@@ -155,6 +157,8 @@ export function BrandSignature() {
           style={{ "--d": "1.05s" } as CSSProperties}
         />
       </div>
+      {/* Saída suave: escurece até o preto do rodapé, por cima da base dos torcedores (esconde o corte) */}
+      <div aria-hidden className="wm-fade-bottom pointer-events-none absolute inset-x-0 bottom-0 h-[15%] md:h-[17%]" />
       <div className="absolute inset-x-0 top-0 px-4 pt-[8vw] md:top-[6%] md:bottom-[52%] md:left-[5%] md:right-auto md:flex md:w-[41%] md:flex-col md:justify-center md:px-0 md:pt-0">
         <p className="flex items-center justify-center gap-3 whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.28em] text-brand sm:text-[11px] sm:tracking-[0.4em]">
           <span className="wm__rule wm__rule--l" aria-hidden />

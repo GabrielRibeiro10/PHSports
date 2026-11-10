@@ -933,6 +933,28 @@ header[data-on-dark="false"] .ph-glass {
 .wm__rule--l { transform-origin: 100% 50%; }
 .wm__rule--r { transform-origin: 0% 50%; }
 .wm-reveal { opacity: 0; translate: 0 14px; }
+/* Emendas da seção: branco da página → textura (em cima) e textura → preto do rodapé (embaixo).
+   Várias paradas no degradê para não aparecer uma faixa marcada. */
+.wm-fade-top {
+  background: linear-gradient(
+    to bottom,
+    var(--background) 0%,
+    color-mix(in oklab, var(--background) 82%, transparent) 22%,
+    color-mix(in oklab, var(--background) 52%, transparent) 50%,
+    color-mix(in oklab, var(--background) 20%, transparent) 78%,
+    transparent 100%
+  );
+}
+.wm-fade-bottom {
+  background: linear-gradient(
+    to top,
+    #0d0d0d 0%,
+    rgb(13 13 13 / 0.86) 22%,
+    rgb(13 13 13 / 0.55) 50%,
+    rgb(13 13 13 / 0.2) 78%,
+    rgb(13 13 13 / 0) 100%
+  );
+}
 .wm-fans { filter: drop-shadow(0 12px 22px rgb(0 0 0 / 0.22)); }
 
 .wm[data-in="true"] .wm__glyph {
