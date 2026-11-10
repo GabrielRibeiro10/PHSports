@@ -12,7 +12,7 @@ export function Ticker({ className = "" }: { className?: string }) {
   return (
     <div className={`ticker-bar w-full overflow-hidden text-white ${className}`}>
       <div className="flex">
-        <div className="ticker-track flex shrink-0 items-center gap-8 whitespace-nowrap py-1.5 pr-8 text-[11px] font-medium tracking-wide">
+        <div className="ticker-track flex shrink-0 items-center gap-8 whitespace-nowrap py-1.5 pr-8 text-[11px] font-semibold tracking-wide">
           {seq.map((it, i) => {
             const Icon = it.icon;
             return (
@@ -25,7 +25,7 @@ export function Ticker({ className = "" }: { className?: string }) {
           })}
         </div>
         <div
-          className="ticker-track flex shrink-0 items-center gap-8 whitespace-nowrap py-1.5 pr-8 text-[11px] font-medium tracking-wide"
+          className="ticker-track flex shrink-0 items-center gap-8 whitespace-nowrap py-1.5 pr-8 text-[11px] font-semibold tracking-wide"
           aria-hidden="true"
         >
           {seq.map((it, i) => {

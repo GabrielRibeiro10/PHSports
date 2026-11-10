@@ -378,82 +378,60 @@ function SearchAndProducts() {
   ];
 
   return (
-    <section id="produtos" className="mx-auto max-w-7xl px-4 py-14">
-      <div className="mb-6 flex flex-col items-start gap-4 md:flex-row md:items-end md:justify-between">
+    <section id="produtos" className="mx-auto max-w-7xl px-4 py-14 md:py-20">
+      {/* Cabeçalho no padrão de loja: título, linha descritiva e busca discreta */}
+      <div className="flex flex-col items-start gap-5 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-brand">Catálogo</p>
-          <h2 className="text-2xl font-black md:text-3xl">Ache o seu time</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Brasileirão, Europa e seleções. Filtra pela região ou digita o nome do clube.</p>
+          <h2 className="text-3xl font-black md:text-[2.5rem] md:leading-none">Ache o seu time</h2>
+          <p className="mt-2 text-sm text-muted-foreground md:mt-3 md:text-[15px]">
+            Camisas de clubes brasileiros, europeus e seleções.
+          </p>
         </div>
-        <form onSubmit={onSearch} className="flex w-full items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2.5 transition-colors focus-within:border-foreground/40 focus-within:bg-background md:w-80">
-          <Search className="size-4 text-muted-foreground" />
+        <form onSubmit={onSearch} role="search" className="cat-search">
+          <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden />
           <input
             value={q}
             onChange={(e) => setQ(sanitizeSearchTyping(e.target.value))}
             maxLength={MAX_SEARCH_LEN}
             inputMode="search"
-            placeholder="Buscar clube..."
-            className="w-full bg-transparent text-sm outline-none"
-            aria-label="Buscar clube"
+            placeholder="Buscar clube ou seleção"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            aria-label="Buscar clube ou seleção"
           />
         </form>
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center gap-2">
+      {/* Regiões em abas sublinhadas; gênero num seletor segmentado e a contagem ao lado */}
+      <div className="cat-bar mt-8 md:mt-10">
+        <div className="cat-tabs" role="group" aria-label="Região">
           {regionOptions.map((r) => (
-            <button
-              key={r.id}
-              onClick={() => selectRegion(r.id)}
-              aria-pressed={region === r.id}
-              className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-colors duration-200 ${
-                region === r.id
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-background text-foreground hover:border-foreground/40"
-              }`}
-            >
+            <button key={r.id} type="button" onClick={() => selectRegion(r.id)} aria-pressed={region === r.id} className="cat-tab">
               {r.label}
             </button>
           ))}
-          <span aria-hidden className="mx-1 hidden h-6 w-px bg-border sm:block" />
-          {genderOptions.map((g) => (
-            <button
-              key={g.id}
-              onClick={() => setGender(g.id)}
-              aria-pressed={gender === g.id}
-              className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-colors duration-200 ${
-                gender === g.id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:border-foreground/40"
-              }`}
-            >
-              {g.id === "todos" ? "Todos os gêneros" : g.label}
-            </button>
-          ))}
+        </div>
+        <div className="cat-tools">
+          <div className="cat-seg" role="group" aria-label="Gênero">
+            {genderOptions.map((g) => (
+              <button key={g.id} type="button" onClick={() => setGender(g.id)} aria-pressed={gender === g.id} className="cat-seg__btn">
+                {g.label}
+              </button>
+            ))}
+          </div>
+          <span className="text-xs text-muted-foreground tabular-nums" aria-live="polite">
+            {filtered.length} {filtered.length === 1 ? "produto" : "produtos"}
+          </span>
+        </div>
       </div>
 
       {region !== "todos" && clubsInRegion.length > 0 && (
-        <div className="mb-4 -mx-4 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden animate-in fade-in slide-in-from-top-1 duration-200">
-          <div className="flex gap-2 md:flex-wrap">
-            <button
-              onClick={() => setClub("todos")}
-              aria-pressed={club === "todos"}
-              className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-colors duration-200 ${
-                club === "todos"
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-background text-foreground hover:border-foreground/40"
-              }`}
-            >
-              Todos
+        <div className="-mx-4 mt-4 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden animate-in fade-in slide-in-from-top-1 duration-200">
+          <div className="flex gap-2 md:flex-wrap" role="group" aria-label="Clube">
+            <button type="button" onClick={() => setClub("todos")} aria-pressed={club === "todos"} className="cat-chip">
+              Todos os clubes
             </button>
             {clubsInRegion.map((c) => (
-              <button
-                key={c}
-                onClick={() => setClub(c)}
-                aria-pressed={club === c}
-                className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-colors duration-200 ${
-                  club === c
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-background text-foreground hover:border-foreground/40"
-                }`}
-              >
+              <button key={c} type="button" onClick={() => setClub(c)} aria-pressed={club === c} className="cat-chip">
                 {c}
               </button>
             ))}
@@ -461,9 +439,7 @@ function SearchAndProducts() {
         </div>
       )}
 
-
-
-      <div className="grid animate-in fade-in duration-300 grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="mt-6 grid animate-in fade-in duration-300 grid-cols-2 gap-4 sm:grid-cols-3 md:mt-8 lg:grid-cols-4">
         {visible.map((p, i) => (
           <ProductCard key={p.slug} p={p} priority={i < 4} />
         ))}
@@ -474,14 +450,24 @@ function SearchAndProducts() {
         )}
       </div>
 
+      {/* Fim da lista: quanto já foi visto, barra de progresso e botão com contorno */}
       {hasMore && (
-        <div className="mt-10 flex flex-col items-center gap-3">
+        <div className="mt-12 flex flex-col items-center gap-4">
+          <p className="text-[13px] text-muted-foreground tabular-nums">
+            Você viu {visible.length} de {filtered.length} produtos
+          </p>
+          <div className="h-0.5 w-48 overflow-hidden rounded-full bg-border" aria-hidden>
+            <div
+              className="h-full rounded-full bg-foreground transition-[width] duration-500 ease-out"
+              style={{ width: `${(visible.length / filtered.length) * 100}%` }}
+            />
+          </div>
           <button
             type="button"
             onClick={loadMore}
             disabled={loadingMore}
             aria-busy={loadingMore}
-            className="btn-glow inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-bold text-primary-foreground disabled:opacity-70"
+            className="cat-more mt-2"
           >
             {loadingMore ? (
               <>
@@ -490,13 +476,10 @@ function SearchAndProducts() {
               </>
             ) : (
               <>
-                Ver mais camisas <ArrowRight className="size-4" />
+                Ver mais camisas <ArrowRight className="size-4" aria-hidden />
               </>
             )}
           </button>
-          <p className="text-[11px] font-semibold text-muted-foreground">
-            Exibindo {visible.length} de {filtered.length} produtos
-          </p>
         </div>
       )}
 
