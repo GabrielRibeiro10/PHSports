@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { Link } from "@tanstack/react-router";
 import { AlertCircle, Loader2, MessageCircle } from "lucide-react";
 import { createOrder } from "@/lib/orders.functions";
 import { buildCheckoutMessage, cartLines, whatsappHref } from "@/lib/whatsapp";
@@ -202,6 +203,13 @@ export function CheckoutForm({
       </button>
       <p className="text-center text-[11px] text-muted-foreground">
         Conferimos preços e estoque, registramos o pedido e abrimos o WhatsApp da loja. Frete e pagamento são combinados por lá.
+      </p>
+      <p className="text-center text-[11px] text-muted-foreground">
+        Seus dados são usados só para registrar, entregar e atender este pedido. Veja a{" "}
+        <Link to="/privacidade" className="underline underline-offset-2 hover:text-foreground">
+          Política de Privacidade
+        </Link>
+        .
       </p>
     </form>
   );

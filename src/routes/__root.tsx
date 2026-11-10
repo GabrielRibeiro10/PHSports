@@ -20,6 +20,7 @@ import { SmoothScroll } from "@/components/SmoothScroll";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { BackToTop } from "@/components/BackToTop";
+import { CookieBanner } from "@/components/CookieBanner";
 import { CartProvider } from "@/lib/cart";
 import { AuthProvider } from "@/lib/auth";
 import { useCatalogRealtimeSync } from "@/lib/catalog";
@@ -173,6 +174,7 @@ function RootComponent() {
               <ScrollReveal />
               <WhatsAppButton />
               <BackToTop />
+              <CookieBanner />
             </>
           )}
           <Toaster position="top-center" richColors />

@@ -30,7 +30,7 @@ function TermosPage() {
       <header className="reveal-up">
         <p className="text-xs font-bold uppercase tracking-widest text-brand">Institucional</p>
         <h1 className="mt-3 text-4xl font-black md:text-5xl">Termos de Uso</h1>
-        <p className="mt-3 text-sm text-muted-foreground">Última atualização: 23 de julho de 2026</p>
+        <p className="mt-3 text-sm text-muted-foreground">Última atualização: 9 de novembro de 2026</p>
       </header>
 
       <Section title="1. Condições de utilização">
@@ -56,15 +56,17 @@ function TermosPage() {
 
       <Section title="4. Pagamentos">
         <p>
-          Todas as compras são processadas via Pix, com confirmação rápida. O pedido é enviado após a
-          aprovação do pagamento.
+          Aceitamos Pix (à vista) e cartão de crédito em até 6x, com juros. Antes do pagamento,
+          informamos pelo WhatsApp o valor total à vista, o frete, o número e o valor de cada parcela e o
+          total parcelado. O pedido é enviado após a aprovação do pagamento.
         </p>
       </Section>
 
       <Section title="5. Envios">
         <p>
-          Realizamos entregas para todo o Brasil. O prazo é informado no momento da compra e conta a partir
-          da confirmação do pagamento. Atrasos das transportadoras podem eventualmente ocorrer.
+          Realizamos entregas para todo o Brasil. O valor do frete e o prazo de entrega são informados
+          antes do pagamento, e o prazo conta a partir da confirmação do pagamento. Atrasos das
+          transportadoras podem eventualmente ocorrer.
         </p>
       </Section>
 
@@ -72,6 +74,13 @@ function TermosPage() {
         <p>
           Você pode solicitar troca ou devolução em até 7 dias corridos após o recebimento do produto, desde
           que ele esteja em condições originais. O atendimento é feito pelo WhatsApp {STORE_PHONE_DISPLAY}.
+        </p>
+        <p>
+          <strong className="text-foreground">Direito de arrependimento:</strong> como a compra é feita a
+          distância, você pode desistir dela em até 7 dias corridos após o recebimento, sem precisar
+          justificar (Código de Defesa do Consumidor, art. 49). Basta avisar pelo mesmo WhatsApp ou pelo
+          e-mail {STORE_EMAIL}. Devolvemos o valor pago integralmente, incluindo o frete, pelo mesmo meio de
+          pagamento usado na compra.
         </p>
       </Section>
 
@@ -84,8 +93,9 @@ function TermosPage() {
 
       <Section title="8. Limitação de responsabilidade">
         <p>
-          A PH Sports não se responsabiliza por danos indiretos decorrentes do uso do site, indisponibilidades
-          eventuais ou informações incorretas fornecidas pelo próprio usuário.
+          A PH Sports não se responsabiliza por indisponibilidades eventuais do site ou por informações
+          incorretas fornecidas pelo próprio usuário. Nada nestes Termos limita os seus direitos como
+          consumidor previstos no Código de Defesa do Consumidor.
         </p>
       </Section>
 

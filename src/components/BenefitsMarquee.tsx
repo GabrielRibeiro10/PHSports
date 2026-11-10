@@ -6,7 +6,7 @@ const items = [
   { icon: RefreshCw, title: "Troca fácil", desc: "7 dias pra trocar, sem formulário" },
   { icon: MessageCircle, title: "Atendimento humanizado", desc: "Quem responde é gente, no WhatsApp" },
   { icon: ShieldCheck, title: "Compra 100% segura", desc: "Site com SSL, seus dados protegidos" },
-  { icon: CreditCard, title: "Pix e cartão", desc: "Parcele em até 6x" },
+  { icon: CreditCard, title: "Pix e cartão", desc: "Cartão em até 6x (com juros)" },
 ];
 
 export function BenefitsMarquee() {

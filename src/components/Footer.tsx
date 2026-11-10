@@ -2,7 +2,14 @@ import { Link } from "@tanstack/react-router";
 import { scrollToTop } from "@/lib/smooth-scroll";
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
-import { STORE_EMAIL, STORE_PHONE_DISPLAY } from "@/lib/products";
+import {
+  STORE_ADDRESS,
+  STORE_CNPJ,
+  STORE_EMAIL,
+  STORE_LEGAL_NAME,
+  STORE_PHONE_DISPLAY,
+} from "@/lib/products";
+import { OPEN_COOKIE_PREFS } from "@/components/CookieBanner";
 import { EXCHANGE_MESSAGE, whatsappHref } from "@/lib/whatsapp";
 import { PH_SPORTS_LOGO } from "@/lib/brand";
 
@@ -232,6 +239,15 @@ export function Footer() {
                   Termos de uso
                 </Link>
               </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new Event(OPEN_COOKIE_PREFS))}
+                  className="ft-link text-left"
+                >
+                  Preferências de cookies
+                </button>
+              </li>
             </ul>
           </nav>
 
@@ -269,9 +285,10 @@ export function Footer() {
 
           <div className="ft-up col-span-2 lg:col-span-2" style={d(0.47)}>
             <ColumnTitle index="04">Pagamento</ColumnTitle>
-            <p className="mt-5 text-sm text-white">Pix, aprovação na hora.</p>
+            <p className="mt-5 text-sm text-white">Pix ou cartão em até 6x (com juros).</p>
             <p className="mt-2 text-sm leading-relaxed text-white/55">
-              Aprovou, a gente já separa o pedido. Envio com rastreio pra todo o Brasil.
+              Valor das parcelas e frete informados antes do pagamento. Aprovou, a gente já separa o
+              pedido. Envio com rastreio pra todo o Brasil.
             </p>
           </div>
         </div>
@@ -281,7 +298,35 @@ export function Footer() {
           className="ft-up mt-16 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-white/45 md:mt-20 md:grid md:grid-cols-3 md:items-center"
           style={d(0.55)}
         >
-          <p>© {new Date().getFullYear()} PH Sports. Todos os direitos reservados.</p>
+          <div className="space-y-1.5">
+            <p className="flex items-center gap-2">
+              {/* Símbolo de acessibilidade em destaque (Lei 13.146/2015, art. 63, §1º) */}
+              <svg
+                viewBox="0 0 24 24"
+                role="img"
+                aria-label="Símbolo internacional de acessibilidade"
+                className="size-5 shrink-0 rounded-full bg-white p-[3px] text-[#0d0d0d]"
+              >
+                <circle cx="12" cy="4" r="2" fill="currentColor" />
+                <path
+                  d="M4.5 8.5 12 10l7.5-1.5M12 10v4.5m0 0-3.2 6.5M12 14.5l3.2 6.5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span>© {new Date().getFullYear()} PH Sports. Todos os direitos reservados.</span>
+            </p>
+            {(STORE_LEGAL_NAME || STORE_CNPJ || STORE_ADDRESS) && (
+              <p>
+                {[STORE_LEGAL_NAME, STORE_CNPJ && `CNPJ ${STORE_CNPJ}`, STORE_ADDRESS]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
+            )}
+          </div>
           <p className="md:text-center">
             Ilhabela, SP <span className="mx-1.5 text-white/20">·</span> <LocalTime />
           </p>

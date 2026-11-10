@@ -88,7 +88,7 @@ function categoryDescription(category: string, club: string, name: string) {
     case "caneleiras":
       return `Caneleiras profissionais com casco rígido de alto impacto e espuma interna de absorção que protege a canela sem travar o movimento. Encaixe anatômico, presilhas ajustáveis e peso reduzido para você esquecer que está usando. Proteção confiável do aquecimento ao apito final.`;
     default:
-      return `Camisa oficial do ${club} versão torcedor 2026, feita para quem veste a camisa de verdade. Poliéster premium de alta densidade com tecnologia dry-fit, que respira, seca rápido e mantém o conforto os 90 minutos inteiros. Escudo bordado, acabamento profissional e modelagem torcedor unissex com caimento impecável — do sofá à arquibancada, sempre no time principal.`;
+      return `Camisa do ${club} versão torcedor 2026, feita para quem veste a camisa de verdade. Poliéster premium de alta densidade com tecnologia dry-fit, que respira, seca rápido e mantém o conforto os 90 minutos inteiros. Escudo bordado, acabamento profissional e modelagem torcedor unissex com caimento impecável — do sofá à arquibancada, sempre no time principal.`;
   }
 }
 
@@ -264,7 +264,7 @@ function ProductPage() {
             <span className="text-base text-muted-foreground line-through">{formatBRL(product.oldPrice)}</span>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            ou 6x de <span className="font-semibold text-foreground">{formatBRL(product.price / 6)}</span> sem juros
+            à vista no Pix, ou no cartão em até 6x com juros (valor das parcelas informado antes do pagamento)
           </p>
 
           {/* Size */}
@@ -382,7 +382,7 @@ function ProductPage() {
             </div>
             <div className="flex items-start gap-2 text-xs">
               <ShieldCheck className="mt-0.5 size-4 shrink-0 text-brand" />
-              <span><strong>Compra segura:</strong> pagamento via Pix, rápido e protegido.</span>
+              <span><strong>Compra segura:</strong> pagamento via Pix ou cartão, rápido e protegido.</span>
             </div>
           </div>
         </div>

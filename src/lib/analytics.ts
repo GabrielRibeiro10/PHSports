@@ -6,6 +6,8 @@
  */
 export const META_PIXEL_ID = "";
 export const GA4_ID = "G-BKRWF75GW9";
+/** Escolha do visitante no banner de cookies: "granted" | "denied" (sem valor = ainda não escolheu). */
+export const CONSENT_KEY = "ph-cookie-consent";
 
 type Item = { slug: string; name: string; club?: string; price: number; qty?: number };
 
@@ -20,14 +22,16 @@ export function analyticsHeadScripts() {
   const scripts: { children?: string; src?: string; async?: boolean }[] = [];
   if (/^\d{6,20}$/.test(META_PIXEL_ID)) {
     scripts.push({
-      children: `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${META_PIXEL_ID}');`,
+      // só com o "Aceitar" do banner de cookies (LGPD)
+      children: `try{if(localStorage.getItem('${CONSENT_KEY}')==='granted')!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${META_PIXEL_ID}');}catch(e){}`,
     });
   }
   if (/^G-[A-Z0-9]{4,20}$/.test(GA4_ID)) {
-    // gtag.js só é baixado depois que a página terminou de carregar (não disputa banda com a
-    // HERO no celular). Até lá os eventos ficam na fila do dataLayer e são enviados quando ele chega.
+    // LGPD: gtag.js só é baixado com o "Aceitar" do banner de cookies (CookieBanner grava
+    // CONSENT_KEY). Sem aceite, os eventos ficam só na fila local do dataLayer e nada sai do navegador.
+    // Com aceite, baixa depois que a página terminou de carregar (não disputa banda com a HERO).
     scripts.push({
-      children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${GA4_ID}',{send_page_view:false});(function(){var d=false;function l(){if(d)return;d=true;var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=${GA4_ID}';document.head.appendChild(s)}function w(){'requestIdleCallback' in window?requestIdleCallback(l,{timeout:3000}):setTimeout(l,1500)}document.readyState==='complete'?w():addEventListener('load',w)})();`,
+      children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${GA4_ID}',{send_page_view:false});(function(){var d=false;function l(){if(d)return;d=true;var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=${GA4_ID}';document.head.appendChild(s)}window.__phLoadAnalytics=l;var ok=false;try{ok=localStorage.getItem('${CONSENT_KEY}')==='granted'}catch(e){}if(!ok)return;function w(){'requestIdleCallback' in window?requestIdleCallback(l,{timeout:3000}):setTimeout(l,1500)}document.readyState==='complete'?w():addEventListener('load',w)})();`,
     });
   }
   return scripts;

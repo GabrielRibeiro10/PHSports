@@ -18,7 +18,7 @@ export const Route = createFileRoute("/sobre")({
 const diferenciais = [
   { icon: Award, title: "Produtos de alta qualidade", desc: "Tecido premium com acabamento profissional e escudo bordado." },
   { icon: Truck, title: "Envio rápido", desc: "Sai daqui com código de rastreio, pra qualquer canto do Brasil." },
-  { icon: Shield, title: "Compra 100% segura", desc: "Pagamento via Pix, protegido e aprovado na hora." },
+  { icon: Shield, title: "Compra 100% segura", desc: "Pix ou cartão, protegido e confirmado na hora." },
   { icon: MessageCircle, title: "Atendimento no WhatsApp", desc: "Pergunta o tamanho, tira dúvida. Quem responde é gente." },
   { icon: Star, title: "Satisfação dos clientes", desc: "Milhares de torcedores atendidos com nota máxima." },
   { icon: Heart, title: "Feito por torcedor", desc: "A gente escolhe os modelos pensando no que a torcida pede." },

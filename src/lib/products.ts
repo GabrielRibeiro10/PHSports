@@ -35,3 +35,8 @@ export const STORE_PHONE = "5512992319709"; // WhatsApp E.164 without '+'
 export const STORE_PHONE_DISPLAY = "(12) 99231-9709";
 export const STORE_EMAIL = "phsportsilha@gmail.com";
 export const STORE_LOCATION = "Ilhabela – SP";
+// Identificação da loja (Decreto 7.962/2013, art. 2º; LGPD art. 9º): preencher com os dados reais.
+// Vazio = não aparece no rodapé nem na Política de Privacidade.
+export const STORE_LEGAL_NAME = ""; // razão social ou nome do responsável
+export const STORE_CNPJ = ""; // CNPJ (ou CPF, se não tiver empresa)
+export const STORE_ADDRESS = ""; // endereço físico completo
