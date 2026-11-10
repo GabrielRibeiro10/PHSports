@@ -85,9 +85,14 @@ export function playHeroIntro(o: IntroOptions): () => void {
   const textAlreadyVisible = o.chars.length > 0 && getComputedStyle(o.chars[0]).opacity === "1";
   const animateText = !o.reducedMotion && !textAlreadyVisible;
 
+  // O selo (data-hero-extra="first") entra antes do título; o resto, depois das letras.
+  const first = o.extras.filter((el) => el.dataset.heroExtra === "first");
+  const rest = o.extras.filter((el) => el.dataset.heroExtra !== "first");
+
   const ctx = gsap.context(() => {
     if (animateText) {
-      gsap.set(o.chars, { opacity: 0, y: 30 });
+      // cada palavra do título é uma máscara: a letra começa escondida abaixo, inclinada
+      gsap.set(o.chars, { opacity: 1, yPercent: 118, rotation: 8, transformOrigin: "0% 100%" });
       gsap.set(o.extras, { opacity: 0, y: 16 });
     }
     o.section.classList.remove("hero-pending");
@@ -129,11 +134,12 @@ export function playHeroIntro(o: IntroOptions): () => void {
       );
     }
     if (animateText) {
-      tl.to(o.chars, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", stagger }, 0.25);
+      tl.to(first, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 0.05);
+      tl.to(o.chars, { yPercent: 0, rotation: 0, duration: 1.2, ease: "expo.out", stagger }, 0.2);
       tl.to(
-        o.extras,
-        { opacity: 1, y: 0, duration: 0.55, ease: "power2.out", stagger: 0.085 },
-        ">-0.4",
+        rest,
+        { opacity: 1, y: 0, duration: 0.85, ease: "power3.out", stagger: 0.09 },
+        ">-0.8",
       );
     }
     // Garante a ordem: texto completo → camisa chega → só então o giro.

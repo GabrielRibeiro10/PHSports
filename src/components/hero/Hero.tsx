@@ -1,6 +1,6 @@
 import type React from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight, ArrowUpRight, RefreshCw, ShieldCheck, Truck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import hero from "@/assets/hero-banner.jpg";
 import posterDesktop from "@/assets/hero-video-d.webp";
@@ -13,35 +13,76 @@ import person from "@/assets/hero-person.webp";
 import personSm from "@/assets/hero-person-640.webp";
 import { Ticker } from "@/components/Ticker";
 
+// Uma linha por item: "VISTA AS / CORES DO" na Archivo larga e "seu clube." em serifa itálica vermelha
 const TITLE = [
-  { text: "Vista as cores do", accent: false },
+  { text: "Vista as", accent: false },
+  { text: "cores do", accent: false },
   { text: "seu clube.", accent: true },
 ];
 const TITLE_LABEL = TITLE.map((t) => t.text).join(" ");
 
-/** Título dividido em letras (spans) para a entrada com stagger. */
+/**
+ * Título em linhas; cada palavra é uma máscara e as letras sobem de dentro dela com leve giro
+ * (a entrada fica no hero-intro). Embaixo de "seu clube." um traço de pincel vermelho se desenha.
+ */
 function SplitTitle() {
-  const words = TITLE.flatMap((seg) => seg.text.split(" ").map((w) => ({ w, accent: seg.accent })));
   let accentIndex = 0; // posição da letra no destaque, para o brilho percorrer da esquerda à direita
   return (
     <>
-      {words.map(({ w, accent }, wi) => (
-        <span key={wi}>
-          <span className="inline-block whitespace-nowrap" aria-hidden>
-            {[...w].map((ch, ci) => (
-              <span
-                key={ci}
-                className={`hero-char hero-reveal${accent ? " hero-char--accent" : ""}`}
-                style={accent ? ({ "--i": accentIndex++ } as React.CSSProperties) : undefined}
-              >
-                {ch}
+      {TITLE.map((line, li) => (
+        <span key={li} aria-hidden className={`hx-line${line.accent ? " hx-line--accent" : ""}`}>
+          {line.text.split(" ").map((w, wi, arr) => (
+            <span key={wi}>
+              <span className="hx-word">
+                {[...w].map((ch, ci) => (
+                  <span
+                    key={ci}
+                    className={`hero-char hero-reveal${line.accent ? " hero-char--accent" : ""}`}
+                    style={line.accent ? ({ "--i": accentIndex++ } as React.CSSProperties) : undefined}
+                  >
+                    {ch}
+                  </span>
+                ))}
               </span>
-            ))}
-          </span>
-          {wi < words.length - 1 ? " " : null}
+              {wi < arr.length - 1 ? " " : null}
+            </span>
+          ))}
+          {line.accent && (
+            <svg className="hx-swoosh" viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden>
+              <path d="M3 16 C 70 8, 160 4, 297 8 C 225 11, 140 15, 62 20 C 38 21.5, 16 21, 3 16 Z" />
+            </svg>
+          )}
         </span>
       ))}
     </>
+  );
+}
+
+/** Botão principal: pílula branca com círculo vermelho; no hover o vermelho sobe e enche o botão,
+ *  a seta atravessa o círculo e o botão segue levemente o mouse (mesmo efeito do rodapé). */
+function HeroCta() {
+  const ref = useRef<HTMLSpanElement>(null);
+  const move = (e: React.PointerEvent<HTMLSpanElement>) => {
+    const el = ref.current;
+    if (!el || e.pointerType !== "mouse") return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty("--mx", `${(e.clientX - (r.left + r.width / 2)) * 0.16}px`);
+    el.style.setProperty("--my", `${(e.clientY - (r.top + r.height / 2)) * 0.28}px`);
+  };
+  const reset = () => {
+    ref.current?.style.setProperty("--mx", "0px");
+    ref.current?.style.setProperty("--my", "0px");
+  };
+  return (
+    <span ref={ref} onPointerMove={move} onPointerLeave={reset} className="hx-magnet">
+      <Link to="/" hash="produtos" className="hx-cta">
+        <span className="relative">Comprar agora</span>
+        <span className="hx-cta__badge" aria-hidden>
+          <ArrowUpRight className="hx-cta__arrow" />
+          <ArrowUpRight className="hx-cta__arrow hx-cta__arrow--in" />
+        </span>
+      </Link>
+    </span>
   );
 }
 
@@ -200,59 +241,45 @@ export function Hero() {
 
       <div className="relative z-10 mx-auto h-[max(calc(100vh-28.5px),531.5px)] max-w-7xl px-4 pt-[35vw] md:grid md:h-[max(640px,calc(100svh-28.5px))] md:pt-28 md:grid-cols-2 md:items-center lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] md:gap-8 md:py-16">
         <div ref={textRef} className="max-md:[zoom:var(--m-scale,1)]">
-          <span
-            data-hero-extra
-            className="hero-reveal inline-flex items-center gap-2 border-l-2 border-white/80 pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-white/90 lg:gap-2.5 lg:pl-4 lg:text-[13px] lg:tracking-[0.2em]"
-          >
-            Coleção 2026 •{" "}
-            <span className="wave-red" aria-label="Edição Premium">
-              {[..."Edição Premium"].map((ch, i) => (
-                <span key={i} aria-hidden style={{ "--i": i } as React.CSSProperties}>
-                  {ch === " " ? "\u00a0" : ch}
-                </span>
-              ))}
-            </span>
-          </span>
+          {/* Selo: ponto vermelho pulsando, fio que se desenha e a edição */}
+          <p data-hero-extra="first" className="hero-reveal hx-eyebrow">
+            <span className="hx-dot" aria-hidden />
+            <span>Coleção 2026</span>
+            <span className="hx-rule" aria-hidden />
+            <span className="text-white/60">Edição Premium</span>
+          </p>
           <h1
             aria-label={TITLE_LABEL}
-            className="hero-display mt-4 max-md:max-w-[6.2em] text-[33px] leading-[0.98] md:text-[clamp(2.7rem,4.4vw,4rem)] lg:mt-6 lg:text-[clamp(3.4rem,5.5vw,5.4rem)] lg:leading-[0.94]"
+            className="hx-title mt-4 text-[31px] md:text-[clamp(2.6rem,min(4.6vw,8.4vh),4.2rem)] lg:mt-[clamp(0.75rem,2.4vh,1.5rem)] lg:text-[clamp(3rem,min(5.6vw,10.4vh),5.6rem)]"
           >
             <SplitTitle />
           </h1>
           <p
             data-hero-extra
-            className="hero-reveal mt-4 max-w-md md:mt-5 text-sm leading-relaxed md:text-[15px] text-white/80 lg:mt-7 lg:max-w-[30rem] lg:text-lg xl:max-w-[34rem]"
+            className="hero-reveal hx-lead mt-5 max-w-[16.5rem] text-[13.5px] leading-relaxed md:mt-6 md:max-w-md md:text-[15px] lg:mt-[clamp(1.1rem,3.4vh,2rem)] lg:max-w-[30rem] lg:text-lg xl:max-w-[33rem]"
           >
-            Camisas dos maiores clubes do Brasil com acabamento premium. Tudo por{" "}
-            <span className="font-black tabular-nums text-white">R$ 179,90</span> na PH Sports.
+            Camisas dos maiores clubes do Brasil, com acabamento premium. Todas por{" "}
+            <span className="hx-price">R$ 179,90</span>.
           </p>
-          <div data-hero-extra className="hero-reveal mt-6 flex flex-wrap gap-3 md:mt-8 lg:mt-10 lg:gap-4">
-            <Link
-              to="/"
-              hash="produtos"
-              className="btn-glow btn-shine inline-flex items-center gap-2 rounded-full bg-white px-5 py-3.5 md:px-7 text-sm font-bold text-foreground lg:gap-2.5 lg:px-9 lg:py-[1.125rem] lg:text-base shadow-[var(--shadow-raised)]"
-            >
-              <span className="btn-silver">Comprar agora</span> <ArrowRight className="size-4 lg:size-5" />
-            </Link>
-            <Link
-              to="/"
-              hash="clubes"
-              className="btn-glow inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/10 px-5 py-3.5 md:px-7 text-sm font-semibold text-white lg:px-9 lg:py-[1.125rem] lg:text-base transition-colors hover:bg-white/20"
-            >
-              Ver clubes
+          <div data-hero-extra className="hero-reveal mt-6 flex flex-wrap items-center gap-x-7 gap-y-3 md:mt-8 lg:mt-[clamp(1.25rem,4vh,2.5rem)]">
+            <HeroCta />
+            <Link to="/" hash="clubes" className="hx-link">
+              <span className="hx-link__label">Ver clubes</span>
+              <ArrowRight className="hx-link__arrow size-4 lg:size-[18px]" aria-hidden />
             </Link>
           </div>
-          <div
-            data-hero-extra
-            className="hero-reveal mt-5 flex flex-wrap items-center gap-5 md:mt-8 text-xs text-white/80 lg:mt-10 lg:gap-7 lg:text-sm"
-          >
-            <span className="inline-flex items-center gap-1.5">
-              <Truck className="size-4 text-white lg:size-[18px]" /> Envio para todo Brasil
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="size-4 text-white lg:size-[18px]" /> Compra 100% segura
-            </span>
-          </div>
+          {/* Selos de confiança sob um fio fino */}
+          <ul data-hero-extra className="hero-reveal hx-trust mt-6 md:mt-[clamp(1.25rem,4vh,2.25rem)] lg:mt-[clamp(1.25rem,4.4vh,3rem)]">
+            <li>
+              <Truck aria-hidden /> Envio para todo o Brasil
+            </li>
+            <li>
+              <ShieldCheck aria-hidden /> Compra 100% segura
+            </li>
+            <li className="hx-trust__extra">
+              <RefreshCw aria-hidden /> Troca em 7 dias
+            </li>
+          </ul>
         </div>
 
         {/* Destino final da camisa 3D (lado direito). */}
