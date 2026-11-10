@@ -6,7 +6,7 @@ import { useEffect } from "react";
  * A HERO, a seção PHSPORTS e o rodapé têm animações próprias e ficam de fora.
  */
 const SELECTOR = "main h2, main section p.uppercase, [data-reveal]";
-const EXCLUDE = "[data-hero], .wm, .ft, [data-no-reveal]";
+const EXCLUDE = "[data-hero], .wm, .ft, .rv, [data-no-reveal]";
 
 export function ScrollReveal() {
   useEffect(() => {

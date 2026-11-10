@@ -58,10 +58,8 @@ function Home() {
         <ProductCarousel items={products} />
       </section>
       <SearchAndProducts />
-      <section id="beneficios" className="border-y border-border bg-secondary/40 py-10">
-        <div className="mx-auto max-w-7xl px-4">
-          <BenefitsMarquee />
-        </div>
+      <section id="beneficios" aria-label="Benefícios" className="bg-[#0d0d0d] py-5 text-white md:py-6">
+        <BenefitsMarquee />
       </section>
       <Reviews />
       <BrandTypography />
